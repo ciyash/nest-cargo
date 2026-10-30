@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AddDispatchTypeComponent } from './add-dispatch-type.component';
-//
+
 describe('AddDispatchTypeComponent', () => {
   let component: AddDispatchTypeComponent;
   let fixture: ComponentFixture<AddDispatchTypeComponent>;
