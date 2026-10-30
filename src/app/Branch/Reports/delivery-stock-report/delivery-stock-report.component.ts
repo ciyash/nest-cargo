@@ -1,11 +1,17 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { BranchService } from 'src/app/service/branch.service';
-import * as XLSX from 'xlsx';
+import type * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 import { Toast, ToastrService } from 'ngx-toastr';
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-delivery-stock-report',
   templateUrl: './delivery-stock-report.component.html',
   styleUrls: ['./delivery-stock-report.component.scss']
@@ -13,7 +19,7 @@ import { Toast, ToastrService } from 'ngx-toastr';
 export class DeliveryStockReportComponent implements OnInit {
   reportData: any = { formattedBookings: [] };
   pfdata: any;
-  
+
 
   currentPage: number = 1;
   itemsPerPage: number = 10;
@@ -29,13 +35,13 @@ export class DeliveryStockReportComponent implements OnInit {
   //   private toast: ToastrService // Inject ToastrService
   // ) {
   //   const gstDataString = localStorage.getItem('gstData');
-  
+
   //   if (gstDataString) {
   //     try {
   //       const parsedData = JSON.parse(gstDataString);
   //       this.reportData = parsedData?.data || {};
   //       console.log("Received data:", this.reportData);
-  
+
   //       this.toast.success(parsedData?.message || 'Report loaded successfully.');
   //     } catch (e) {
   //       console.error("Parsing error:", e);
@@ -51,13 +57,13 @@ export class DeliveryStockReportComponent implements OnInit {
     private toast: ToastrService
   ) {
     const pendingDataString = localStorage.getItem('pendingData');
-  
+
     if (pendingDataString) {
       try {
         const parsedData = JSON.parse(pendingDataString);
         this.reportData = parsedData?.data || {};
         console.log("Received pending delivery data:", this.reportData);
-  
+
         this.toast.success(parsedData?.message || 'Pending delivery report loaded successfully.');
       } catch (e) {
         console.error("Parsing error:", e);
@@ -67,9 +73,9 @@ export class DeliveryStockReportComponent implements OnInit {
       this.toast.warning('No pending delivery report data found in local storage.');
     }
   }
-  
-  
-  
+
+
+
 
   ngOnInit() {
     this.getProfileData();
@@ -151,7 +157,8 @@ export class DeliveryStockReportComponent implements OnInit {
     }
   }
 
-  exportFullReportToExcel(): void {
+  async exportFullReportToExcel(): Promise<void> {
+    const XLSX = await import('xlsx');
     const rows: any[][] = [];
 
     // Header: Company Info

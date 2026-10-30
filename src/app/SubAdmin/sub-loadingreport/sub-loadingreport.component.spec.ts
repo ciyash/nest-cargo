@@ -8,7 +8,7 @@ describe('SubLoadingreportComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [SubLoadingreportComponent]
+      imports: [SubLoadingreportComponent]
     });
     fixture = TestBed.createComponent(SubLoadingreportComponent);
     component = fixture.componentInstance;

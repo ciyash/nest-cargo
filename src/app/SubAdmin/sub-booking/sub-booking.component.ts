@@ -1,3 +1,8 @@
+import { BillingComponent } from '../../shared/billing/billing.component';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { SearchGrnNumberComponent } from '../../Branch/Widgets/search-grn-number/search-grn-number.component';
 import { Component } from '@angular/core';
 import { ChangeDetectorRef } from '@angular/core'
 import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
@@ -8,15 +13,18 @@ import { HeaderComponent } from "../../USER/header/header.component";
 import { AdminService } from 'src/app/service/admin.service';
 import { ToastrService } from 'ngx-toastr';
 declare var $: any;
-declare const SlimSelect: any; 
+declare const SlimSelect: any;
 import {  ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 
 @Component({
+  standalone: true,
+  imports: [BillingComponent, CommonModule, FormsModule, ReactiveFormsModule, RouterModule, SearchGrnNumberComponent, HeaderComponent],
   selector: 'app-sub-booking',
   templateUrl: './sub-booking.component.html',
   styleUrls: ['./sub-booking.component.scss']
 })
 export class SubBookingComponent {
+  @ViewChild(BillingComponent) billing?: BillingComponent;
 
 
 
@@ -46,7 +54,7 @@ export class SubBookingComponent {
     errorMessage: string = '';
     userList: any[] = [];
     showDropdown:boolean=true;
-    
+
     dptype:any;
     @ViewChild('selectElem') selectElem!: ElementRef;
     @ViewChild('pickupbranch') pickupbranch!: ElementRef;
@@ -65,9 +73,9 @@ export class SubBookingComponent {
   profileData: any;
   fromCityValue: any;
   filteredCityList: any;
-  
+
     constructor(private fb: FormBuilder, private api: BranchService, private token:TokenService,
-       private cdr: ChangeDetectorRef,  private route: ActivatedRoute,private toastr:ToastrService, 
+       private cdr: ChangeDetectorRef,  private route: ActivatedRoute,private toastr:ToastrService,
        private router:Router, private admin:AdminService) {
       this.form = this.fb.group({
         fromCity:  ['', Validators.required],
@@ -92,16 +100,16 @@ export class SubBookingComponent {
         grandTotal: [''],
         agent:[''],
         packages: this.fb.array([]),
-  
+
           });
-       
+
           this.form1 = this.fb.group({
             fromCity: [''],
             toCity: ['', Validators.required],
               });
-              
+
      }
-  
+
     ngOnInit() {
       this.getAllCompany();
       // const id = this.activate.snapshot.paramMap.get('id');
@@ -113,22 +121,22 @@ export class SubBookingComponent {
       this.api.GetBranch().subscribe((res:any)=>{
         console.log(res);
         this.branchdata=res;
-        
+
       });
       //get Packages
       this.api.GetPAckagesType().subscribe((res:any)=>{
         console.log(res);
         this.packdata=res;
       });
-  
+
       this.admin.GetDispatchtypeData().subscribe((res:any)=>{
         console.log(res);
         this.dptype=res;
       });
-  
+
       this.getProfileData();
       this.addOrderItem()
-  
+
       this.form.get('bookingType')?.valueChanges.subscribe((value) => {
         console.log("Booking type changed to:", value);
         if (value !== 'credit') {
@@ -143,9 +151,9 @@ export class SubBookingComponent {
         }
       });
     }
-    
-   
-    
+
+
+
     ngAfterViewInit(): void {
       setTimeout(() => {
         $(this.selectElem.nativeElement).select2();
@@ -156,7 +164,7 @@ export class SubBookingComponent {
           console.log('Updated form value:', this.form.value);
           this.onFromcitySelect({ target: { value: selectedCity } });
         });
-    
+
         // Initialize Select2 for Pickup Branch
         $(this.pickupbranch.nativeElement).select2();
         $(this.pickupbranch.nativeElement).on('select2:select', (event: any) => {
@@ -166,7 +174,7 @@ export class SubBookingComponent {
           console.log('Updated form value:', this.form.value);
           this.onPickupBranchSelect({ target: { value: selectedBranch } });
         });
-    
+
         // Initialize Select2 for To City
         $(this.selectElem2.nativeElement).select2();
         $(this.selectElem2.nativeElement).on('select2:select', (event: any) => {
@@ -176,7 +184,7 @@ export class SubBookingComponent {
           console.log('Updated form value:', this.form.value);
           this.onTocitySelect({ target: { value: selectedToCity } });
         });
-    
+
         // Initialize Select2 for Drop Branch
         $(this.droupbranch.nativeElement).select2();
         $(this.droupbranch.nativeElement).on('select2:select', (event: any) => {
@@ -186,48 +194,48 @@ export class SubBookingComponent {
           console.log('Updated form value:', this.form.value);
           this.onDropBranchSelect({ target: { value: selectedDropBranch } });
         });
-    
+
       }, 0);
     }
-    
+
 
 
   getProfileData() {
     this.api.GetProfileData().subscribe((res: any) => {
       this.fromCityValue = res.branchId.city;
       this.filteredCityList = this.citydata.filter((city: { cityName: any; }) => city.cityName === this.fromCityValue);
-  
+
       this.form.patchValue({
         fromCity: this.fromCityValue,
       });
-  
+
       // Manually call city change logic to load pickup branches
       this.onFromcitySelect({ target: { value: this.fromCityValue } });
-  
+
       setTimeout(() => {
         $(this.selectElem.nativeElement).select2();
         $(this.selectElem.nativeElement).val(this.fromCityValue).trigger('change');
         $(this.selectElem.nativeElement).prop('disabled', true).trigger('change.select2');
       }, 0);
-  
+
       this.fetchServiceCharges();
     });
   }
-  
-  
+
+
   fetchServiceCharges() {
     const fromCity = this.form.get('fromCity')?.value;
     const toCity = this.form.get('toCity')?.value;
-  
+
     if (fromCity && toCity) {
       this.api.FilterBookingServiceCharges({ fromCity, toCity }).subscribe(
         (res: any) => {
           console.log('Service Charges:', res);
-  
+
           if (res && res.length > 0) {
             const chargeData = res[0]; // First item in the array
             this.sdata = chargeData.serviceCharge || 0;
-  
+
             // Update form with service charges and recalculate total
             this.form.patchValue({ serviceCharges: this.sdata });
             this.calculateGrandTotal();
@@ -245,7 +253,7 @@ export class SubBookingComponent {
       console.warn('Both fromCity and toCity must be selected.');
     }
   }
-  
+
   onFromcitySelect(event: any) {
     const cityName = event.target.value;
     if (cityName) {
@@ -263,8 +271,8 @@ export class SubBookingComponent {
       this.pdata = [];
     }
   }
-  
-  
+
+
   onTocitySelect(event: any) {
     console.log('Event triggered:', event);
     console.log('Selected City:', event.target.value);
@@ -273,10 +281,10 @@ export class SubBookingComponent {
       this.api.GetBranchbyCity(cityName).subscribe(
         (res: any) => {
           console.log('Branches for selected city:', res);
-  
+
           this.tbcdata = res;
           this.fetchServiceCharges(); // Fetch service charges
-         
+
         },
         (error: any) => {
           console.error('Error fetching branches:', error);
@@ -285,15 +293,15 @@ export class SubBookingComponent {
     } else {
       this.tbcdata = [];
     }
-    
+
   }
-  
-  
-  
+
+
+
     get packages(): FormArray {
       return this.form.get('packages') as FormArray;
     }
-  
+
     addOrderItem() {
       this.packages.push(
         this.fb.group({
@@ -307,48 +315,48 @@ export class SubBookingComponent {
       );
       this.calculateGrandTotal();
     }
-  
+
     removeBarcodeData(index: number) {
       this.packages.removeAt(index);
       this.calculateGrandTotal();
     }
-  
+
     calculateTotal(index: number) {
       const packageArray = this.form.get('packages') as FormArray;
       const packageForm = packageArray.at(index);
-    
+
       const quantity = packageForm.get('quantity')?.value || 0;
       const unitPrice = packageForm.get('unitPrice')?.value || 0;
-      
+
       const totalPrice = quantity * unitPrice;
       packageForm.get('totalPrice')?.setValue(totalPrice);
-    
+
       this.calculateGrandTotal();
     }
-  
+
     calculateGrandTotal() {
       const packageArray = this.form.get('packages') as FormArray;
-      
+
       // Calculate total price from all packages
       let totalValue = 0;
       packageArray.controls.forEach((pkg) => {
         totalValue += pkg.get('totalPrice')?.value || 0;
       });
-    
+
       // Get charges from form inputs
       const serviceCharges = this.form.get('serviceCharges')?.value || 0;
       const hamaliCharges = this.form.get('hamaliCharges')?.value || 0;
       const doorDeliveryCharges = this.form.get('doorDeliveryCharges')?.value || 0;
       const doorPickupCharges = this.form.get('doorPickupCharges')?.value || 0;
-    
+
       // Calculate Grand Total
       const grandTotal = totalValue + serviceCharges + hamaliCharges + doorDeliveryCharges + doorPickupCharges;
-    
+
       // Update Grand Total without triggering another event
       this.form.get('grandTotal')?.setValue(grandTotal, { emitEvent: false });
     }
-  
-  
+
+
     // openPreviewModal() {
     //   if (this.form.valid) {
     //     this.modelData = { ...this.form.value };  // Copy form values into modelData
@@ -356,9 +364,9 @@ export class SubBookingComponent {
     //     this.toastr.warning("Please fill all required fields", "Warning");
     //   }
     // }
-    
-   
-  
+
+
+
     openPreviewModal() {
       if (this.form.valid) {
         const orderDataToSend = this.packages.value.map((item: any) => ({
@@ -369,13 +377,13 @@ export class SubBookingComponent {
           unitPrice: item.unitPrice,
           totalPrice: item.totalPrice
         }));
-    
+
         const pickupBranchId = this.form.value.pickUpBranch;
         const dropBranchId = this.form.value.dropBranch;
-    
+
         const pickupBranchName = this.pdata.find((b: any) => b.branchUniqueId === pickupBranchId)?.name || "N/A";
         const dropBranchName = this.tbcdata.find((b: any) => b.branchUniqueId === dropBranchId)?.name || "N/A";
-    
+
         this.modelData = {
           fromCity: this.form.value.fromCity,
           toCity: this.form.value.toCity,
@@ -402,19 +410,19 @@ export class SubBookingComponent {
           grandTotal: this.form.value.grandTotal,
           agent:this.form.value.agent
         };
-    
+
         // Then open modal using Bootstrap JS if needed (or it's already bound by button trigger)
         console.log("Preview Data:", this.modelData);
       } else {
         this.toastr.warning("Please fill all required fields before previewing.", "Form Incomplete");
       }
     }
-    
-    
+
+
     confirmBooking() {
       try {
         console.log("Form Data Before Submission:", this.form.value);
-    
+
         if (this.form.valid) {
           const orderDataToSend = this.packages.value.map((item: any) => ({
             quantity: item.quantity,
@@ -424,16 +432,16 @@ export class SubBookingComponent {
             unitPrice: item.unitPrice,
             totalPrice: item.totalPrice
           }));
-    
+
           const pickupBranchId = this.form.value.pickUpBranch;
           const dropBranchId = this.form.value.dropBranch;
-    
+
           // Find branch names by ID
           const pickupBranchName =
             this.pdata.find((b: any) => b.branchUniqueId === pickupBranchId)?.name || "N/A";
           const dropBranchName =
             this.tbcdata.find((b: any) => b.branchUniqueId === dropBranchId)?.name || "N/A";
-    
+
           const val: any = {
             fromCity: this.form.value.fromCity,
             toCity: this.form.value.toCity,
@@ -460,23 +468,24 @@ export class SubBookingComponent {
             grandTotal: this.form.value.grandTotal,
             agent: this.form.value.agent
           };
-    
+
           console.log("Final Data to Submit:", val);
           this.modelData = val;
-    
+
           this.api.createBooking(val).subscribe(
             (response: any) => {
               console.log("Parcel saved successfully:", response);
-    
+
               this.gdata = response.data;
+              this.billing?.load();
               console.log("GRN Number:", this.gdata.grnNo);
               this.toastr.success("Parcel Booked Successfully", "Success");
-    
+
               // Reload profile data and reset form
               this.getProfileData();
               this.form.reset();
               this.packages.clear();
-    
+
               // Navigate to print and reload
               this.router.navigateByUrl(`/printgrn/${this.gdata.grnNo}`).then(() => {
                 window.location.reload();
@@ -484,7 +493,7 @@ export class SubBookingComponent {
             },
             (error: any) => {
               console.error("❌ API error during booking:", error);
-              this.toastr.error("Failed to book parcel. Try again.", "API Error");
+              this.toastr.error(error.error?.message || "Failed to book parcel. Try again.", error.status === 402 ? "Upgrade required" : "API Error");
             }
           );
         } else {
@@ -495,11 +504,11 @@ export class SubBookingComponent {
         this.toastr.error("Unexpected error occurred. Please contact support.", "Error");
       }
     }
-    
-    
-    
-    
-  
+
+
+
+
+
     searchUser(): void {
       const searchTerm = this.form.get('senderName')?.value?.trim();
       if (searchTerm) {
@@ -520,7 +529,7 @@ export class SubBookingComponent {
         this.showDropdown = false;
       }
     }
-    
+
     selectUser(user: any): void {
       this.form.patchValue({
         senderName: user.name,
@@ -530,20 +539,20 @@ export class SubBookingComponent {
       });
          console.log('sender-address:', this.form.get('senderAddress')?.value);
          console.log('sender-address:', this.form.get('senderMobile')?.value);
-  
-  
+
+
       this.showDropdown = false;
-      
+
     }
-    
+
     hideDropdown(): void {
       setTimeout(() => {
         this.showDropdown = false;
       }, 200); // Small delay to allow selection click
     }
-    
-    
-    
+
+
+
     toggleSameAsSender(event: any) {
       if (event.target.checked) {
         this.form.patchValue({
@@ -561,19 +570,19 @@ export class SubBookingComponent {
         });
       }
     }
-    
+
     getAllCompany(): void {
       this.api.GetcfmasterData().subscribe(
         (res: any) => {
-          this.companyList = res.data 
+          this.companyList = res.data
           console.log("comapany:",this.companyList)
         },
         (err: any) => {
           console.error('Error fetching company data:', err);
         }
       );
-    }   
-           
+    }
+
     onCompanySelect(event: any): void {
       const selectedCompanyName = event.target.value;
       console.log("Selected company name:", selectedCompanyName);
@@ -587,12 +596,12 @@ export class SubBookingComponent {
           senderMobile: selectedCompany.senderMobile || '',
           senderAddress: selectedCompany.address || '',
           senderGST: selectedCompany.gst || ''
-          
+
         });
         console.log("Auto-filled address:", selectedCompany.address);
       }
     }
-    
-    
-  
+
+
+
   }

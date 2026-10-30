@@ -1,3 +1,8 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
+import { ButtonModule } from 'primeng/button';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -7,13 +12,15 @@ import { BranchService } from 'src/app/service/branch.service';
 
 declare var bootstrap: any;
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent, ButtonModule],
   selector: 'app-get-cfmaster-data',
   templateUrl: './get-cfmaster-data.component.html',
   styleUrls: ['./get-cfmaster-data.component.scss']
 })
 export class GetCfmasterDataComponent {
   data:any;
-  
+
   loading:boolean=true;
   visible: boolean = false;
   repd: any = {};
@@ -81,7 +88,7 @@ export class GetCfmasterDataComponent {
     });
   }
 
- 
+
 
   getsetcharges(id: any) {
     this.api.GetCFMasterChargesID(id).subscribe((res: any) => {
@@ -117,10 +124,10 @@ export class GetCfmasterDataComponent {
           if (a?.data) {
             console.log(a);
             this.messageService.add({ severity: 'success', summary: 'success', detail: 'Packages Type Update Successfully' });
-           
+
           } else {
             console.log(a);
-            
+
             this.msg = 'Packages Type Successfully Updated !!!';
             setTimeout(() => {
               this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
@@ -179,7 +186,7 @@ setcharges() {
   this.api.AddCfmasterCharges(payload).subscribe({
     next: (response: any) => {
       console.log('Master successfully:', response);
-      
+
       setTimeout(() => {
        this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
          this.router.navigate(['/getcfmasterdata']);

@@ -8,7 +8,7 @@ describe('AddPackagesTypeComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [AddPackagesTypeComponent]
+      imports: [AddPackagesTypeComponent]
     });
     fixture = TestBed.createComponent(AddPackagesTypeComponent);
     component = fixture.componentInstance;

@@ -1,15 +1,23 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../USER/header/header.component';
+import { RippleModule } from 'primeng/ripple';
+import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { ChangeDetectorRef, Component,ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import {  FormArray,  FormBuilder,  FormControl,  FormGroup,  Validators,} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { BranchService } from 'src/app/service/branch.service';
 import { ToastrService } from 'ngx-toastr';
-import * as XLSX from 'xlsx';
+import type * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
-  
+
 declare var $: any;
 declare const SlimSelect: any;
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent, RippleModule, ZXingScannerModule],
   selector: 'app-sub-unloading',
   templateUrl: './sub-unloading.component.html',
   styleUrls: ['./sub-unloading.component.scss']
@@ -47,7 +55,7 @@ export class SubUnloadingComponent {
       qrdata: string = '';
       showScanner: boolean = false;
       today = new Date();
-      
+
       constructor(
         private api: BranchService,
         private fb: FormBuilder,
@@ -63,7 +71,7 @@ export class SubUnloadingComponent {
           toCity: [''],
           vehicalNumber: ['',],
           branch: [''] // ✅
-    
+
         });
         this.form1 = this.fb.group({
           fromBookingDate: ['', ],
@@ -81,9 +89,9 @@ export class SubUnloadingComponent {
         this.getCities();
         this.getvehicleData();
         // this.updateFormattedDate();
-    
+
       }
-    
+
       getTodayDateString(): string {
         const today = new Date();
         const day = ('0' + today.getDate()).slice(-2);
@@ -91,16 +99,16 @@ export class SubUnloadingComponent {
         const year = today.getFullYear();
         return `${year}-${month}-${day}`; // ✔ HTML date input format
       }
-      
-    
-    
+
+
+
       ngAfterViewInit(): void {
         new SlimSelect({
           select: this.demoSelect.nativeElement
         });
-    
+
         setTimeout(() => {
-    
+
           // $(this.demoSelect.nativeElement).select2();
           $(this.demoSelect.nativeElement).on('select2:select', (event: any) => {
             const selectedCity = event.params.data.id;
@@ -108,7 +116,7 @@ export class SubUnloadingComponent {
             this.onFromCityChange({ target: { value: selectedCity } });
             console.log('Updated To City:', this.form.get('fromCity')?.value);
           });
-    
+
           $(this.selectElem.nativeElement).select2();
           $(this.selectElem.nativeElement).on('select2:select', (event: any) => {
             const selectedCity = event.params.data.id;
@@ -116,16 +124,16 @@ export class SubUnloadingComponent {
             this.onTocitySelect({ target: { value: selectedCity } });
             console.log('Updated To City:', this.form.get('toCity')?.value);
           });
-    
-       
+
+
           $(this.branch.nativeElement).select2();
           $(this.branch.nativeElement).on('select2:select', (event: any) => {
             const selectedBranch = event.params.data.id;
             this.form.get('branch')?.setValue(selectedBranch);
             console.log('Updated Branch:', this.form.get('branch')?.value);
           });
-    
-        
+
+
           $(this.selectvehicle.nativeElement).select2();
           $(this.selectvehicle.nativeElement).on('select2:select', (event: any) => {
             const selectedVehicle = event.params.data.id;
@@ -137,8 +145,8 @@ export class SubUnloadingComponent {
           });
         }, 0);
       }
-    
-    
+
+
     onLoad() {
       if (this.form.invalid) {
         this.toastr.error('Please fill all required fields', 'Validation Error');
@@ -159,10 +167,10 @@ export class SubUnloadingComponent {
           console.log('dataload', response)
           if (response?.data?.length) {
             this.apiResponse = response.data || [];
-    
+
             // Combine all bookings into one array
             this.bkdata = this.apiResponse.flatMap((item: any) => item.bookings);
-    
+
             // Prepare summary
             this.summary = {};
             this.apiResponse.forEach((item: any) => {
@@ -171,11 +179,11 @@ export class SubUnloadingComponent {
                 totalGrandTotal: item.totalGrandTotal,
               };
             });
-    
+
             this.LoadSuccess = true;
             if (this.bkdata.length > 0) {
               this.form1.patchValue({
-                branch: this.bkdata[0].branch,            
+                branch: this.bkdata[0].branch,
               });
               this.setFormArray('bookingType', this.bkdata.map((d: any) => d.bookingType));
               this.setFormArray('grnNo', this.bkdata.map((d: any) => d.grnNo));
@@ -188,7 +196,7 @@ export class SubUnloadingComponent {
             this.summary = {};
             this.LoadSuccess = false;
             this.toastr.error('No customer bookings found.', 'error');
-    
+
           }
         },
         error: (error: any) => {
@@ -197,34 +205,34 @@ export class SubUnloadingComponent {
         },
       });
     }
-    
+
     openScanner() {
       this.showScanner = true;
     }
-    
+
     closeScanner() {
       this.showScanner = false;
     }
-    
+
     handleQrCodeResult(result: string) {
       this.closeScanner();
-    
+
       // Don't set this.data = result directly here (it's just a string)
       this.getQRdata(result);
     }
-    
-    
+
+
     getQRdata(id: string) {
       this.api.GetQrUnloadGRNnumber(id).subscribe(
         (res: any) => {
           console.log('Scanned QR data:', res);
-    
+
           let newData: any[] = [];
-    
+
           // Normalize based on your API structure
           if (res?.data?.length) {
             this.apiResponse = res.data || [];
-    
+
             // Combine all bookings into one array
             this.bkdata = this.apiResponse.flatMap((item: any) => item.bookings);
           } else if (Array.isArray(res)) {
@@ -232,9 +240,9 @@ export class SubUnloadingComponent {
           } else if (typeof res === 'object') {
             newData = [res];
           }
-    
+
           this.bkdata = [...this.bkdata, ...newData]; // avoid push()
-    
+
           this.toastr.success('Parcel Unloaded successfully', 'Success');
           this.cdRef.detectChanges(); // Ensure UI refresh if needed
         },
@@ -243,10 +251,10 @@ export class SubUnloadingComponent {
         }
       );
     }
-    
-    
-    
-      
+
+
+
+
       onTocitySelect(event: any) {
         console.log('Event triggered:', event);
         console.log('Selected City:', event.target.value);
@@ -265,7 +273,7 @@ export class SubUnloadingComponent {
           this.tbcdata = [];
         }
       }
-    
+
       getCities() {
         this.api.GetCities().subscribe({
           next: (response: any) => {
@@ -282,20 +290,20 @@ export class SubUnloadingComponent {
       get fromCityArray() {
         return this.form.get('fromCity') as FormArray;
       }
-    
+
       onFromCityChange(event: any) {
         const selectedOptions = Array.from(event.target.selectedOptions).map(
           (option: any) => option.value
         );
         const fromCityArray = this.form.get('fromCity') as FormArray;
         fromCityArray.clear(); // Clear previous selections
-    
+
         selectedOptions.forEach((city) => {
           fromCityArray.push(new FormControl(city));
         });
         console.log('Selected From Cities:', fromCityArray.value);
       }
-    
+
       setFormArray(controlName: string, values: any[]) {
         const formArray = this.form1.get(controlName) as FormArray;
         formArray.clear(); // Clear existing
@@ -303,7 +311,7 @@ export class SubUnloadingComponent {
           formArray.push(this.fb.control(value));
         });
       }
-    
+
       onGrnNoChange(event: any, grnNo: string) {
         const formArray = this.form1.get('grnNo') as FormArray;
         if (event.target.checked) {
@@ -318,16 +326,16 @@ export class SubUnloadingComponent {
             formArray.removeAt(index);
           }
         }
-      
+
         // ✅ Update "Select All" status based on selected values
         this.allSelected = this.bkdata.length === formArray.value.length;
         console.log('Selected GRN Numbers:', formArray.value);
       }
-    
+
       onSelectAllChange(event: any) {
         const formArray = this.form1.get('grnNo') as FormArray;
         formArray.clear();
-    
+
         if (event.target.checked && this.bkdata?.length > 0) {
           this.bkdata.forEach((row: any) => {
             const grn = row?.grnNo;
@@ -336,11 +344,11 @@ export class SubUnloadingComponent {
             }
           });
         }
-    
+
         this.allSelected = event.target.checked;
         console.log('All selected GRNs:', formArray.value);
       }
-    
+
       getvehicleData() {
         this.api.VehicleData().subscribe({
           next: (response: any) => {
@@ -352,7 +360,7 @@ export class SubUnloadingComponent {
           },
         });
       }
-    
+
       ParcelLoad() {
         const payload = {
           fromBookingDate: this.form1.value.fromBookingDate,
@@ -364,13 +372,13 @@ export class SubUnloadingComponent {
           grnNo: this.form1.value.grnNo, // ✅ This must be an array!
           bookingType: this.form1.value.bookingType,
         };
-    
+
         console.log('Final Payload:', payload);
         this.api.ParcelUnLoading(payload).subscribe({
           next: (response: any) => {
             console.log('Parcel unloaded successfully:', response);
             this.toastr.success('Parcel unloaded successfully', ' successfully');
-    
+
             setTimeout(() => {
               this.router
                 .navigateByUrl('/', { skipLocationChange: true })
@@ -385,29 +393,29 @@ export class SubUnloadingComponent {
           },
         });
       }
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
       // selectedDate: string = moment().format('YYYY/MM/DD');
       // formattedDate: string = '';
       //   dateFormat: string = 'DD/MMMM/YYYY';
-      
-     
-      
+
+
+
       //   updateFormattedDate() {
       //     if (this.selectedDate) {
       //       this.formattedDate = moment(this.selectedDate, 'YYYY-MM-DD').format(this.dateFormat);
       //     }
       //   }
-      
+
       //   onSubmit() {
       //     alert('Selected Date: ' + this.selectedDate + '\nFormatted: ' + this.formattedDate);
       //   }
-    
+
       printTable() {
         const printContent = document.getElementById('print-section');
         const WindowPrt = window.open('', '', 'width=900,height=650');
@@ -436,18 +444,19 @@ export class SubUnloadingComponent {
           WindowPrt.document.close();
         }
       }
-      
-    
-      ExportEXcel(): void {
+
+
+      async ExportEXcel(): Promise<void> {
+    const XLSX = await import('xlsx');
         const headerData = [];
-      
+
         // Optional: Add title or meta info
         headerData.push(['Parcel Booking GRN Report']);
         headerData.push([
           `Print Date: ${this.formatDate(this.today)} Time: ${this.formatTime(this.today)}`
         ]);
         headerData.push([]); // Blank row
-      
+
         // Table headers
         const tableHeaders = [
           'S.No',
@@ -463,7 +472,7 @@ export class SubUnloadingComponent {
           'Charges'
         ];
         headerData.push(tableHeaders);
-      
+
         // Table data rows
         const tableRows = this.bkdata.map((row: any, index: number) => [
           index + 1,
@@ -478,35 +487,35 @@ export class SubUnloadingComponent {
           row?.totalQuantity,
           row?.grandTotal
         ]);
-      
+
         const sheetData = [...headerData, ...tableRows];
-      
+
         const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(sheetData);
         const workbook: XLSX.WorkBook = {
           Sheets: { 'Report': worksheet },
           SheetNames: ['Report']
         };
-      
+
         const excelBuffer: any = XLSX.write(workbook, {
           bookType: 'xlsx',
           type: 'array'
         });
-      
+
         const blob: Blob = new Blob([excelBuffer], {
           type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'
         });
-      
+
         FileSaver.saveAs(blob, 'Parcel_GRN_Report.xlsx');
       }
-      
-      
+
+
       formatDate(date: Date): string {
         const d = new Date(date);
         return `${d.getDate().toString().padStart(2, '0')}-${(d.getMonth() + 1)
           .toString()
           .padStart(2, '0')}-${d.getFullYear()}`;
       }
-      
+
       formatTime(date: Date): string {
         const d = new Date(date);
         return d.toLocaleTimeString('en-IN', {
@@ -515,17 +524,6 @@ export class SubUnloadingComponent {
           hour12: true
         });
       }
-      
-    
+
+
       }
-      
-    
-    
-    
-    
-    
-    
-    
-    
-    
-  

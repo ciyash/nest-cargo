@@ -1,12 +1,18 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
 import { Component, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { BranchService } from 'src/app/service/branch.service';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import * as XLSX from 'xlsx';
+import type * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 declare var $: any;
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-report-delivery',
   templateUrl: './report-delivery.component.html',
   styleUrls: ['./report-delivery.component.scss']
@@ -29,7 +35,7 @@ export class ReportDeliveryComponent {
     branchdata: any;
     allgetvechicle: any;
     pfdata: any;
-    today = new Date(); 
+    today = new Date();
     payload: any;
   pdata: any;
   tbcdata: any;
@@ -48,7 +54,7 @@ export class ReportDeliveryComponent {
         dropBranch: [''],
       });
     }
-  
+
     getTodayDateString(): string {
       const today = new Date();
       const day = ('0' + today.getDate()).slice(-2);
@@ -56,15 +62,15 @@ export class ReportDeliveryComponent {
       const year = today.getFullYear();
       return `${year}-${month}-${day}`; // ✔ HTML date input format
     }
-    
-  
+
+
     ngOnInit() {
       // Fetch cities
       this.api.GetCities().subscribe((res: any) => {
         console.log('citydata', res);
         this.citydata = res;
       });
-  
+
       // Fetch branches
 
       this.api.GetBranch().subscribe((res: any) => {
@@ -72,7 +78,7 @@ export class ReportDeliveryComponent {
         console.log('branchdata:', this.branchdata);
       });
 
-  
+
       // Fetch vehicles
       this.api.VehicleData().subscribe((res: any) => {
         console.log('allvechicle:', res);
@@ -91,13 +97,13 @@ export class ReportDeliveryComponent {
     //     pickUpBranch: this.form.value.pickUpBranch,
     //     dropBranch: this.form.value.dropBranch,
     //   };
-    
+
     //   console.log("payload:", this.payload);
-    
+
     //   // 🧹 Clear previous data before making the API call
     //   this.reportData = [];
     //   this.Bdata = null;
-    
+
     //   this.api.DeliveryStockReport(this.payload).subscribe(
     //     (res: any) => {
     //     console.log("res:",res);
@@ -165,7 +171,7 @@ export class ReportDeliveryComponent {
         this.pfdata = res;
         console.log('profiledata:', this.pfdata);
       });
-    
+
   }
 
     ngAfterViewInit(): void {
@@ -178,7 +184,7 @@ export class ReportDeliveryComponent {
           this.form.patchValue({ fromCity: selectedCity });
           this.onFromcitySelect({ target: { value: selectedCity } });
         });
-    
+
         // Pickup Branch
         $(this.pickupbranch.nativeElement).select2();
         $(this.pickupbranch.nativeElement).val('all').trigger('change'); // ✅
@@ -186,9 +192,9 @@ export class ReportDeliveryComponent {
           const selectedBranch = event.params.data.id;
           this.form.patchValue({ pickUpBranch: selectedBranch });
           this.onPickupBranchSelect({ target: { value: selectedBranch } });
-          
+
         });
-    
+
         // To City
         $(this.selectElem2.nativeElement).select2();
         $(this.selectElem2.nativeElement).val('all').trigger('change'); // ✅
@@ -197,7 +203,7 @@ export class ReportDeliveryComponent {
           this.form.patchValue({ toCity: selectedToCity });
           this.onTocitySelect({ target: { value: selectedToCity } });
         });
-    
+
         // Drop Branch
         $(this.droupbranch.nativeElement).select2();
         $(this.droupbranch.nativeElement).val('all').trigger('change'); // ✅
@@ -208,7 +214,7 @@ export class ReportDeliveryComponent {
         });
       }, 0);
     }
-    
+
     onFromcitySelect(event: any) {
       const cityName = event.target.value;
       if (cityName) {
@@ -225,7 +231,7 @@ export class ReportDeliveryComponent {
         this.pdata = [];
       }
     }
-  
+
     onTocitySelect(event: any) {
       console.log('Event triggered:', event);
       console.log('Selected City:', event.target.value);
@@ -234,7 +240,7 @@ export class ReportDeliveryComponent {
         this.api.GetBranchbyCity(cityName).subscribe(
           (res: any) => {
             console.log('Branches for selected city:', res);
-  
+
             this.tbcdata = res;
           },
           (error: any) => {
@@ -260,40 +266,40 @@ export class ReportDeliveryComponent {
                   font-family: Arial, sans-serif;
                   margin: 20px;
                 }
-    
+
                 table {
                   width: 100%;
                   border-collapse: collapse;
                   font-size: 12px;
                 }
-    
+
                 th, td {
                   border: 1px solid #000;
                   padding: 4px;
                   text-align: center;
                 }
-    
+
                 h4, h6, p {
                   margin: 4px 0;
                 }
-    
+
                 .text-center {
                   text-align: center;
                 }
-    
+
                 .fw-bold {
                   font-weight: bold;
                 }
-    
+
                 .text-decoration-underline {
                   text-decoration: underline;
                 }
-    
+
                 .d-flex {
                   display: flex;
                   justify-content: space-between;
                 }
-    
+
                 @media print {
                   .no-print {
                     display: none;
@@ -309,9 +315,10 @@ export class ReportDeliveryComponent {
         popupWin!.document.close();
       }
     }
-  
 
-exportToExcel(): void {
+
+async exportToExcel(): Promise<void> {
+    const XLSX = await import('xlsx');
   const data: any[][] = [];
 
   // 1. Header Info
@@ -412,6 +419,6 @@ exportToExcel(): void {
   XLSX.writeFile(wb, `Delivered_Report_${new Date().getTime()}.xlsx`);
 }
 
-    
-    
-  }    
+
+
+  }

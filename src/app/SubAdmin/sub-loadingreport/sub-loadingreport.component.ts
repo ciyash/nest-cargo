@@ -1,3 +1,8 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../USER/header/header.component';
+import { FooterComponent } from '../../USER/footer/footer.component';
 import { ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -6,6 +11,8 @@ import { BranchService } from 'src/app/service/branch.service';
 declare var $: any;
 declare const SlimSelect: any;
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent, FooterComponent],
   selector: 'app-sub-loadingreport',
   templateUrl: './sub-loadingreport.component.html',
   styleUrls: ['./sub-loadingreport.component.scss']
@@ -14,7 +21,7 @@ export class SubLoadingreportComponent {
     @ViewChild('selectElem') selectElem!: ElementRef;
     @ViewChild('demoSelect') demoSelect!: ElementRef;
     @ViewChild('pickupbranch') pickupbranch!: ElementRef;
-  
+
     branchdata: any;
     pdata: any[] = [];
     data1: any[] = [];
@@ -22,7 +29,7 @@ export class SubLoadingreportComponent {
     cities: any;
   fromCityValue: any;
   filteredCityList: any;
-  
+
     constructor(
       private api: BranchService,
       private fb: FormBuilder,
@@ -39,7 +46,7 @@ export class SubLoadingreportComponent {
         dropBranch: ['']
       });
     }
-  
+
     ngOnInit() {
       this.getCities();
       this.api.GetBranch().subscribe((res: any) => {
@@ -54,12 +61,12 @@ export class SubLoadingreportComponent {
       const day = ('0' + today.getDate()).slice(-2);
       return `${year}-${month}-${day}`;
     }
-  
+
     ngAfterViewInit(): void {
       new SlimSelect({
         select: this.demoSelect.nativeElement
       });
-  
+
       setTimeout(() => {
         $(this.selectElem.nativeElement).select2();
         $(this.selectElem.nativeElement).on('select2:select', (event: any) => {
@@ -77,7 +84,7 @@ export class SubLoadingreportComponent {
         });
       }, 0);
     }
-  
+
     getCities() {
       this.api.GetCities().subscribe({
         next: (response: any) => {
@@ -90,11 +97,11 @@ export class SubLoadingreportComponent {
         },
       });
     }
-  
+
     get toCityArray() {
       return this.form1.get('toCity') as FormArray;
     }
-  
+
     onFromcitySelect(event: any) {
       const cityName = event.target.value;
       if (cityName) {
@@ -121,7 +128,7 @@ export class SubLoadingreportComponent {
         this.pdata = [];
       }
     }
-  
+
     onToCityChange(event: any) {
       const selectedOptions = Array.from(event.target.selectedOptions).map((option: any) => option.value);
       const toCityArray = this.form1.get('toCity') as FormArray;
@@ -129,11 +136,11 @@ export class SubLoadingreportComponent {
       selectedOptions.forEach(city => toCityArray.push(new FormControl(city)));
       console.log('Selected To Cities:', toCityArray.value);
     }
-  
+
     ParcelLoad() {
       console.log('ParcelLoad() triggered');
       console.log('form1 value:', this.form1.value);
-    
+
       const payload = {
         fromDate: this.form1.value.fromDate,
         toDate: this.form1.value.toDate,
@@ -142,9 +149,9 @@ export class SubLoadingreportComponent {
         fromBranch: this.form1.value.fromBranch,
         dropBranch: this.form1.value.dropBranch,
       };
-    
+
       console.log("payload:", payload);
-    
+
       this.api.ParcelOfflineReport(payload).subscribe({
         next: (response: any) => {
           console.log("After Load: Response received", response);
@@ -153,10 +160,10 @@ export class SubLoadingreportComponent {
             fromDate: this.form1.value.fromDate,
             toDate: this.form1.value.toDate
           };
-    
+
           // Save to localStorage
           localStorage.setItem('parcelReportData', JSON.stringify(finalData8));
-    
+
           // Open new tab
           window.open('/parcelloading-offlinereport', '_blank');
         },
@@ -166,24 +173,24 @@ export class SubLoadingreportComponent {
         },
       });
     }
-    
+
 
     getProfileData() {
       this.api.GetProfileData().subscribe((res: any) => {
         this.fromCityValue = res.branchId.city; // Example: Hyderabad
-    
+
         // Filter only one matching city
         this.filteredCityList = this.cities.filter(
           (city: { cityName: string }) =>
             city.cityName?.trim().toLowerCase() === this.fromCityValue?.trim().toLowerCase()
         );
-    
+
         // Patch form
         this.form1.patchValue({ fromCity: this.fromCityValue });
-    
+
         // Call FromCity logic
         this.onFromcitySelect({ target: { value: this.fromCityValue } });
-    
+
         // Re-initialize Select2 and disable
         setTimeout(() => {
           const select2Ref = $(this.selectElem.nativeElement);
@@ -194,5 +201,5 @@ export class SubLoadingreportComponent {
         }, 0);
       });
     }
-  
+
   }

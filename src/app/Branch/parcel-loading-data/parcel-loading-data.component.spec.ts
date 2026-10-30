@@ -8,7 +8,7 @@ describe('ParcelLoadingDataComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [ParcelLoadingDataComponent]
+      imports: [ParcelLoadingDataComponent]
     });
     fixture = TestBed.createComponent(ParcelLoadingDataComponent);
     component = fixture.componentInstance;

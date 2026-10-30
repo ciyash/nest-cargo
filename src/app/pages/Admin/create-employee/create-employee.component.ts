@@ -1,3 +1,9 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
+import { DialogModule } from 'primeng/dialog';
+import { ToastModule } from 'primeng/toast';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -8,6 +14,8 @@ import { BranchService } from 'src/app/service/branch.service';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent, DialogModule, ToastModule],
   selector: 'app-create-employee',
   templateUrl: './create-employee.component.html',
   styleUrls: ['./create-employee.component.scss']
@@ -57,7 +65,7 @@ export class CreateEmployeeComponent {
       this.api.GetEmployees().subscribe((res: any) => {
         console.log('empdata', res);
         this.edata = res.map((employee: any) => {
-          employee.showPassword = false; // Initialize show/hide 
+          employee.showPassword = false; // Initialize show/hide
           return employee;
         });
         this.loading = false;
@@ -68,7 +76,7 @@ export class CreateEmployeeComponent {
     this.visible = true;
     this.repd = row;
     console.log("employeedata:", this.repd);
-  
+
     this.form1.patchValue({
       name: row.name,
       username: row.username,
@@ -82,11 +90,11 @@ export class CreateEmployeeComponent {
       companyName: row.companyId?.name || ''
     });
   }
-  
+
     togglePassword(index: number) {
       this.edata[index].showPassword = !this.edata[index].showPassword;
     }
-  
+
 
     branchData() {
       this.bapi.getData('branch').subscribe({
@@ -99,8 +107,8 @@ export class CreateEmployeeComponent {
         }
       });
     }
-    
-  
+
+
     Add() {
       const payload = {
         name: this.form.value.name,
@@ -147,9 +155,9 @@ export class CreateEmployeeComponent {
     //     role: this.form.value.role,
     //     companyName:this.form1.value.companyName
     //   };
-    
+
     //   console.log('Final Payload:', payload);
-      
+
     //   this.api.UpdateEmployee(id,payload).subscribe({
     //     next: (response: any) => {
     //       console.log('Parcel loaded successfully:', response);
@@ -182,14 +190,14 @@ export class CreateEmployeeComponent {
         role: this.form1.value.role,
         companyName: this.form1.value.companyName
       };
-    
+
       console.log('Final Payload:', payload);
-    
+
       this.api.UpdateEmployee(payload).subscribe({
         next: (response: any) => {
           console.log('Employee updated successfully:', response);
           this.toastr.success('Employee updated successfully', 'Success');
-    
+
           setTimeout(() => {
             this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
               this.router.navigate(['/createemployee']);
@@ -202,5 +210,5 @@ export class CreateEmployeeComponent {
         },
       });
     }
-    
+
 }

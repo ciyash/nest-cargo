@@ -1,15 +1,21 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { BranchService } from 'src/app/service/branch.service';
-import * as XLSX from 'xlsx';
+import type * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-parcel-loading-offline-report',
   templateUrl: './parcel-loading-offline-report.component.html',
   styleUrls: ['./parcel-loading-offline-report.component.scss']
 })
 export class ParcelLoadingOfflineReportComponent implements OnInit {
-  data2: any[] = []; 
+  data2: any[] = [];
   today = new Date();
   pfdata: any;
   printTable: any;
@@ -35,7 +41,7 @@ export class ParcelLoadingOfflineReportComponent implements OnInit {
         this.data2 = stateData.data || [];
         this.fromDate = stateData.fromDate;
         this.toDate = stateData.toDate;
-      
+
         // Don't remove here to persist after refresh
         // localStorage.removeItem('parcelReportData');
       }
@@ -109,7 +115,8 @@ export class ParcelLoadingOfflineReportComponent implements OnInit {
 
 
 
-ExportEXcel(): void {
+async ExportEXcel(): Promise<void> {
+    const XLSX = await import('xlsx');
   const headerData = [];
 
   // Add company details

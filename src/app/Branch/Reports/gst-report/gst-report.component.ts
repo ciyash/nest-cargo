@@ -1,3 +1,7 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
 import { Component, ElementRef, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -5,6 +9,8 @@ import { BranchService } from 'src/app/service/branch.service';
 declare var $: any;
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-gst-report',
   templateUrl: './gst-report.component.html',
   styleUrls: ['./gst-report.component.scss']
@@ -67,7 +73,7 @@ export class GstReportComponent implements OnInit, AfterViewInit {
 
   GstReport() {
 
-    
+
     const payload = this.form.value;
 
     console.log("thispayload:", payload);
@@ -76,7 +82,7 @@ export class GstReportComponent implements OnInit, AfterViewInit {
         console.log('wise Report Data:', res);
         this.gstdata = res;
         console.log("gstdta:",this.gstdata);
-        
+
         this.router.navigateByUrl('/gstdata', { state: { data: res } });
       },
       error: (err) => {

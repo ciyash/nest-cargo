@@ -8,7 +8,7 @@ describe('AddExtraChargesComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [AddExtraChargesComponent]
+      imports: [AddExtraChargesComponent]
     });
     fixture = TestBed.createComponent(AddExtraChargesComponent);
     component = fixture.componentInstance;

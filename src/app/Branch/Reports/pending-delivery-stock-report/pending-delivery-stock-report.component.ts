@@ -1,3 +1,7 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
 import {
   Component,
   ElementRef,
@@ -12,6 +16,8 @@ import { BranchService } from 'src/app/service/branch.service';
 declare var $: any;
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-pending-delivery-stock-report',
   templateUrl: './pending-delivery-stock-report.component.html',
   styleUrls: ['./pending-delivery-stock-report.component.scss'],
@@ -78,7 +84,7 @@ export class PendingDeliveryStockReportComponent
         this.form.patchValue({ fromCity: selectedCity });
         this.onFromcitySelect({ target: { value: selectedCity } });
       });
-  
+
       // Pickup Branch
       $(this.pickupbranch.nativeElement).select2();
       $(this.pickupbranch.nativeElement).val('all').trigger('change'); // ✅
@@ -87,7 +93,7 @@ export class PendingDeliveryStockReportComponent
         this.form.patchValue({ pickUpBranch: selectedBranch });
         this.onPickupBranchSelect({ target: { value: selectedBranch } });
       });
-  
+
       // To City
       $(this.selectElem2.nativeElement).select2();
       $(this.selectElem2.nativeElement).val('all').trigger('change'); // ✅
@@ -96,7 +102,7 @@ export class PendingDeliveryStockReportComponent
         this.form.patchValue({ toCity: selectedToCity });
         this.onTocitySelect({ target: { value: selectedToCity } });
       });
-  
+
       // Drop Branch
       $(this.droupbranch.nativeElement).select2();
       $(this.droupbranch.nativeElement).val('all').trigger('change'); // ✅
@@ -107,7 +113,7 @@ export class PendingDeliveryStockReportComponent
       });
     }, 0);
   }
-  
+
   onFromcitySelect(event: any) {
     const cityName = event.target.value;
     if (cityName) {
@@ -146,22 +152,22 @@ export class PendingDeliveryStockReportComponent
   }
 
 
-  
+
   DeliveryStockReport() {
     const payload = this.form.value;
     console.log('payload:', payload);
     this.api.PendingDeliveryStockReport(payload).subscribe({
       next: (res: any) => {
         console.log('pending delivery:', res);
-        
+
         const message = res?.message || 'Report fetched successfully';
         this.toast.success(message);
-  
+
         this.gstdata = res;
         console.log('gstdata:', this.gstdata);
         // localStorage.setItem('gstData', JSON.stringify(this.gstdata));
         //   window.open('/devliveryreport', '_blank');
-    
+
 
           const finalData = {
             ...this.gstdata,
@@ -184,6 +190,6 @@ export class PendingDeliveryStockReportComponent
       },
     });
   }
-  
-  
+
+
 }

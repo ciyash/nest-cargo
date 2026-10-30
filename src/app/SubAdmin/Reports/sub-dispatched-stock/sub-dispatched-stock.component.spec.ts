@@ -8,7 +8,7 @@ describe('SubDispatchedStockComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [SubDispatchedStockComponent]
+      imports: [SubDispatchedStockComponent]
     });
     fixture = TestBed.createComponent(SubDispatchedStockComponent);
     component = fixture.componentInstance;

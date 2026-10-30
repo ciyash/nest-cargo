@@ -1,5 +1,12 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../USER/header/header.component';
+import { SubLoadingreportComponent } from '../sub-loadingreport/sub-loadingreport.component';
+import { RippleModule } from 'primeng/ripple';
+import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import {  OnInit,AfterViewInit, Component, ElementRef, ViewChild  } from '@angular/core';
-import * as XLSX from 'xlsx';
+import type * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { BranchService } from 'src/app/service/branch.service';
@@ -9,8 +16,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Toast } from 'primeng/toast';
 import { ToastrService } from 'ngx-toastr';
 declare var $: any;
-declare const SlimSelect: any; 
+declare const SlimSelect: any;
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent, SubLoadingreportComponent, RippleModule, ZXingScannerModule],
   selector: 'app-sub-loading',
   templateUrl: './sub-loading.component.html',
   styleUrls: ['./sub-loading.component.scss']
@@ -18,12 +27,12 @@ declare const SlimSelect: any;
 export class SubLoadingComponent {
 
 
-  
+
     adminData: any;
     form!: FormGroup;
     form1:FormGroup;
     cities:any;
-    vehicle: any = {}; 
+    vehicle: any = {};
     branchdata:any;
     data:any;
     searchTerm: string = '';       // For binding with input field
@@ -41,26 +50,26 @@ export class SubLoadingComponent {
      @ViewChild('SelectVechicle')SelectVechicle!:ElementRef;
     @ViewChild('demoSelect') demoSelect!: ElementRef;
     @ViewChild('printTable') printTable!: ElementRef;
-  
+
     BranchSelect: any;
     pfdata: any;
   fromCityValue: any;
   filteredCityList: any;
   citydata: any;
   onPickupBranchSelect: any;
-    
-  
+
+
     constructor(private api: BranchService, private token:TokenService,
        private fb: FormBuilder, private messageService:MessageService,
         private router:Router, private activeroute:ActivatedRoute,private toast:ToastrService) {
         this.form = this.fb.group({
           startDate: [this.getTodayDateString(), Validators.required],
           endDate: [this.getTodayDateString(), Validators.required],
-          fromCity: ['',Validators.required],               
-          toCity: this.fb.array([]),     
-          pickUpBranch: ['',Validators.required], 
+          fromCity: ['',Validators.required],
+          toCity: this.fb.array([]),
+          pickUpBranch: ['',Validators.required],
         });
-  
+
         this.form1 = this.fb.group({
           loadingType: ['offload'],
           fromBranch: ['', ],
@@ -77,8 +86,8 @@ export class SubLoadingComponent {
           grnNo: this.fb.array([], ),
           lrNumber: this.fb.array([], ),
         });
-  
-      
+
+
     }
     ngOnInit() {
       this.searchTerm = this.activeroute.snapshot.params['grnNo'];
@@ -89,7 +98,7 @@ export class SubLoadingComponent {
       this.branchData();
       this.getProfileData();
     }
-  
+
     getTodayDateString(): string {
       const today = new Date();
       const year = today.getFullYear();
@@ -97,36 +106,36 @@ export class SubLoadingComponent {
       const day = ('0' + today.getDate()).slice(-2);
       return `${year}-${month}-${day}`; // yyyy-MM-dd
     }
-    
+
     getCities() {
       this.api.GetCities().subscribe({
         next: (response: any) => {
           console.log('Cities data:', response);
-          this.cities = response; 
+          this.cities = response;
           this.getProfileData(); // Call after cities are ready
 
         },
         error: (error: any) => {
           console.error('Error fetching cities:', error);
           this.toast.error('Failed to fetch cities data.', 'Error');
-  
+
         },
       });
-  
+
     }
-  
+
    onToCityChange(event: any) {
     const selectedOptions = Array.from(event.target.selectedOptions).map((option: any) => option.value);
-  
+
     const toCityArray = this.form.get('toCity') as FormArray;
     toCityArray.clear(); // ✅ Clear old values before updating
-  
+
     selectedOptions.forEach(city => toCityArray.push(new FormControl(city)));
-  
+
     console.log('Selected To Cities:', toCityArray.value);
   }
-  
-  
+
+
   onLoad() {
     if (this.form.invalid) {
       this.form.markAllAsTouched(); // Trigger all validations
@@ -134,34 +143,34 @@ export class SubLoadingComponent {
     }
     const today = this.getTodayDateString();
     const formValues = this.form.value;
-    
+
     const payload: any = {
       startDate: formValues.startDate || today,
       endDate: formValues.startDate || today
     };
-  
+
     if (formValues.fromCity) {
       payload.fromCity = formValues.fromCity;
     }
-  
+
     if (formValues.toCity && formValues.toCity.length > 0) {
       payload.toCity = formValues.toCity;
     }
-  
+
     if (formValues.pickUpBranch) {
       payload.pickUpBranch = formValues.pickUpBranch;
     }
-  
+
     console.log('Final Parcel Load Data:', payload);
-  
+
     this.api.FilterParcelLoading(payload).subscribe({
       next: (response: any) => {
         this.toast.success('Parcel Load successful', 'Success');
         console.log("data:", response);
         this.data = response || [];
-  
+
         this.LoadSuccess = true;
-  
+
         if (this.data.length > 0) {
           this.form1.patchValue({
             fromBranch: this.data[0].pickUpBranch,
@@ -171,7 +180,7 @@ export class SubLoadingComponent {
             fromCity: this.form.value.fromCity,
             senderName: this.data[0]?.senderName || ''
           });
-  
+
           this.setFormArray('toCity', this.data.map((d: any) => d.toCity));
           this.setFormArray('grnNo', this.data.map((d: any) => d.grnNo));
           this.setFormArray('lrNumber', this.data.map((d: any) => d.lrNumber));
@@ -179,9 +188,9 @@ export class SubLoadingComponent {
       },
       error: (error: any) => {
         console.error('Parcel Load Error:', error);
-  
+
         const errorMessage = error?.error?.message || error?.message || 'An error occurred during parcel load.';
-  
+
         this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
           this.router.navigate(['/sub-loading']);
           this.toast.error(errorMessage, "Parcel Load Failed");
@@ -196,7 +205,7 @@ export class SubLoadingComponent {
         formArray.push(this.fb.control(value));
       });
     }
-  
+
     onGrnNoChange(event: any, grnNo: string) {
       const formArray = this.form1.get('grnNo') as FormArray;
       if (event.target.checked) {
@@ -211,12 +220,12 @@ export class SubLoadingComponent {
           formArray.removeAt(index);
         }
       }
-    
+
       // ✅ Update "Select All" status based on selected values
       this.allSelected = this.data.length === formArray.value.length;
       console.log('Selected GRN Numbers:', formArray.value);
     }
-    
+
     // ✅ Handle "Select All" checkbox
     onSelectAllChange(event: any) {
       const formArray = this.form1.get('grnNo') as FormArray;
@@ -235,7 +244,7 @@ export class SubLoadingComponent {
       this.allSelected = event.target.checked;
       console.log('All GRN Numbers Selected:', formArray.value);
     }
-  
+
     ngAfterViewInit(): void {
       // Initialize SlimSelect
       new SlimSelect({
@@ -251,7 +260,7 @@ export class SubLoadingComponent {
           console.log('Updated form value:', this.form.value);
           this.onFromcitySelect({ target: { value: selectedCity } });
         });
-    
+
         // Initialize Select2 for Pickup Branch
         $(this.branchselect.nativeElement).select2();
         $(this.branchselect.nativeElement).on('select2:select', (event: any) => {
@@ -262,8 +271,8 @@ export class SubLoadingComponent {
           this.onPickupBranchSelect({ target: { value: selectedBranch } });
         });
 
-        
-      
+
+
         // Initialize select2 for Vehicle Number
         $(this.SelectVechicle.nativeElement).select2();
         $(this.SelectVechicle.nativeElement).on('select2:select', (event: any) => {
@@ -271,26 +280,26 @@ export class SubLoadingComponent {
           this.form1.patchValue({ vehicalNumber: selectedVehicle });
           this.form1.get('vehicalNumber')?.markAsTouched();  // ensure validation triggers
         });
-        
+
       }, 0);
 
     }
     getProfileData() {
       this.api.GetProfileData().subscribe((res: any) => {
         this.fromCityValue = res.branchId.city; // Example: Hyderabad
-    
+
         // Filter only one matching city
         this.filteredCityList = this.cities.filter(
           (city: { cityName: string }) =>
             city.cityName?.trim().toLowerCase() === this.fromCityValue?.trim().toLowerCase()
         );
-    
+
         // Patch form
         this.form.patchValue({ fromCity: this.fromCityValue });
-    
+
         // Call FromCity logic
         this.onFromcitySelect({ target: { value: this.fromCityValue } });
-    
+
         // Re-initialize Select2 and disable
         setTimeout(() => {
           const select2Ref = $(this.selectElem.nativeElement);
@@ -301,26 +310,26 @@ export class SubLoadingComponent {
         }, 0);
       });
     }
-    
-    
-    
+
+
+
     openScanner() {
       this.showScanner = true;
     }
-  
+
     closeScanner() {
       this.showScanner = false;
     }
-  
+
     handleQrCodeResult(result: string) {
       this.closeScanner();
-    
+
       // Don't set this.data = result directly here (it's just a string)
       this.getQRdata(result);
     }
-    
-  
-  
+
+
+
     // getQRdata(id: any) {
     //   this.api.GetQrGRNnumber(id).subscribe((res: any) => {
     //     console.log(res, 'qrdata');
@@ -334,20 +343,20 @@ export class SubLoadingComponent {
     //         newData = [res];
     //       }
     //     }
-    
+
     //     // Merge data to the table
     //     if (newData.length > 0) {
     //       this.data = [...this.data || [], ...newData];
     //       this.form1.patchValue({
-    //         senderName: this.data[0]?.senderName || ''            
+    //         senderName: this.data[0]?.senderName || ''
     //       });
     //       this.setFormArray('grnNo', this.data.map((d: any) => d.grnNo));
     //       this.setFormArray('lrNumber', this.data.map((d: any) => d.lrNumber));
     //     }
-    
+
     //     // Show toast depending on success/failure
     //     if (res.success) {
-         
+
     //       this.toast.success(res.message || 'Parcel loaded successfully', 'Success');
     //     } else {
     //       this.toast.success(res.message || 'Parcel loaded successfully', 'Success');
@@ -360,7 +369,7 @@ export class SubLoadingComponent {
       this.api.GetQrGRNnumber(id).subscribe((res: any) => {
         console.log(res, 'qrdata');
         let newData: any[] = [];
-    
+
         if (Array.isArray(res)) {
           newData = res;
         } else if (res && typeof res === 'object') {
@@ -368,12 +377,12 @@ export class SubLoadingComponent {
             newData = [res];
           }
         }
-    
+
         if (newData.length > 0) {
           this.data = [...this.data || [], ...newData];
-    
+
           const qr = this.data[0];
-    
+
           // Patch all required fields from QR
           this.form1.patchValue({
             senderName: qr?.senderName || '',
@@ -384,11 +393,11 @@ export class SubLoadingComponent {
             fromBookingDate: qr?.ltDate?.split('T')[0] || '', // format ISO to date (yyyy-mm-dd)
             toBookingDate: qr?.bookingDate?.split('T')[0] || ''
           });
-    
+
           this.setFormArray('grnNo', this.data.map((d: any) => d.grnNo));
           this.setFormArray('lrNumber', this.data.map((d: any) => d.lrNumber));
         }
-    
+
         if (res.success) {
           this.toast.success(res.message || 'Parcel loaded successfully', 'Success');
         } else {
@@ -398,8 +407,8 @@ export class SubLoadingComponent {
         this.toast.error('Parcel already loaded', 'Error');
       });
     }
-    
-    
+
+
     // jkasdbksabd
     onFromcitySelect(event: any) {
       const cityName = event.target.value;
@@ -423,7 +432,7 @@ export class SubLoadingComponent {
         this.toast.warning('Please fill required fields correctly.', 'Validation');
         return;
       }
-    
+
       const payload = {
         loadingType: this.form1.value.loadingType,
         fromBranch: this.form1.value.fromBranch,
@@ -439,9 +448,9 @@ export class SubLoadingComponent {
         grnNo: this.form1.value.grnNo,
         lrNumber: this.form1.value.lrNumber,
       };
-    
+
       console.log('Final Payload:', payload);
-    
+
       this.api.ParcelLoading(payload).subscribe({
         next: (response: any) => {
           console.log('Parcel loaded successfully:', response);
@@ -458,20 +467,20 @@ export class SubLoadingComponent {
         },
       });
     }
-    
-  
+
+
     getVehicleData() {
       this.api.getData('Vehicle').subscribe({
         next: (response: any) => {
           console.log('Vehicle:', response);
-          this.vehicle = response; 
+          this.vehicle = response;
         },
         error: (error: any) => {
           console.error('Error fetching vehicle data:', error);
         }
       });
     }
-  
+
     branchData() {
       this.api.getData('branch').subscribe({
         next: (response: any) => {
@@ -519,31 +528,18 @@ export class SubLoadingComponent {
           WindowPrt.document.close();
         }
       }
-        ExportExel(): void {
+        async ExportExel(): Promise<void> {
+    const XLSX = await import('xlsx');
           const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(this.printTable.nativeElement);
           const wb: XLSX.WorkBook = XLSX.utils.book_new();
           XLSX.utils.book_append_sheet(wb, ws, 'Bookings');
-      
+
           const excelBuffer: any = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-      
+
           const blob = new Blob([excelBuffer], {
             type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
           });
-      
+
           FileSaver.saveAs(blob, `ParcelBooking_${new Date().toISOString().slice(0, 10)}.xlsx`);
         }
       }
-      
-    
-    
-    
-    
-  
-  
-    
-    
-  
-      
-  
-  
-  

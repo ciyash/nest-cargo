@@ -8,7 +8,7 @@ describe('SubBranchToBranchUnloadingComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [SubBranchToBranchUnloadingComponent]
+      imports: [SubBranchToBranchUnloadingComponent]
     });
     fixture = TestBed.createComponent(SubBranchToBranchUnloadingComponent);
     component = fixture.componentInstance;

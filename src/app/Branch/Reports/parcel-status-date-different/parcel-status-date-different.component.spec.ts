@@ -8,7 +8,7 @@ describe('ParcelStatusDateDifferentComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [ParcelStatusDateDifferentComponent]
+      imports: [ParcelStatusDateDifferentComponent]
     });
     fixture = TestBed.createComponent(ParcelStatusDateDifferentComponent);
     component = fixture.componentInstance;

@@ -1,10 +1,16 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
 import { Component, OnInit } from '@angular/core';
 import { Router, NavigationExtras } from '@angular/router';
 import { BranchService } from 'src/app/service/branch.service';
-import * as XLSX from 'xlsx';
+import type * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-regularcustomer-booking',
   templateUrl: './regularcustomer-booking.component.html',
   styleUrls: ['./regularcustomer-booking.component.scss']
@@ -33,8 +39,8 @@ export class RegularcustomerBookingComponent implements OnInit {
     // ✅ Fallback: if data7 not set in constructor, get from localStorage
     if (!this.data7) {
       const storedData = localStorage.getItem('regularCustomerData');
-      
-      
+
+
       if (storedData) {
         this.data7 = JSON.parse(storedData);
         console.log('Customer data from localStorage:', this.data7);
@@ -82,7 +88,8 @@ export class RegularcustomerBookingComponent implements OnInit {
   }
 
 
-ExportExcel(): void {
+async ExportExcel(): Promise<void> {
+    const XLSX = await import('xlsx');
   const aoa: any[][] = [];
 
   // Add Header Info
@@ -164,5 +171,5 @@ formatTime(date: Date): string {
   return date.toLocaleTimeString('en-US'); // hh:mm AM/PM
 }
 
-  
+
 }

@@ -1,8 +1,18 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
+import { PrintGrnNumberComponent } from '../../../Branch/print-grn-number/print-grn-number.component';
+import { SearchGrnNumberComponent } from '../../../Branch/Widgets/search-grn-number/search-grn-number.component';
+import { TableModule } from 'primeng/table';
+import { DialogModule } from 'primeng/dialog';
 
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { BranchService } from 'src/app/service/branch.service';
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent, PrintGrnNumberComponent, SearchGrnNumberComponent, TableModule, DialogModule],
   selector: 'app-sub-todaybooking',
   templateUrl: './sub-todaybooking.component.html',
   styleUrls: ['./sub-todaybooking.component.scss']
@@ -75,5 +85,3 @@ export class SubTodaybookingComponent {
     console.log(this.repd);
   }
 }
-
-

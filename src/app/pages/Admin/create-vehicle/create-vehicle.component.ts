@@ -1,3 +1,10 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
+import { DialogModule } from 'primeng/dialog';
+import { ToastModule } from 'primeng/toast';
+import { ButtonModule } from 'primeng/button';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -7,6 +14,8 @@ import { AdminService } from 'src/app/service/admin.service';
 import { BranchService } from 'src/app/service/branch.service';
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent, DialogModule, ToastModule, ButtonModule],
   selector: 'app-create-vehicle',
   templateUrl: './create-vehicle.component.html',
   styleUrls: ['./create-vehicle.component.scss']
@@ -51,7 +60,7 @@ export class CreateVehicleComponent {
                 vehicleStatus: ['active']
               });
       }
-    
+
       ngOnInit(){
         this.branchData();
         this.bapi.VehicleData().subscribe((res:any)=>{
@@ -60,7 +69,7 @@ export class CreateVehicleComponent {
           this.loading=false;
         })
       }
-    
+
       branchData() {
         this.bapi.getData('branch').subscribe({
           next: (response: any) => {
@@ -72,7 +81,7 @@ export class CreateVehicleComponent {
           }
         });
       }
-    
+
       Add() {
         const payload = {
           vehicleNo: this.form.value.vehicleNo,
@@ -85,9 +94,9 @@ export class CreateVehicleComponent {
           branch: this.form.value.branch,
           vehicleStatus: this.form.value.vehicleStatus,
         };
-      
+
         console.log('Final Payload:', payload);
-        
+
         this.api.createVehicle(payload).subscribe({
           next: (response: any) => {
             this.toastr.success('Vehicle created successfully!', 'Success');
@@ -104,15 +113,15 @@ export class CreateVehicleComponent {
           error: (error: any) => {
             this.toastr.error('Create Vehicle Failed. Please try again.', 'Error');
           }
-          
+
         });
       }
 
-      
+
 
       edit(id:any) {
         console.log("id:",id);
-        
+
         console.log(this.form1.value);
         if (this.form1.valid) {
           const val = {
@@ -130,7 +139,7 @@ export class CreateVehicleComponent {
             (a: any) => {
               if (a?.data) {
                 console.log(a);
-               
+
               } else {
                 console.log(a);
                 // this.errorMessage = a.msg.message;
@@ -147,7 +156,7 @@ export class CreateVehicleComponent {
             },
           );
         }
-    
+
         return false;
       }
 

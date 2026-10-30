@@ -8,7 +8,7 @@ describe('CompanyLoginComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [CompanyLoginComponent]
+      imports: [CompanyLoginComponent]
     });
     fixture = TestBed.createComponent(CompanyLoginComponent);
     component = fixture.componentInstance;

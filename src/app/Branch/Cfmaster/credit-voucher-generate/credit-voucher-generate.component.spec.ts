@@ -8,7 +8,7 @@ describe('CreditVoucherGenerateComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [CreditVoucherGenerateComponent]
+      imports: [CreditVoucherGenerateComponent]
     });
     fixture = TestBed.createComponent(CreditVoucherGenerateComponent);
     component = fixture.componentInstance;

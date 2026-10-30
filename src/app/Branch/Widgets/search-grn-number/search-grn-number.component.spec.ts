@@ -8,7 +8,7 @@ describe('SearchGrnNumberComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [SearchGrnNumberComponent]
+      imports: [SearchGrnNumberComponent]
     });
     fixture = TestBed.createComponent(SearchGrnNumberComponent);
     component = fixture.componentInstance;

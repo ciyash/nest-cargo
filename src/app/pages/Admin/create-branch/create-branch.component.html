@@ -1,24 +1,21 @@
 <app-header></app-header>
-<h4 class="text-center  "
-    style="color: #3C3C3C;font-size: 20px;font-family:
-     Poppins;font-weight: 500;text-decoration: underline;word-wrap: break-word;margin-top: 8%;">
-    Create Branch</h4>
-<form [formGroup]="form">
+<div class="container"><header class="branch-page-heading"><div><span class="branch-eyebrow">COMPANY SETUP</span><h1>Create branch</h1><p>Add a location and contact details for your branch.</p></div></header></div>
+<form class="branch-create-form" [formGroup]="form" (ngSubmit)="form.valid && Add()">
     <div class="container pb-3">
-        <div class="row pt-3">
-            <div class="col-md-3 col-sm-12">
+        <div class="row g-3">
+            <div class="col-lg-4 col-md-6">
                 <label class="form-label form-after">Branch Name</label>
                 <input type="text" class="form-control form-select-sm " formControlName="name">
             </div>
-            <!-- <div class="col-md-3 col-sm-12">
+            <!-- <div class="col-lg-4 col-md-6">
                 <label class="form-label">Branch Type</label>
                 <input type="text" class="form-control form-select-sm " formControlName="branchType">
             </div> -->
 
-            <div class="col-md-3 col-sm-12">
+            <div class="col-lg-4 col-md-6">
                 <label class="form-label form-after">Branch Type</label>
                 <select class="form-select" formControlName="branchType">
-                    <option value="" selected>Select City</option>
+                    <option value="" selected>Select branch type</option>
                     <option value="main" >Main</option>
                     <option value="normal" >Normal</option>
                 </select>
@@ -27,29 +24,29 @@
 
 
 
-            <div class="col-md-3 col-sm-12">
+            <div class="col-lg-4 col-md-6">
                 <label class="form-label form-after">City</label>
                 <select class="form-select" formControlName="city">
                     <option value="" selected>Select City</option>
                     <option *ngFor="let branch of citydata" [value]="branch.cityName">{{ branch.cityName }}</option>
                 </select>
             </div>
-            <div class="col-md-3 col-sm-12">
+            <div class="col-lg-4 col-md-6">
                 <label class="form-label form-after">Location</label>
                 <input type="text" class="form-control form-select-sm " formControlName="location">
             </div>
-            <div class="col-md-3 col-sm-12">
+            <div class="col-lg-4 col-md-6">
                 <label class="form-label form-after">Address</label>
                 <input type="text" class="form-control form-select-sm " formControlName="address">
             </div>
-            <div class="col-md-3 col-sm-12">
+            <div class="col-lg-4 col-md-6">
                 <label class="form-label form-after">Phone</label>
                 <input type="text" class="form-control form-select-sm " formControlName="phone">
                 <div *ngIf="form.get('phone')?.invalid && form.get('phone')?.touched" class="text-danger">
                     Invalid phone number (must be 10 digits starting from 6-9)
                 </div>
             </div>
-            <div class="col-md-3 col-sm-12">
+            <div class="col-lg-4 col-md-6">
                 <label class="form-label">Alternate Phone</label>
                 <input type="text" class="form-control form-select-sm " formControlName="alternateMobile">
                 <div *ngIf="form.get('alternateMobile')?.invalid && form.get('alternateMobile')?.touched"
@@ -57,15 +54,12 @@
                     Invalid phone number (must be 10 digits starting from 6-9)
                 </div>
             </div>
-            <div class="col-md-3 col-sm-12">
-                <label class="form-label form-after">Email</label>
-                <input type="text" class="form-control form-select-sm " formControlName="email">
-            </div>
-            <div class="col-md-3 col-sm-12">
+            
+            <div class="col-lg-4 col-md-6">
                 <label class="form-label form-after">Pin Code</label>
                 <input type="text" class="form-control form-select-sm " formControlName="pincode">
             </div>
-            <div class="col-md-3 col-sm-12">
+            <div class="col-lg-4 col-md-6">
                 <label class="form-label form-after">State</label>
                 <select class="form-select form-select-sm" formControlName="state">
                     <option value="" selected> Select State </option>
@@ -78,16 +72,7 @@
                 </select>
             </div>
         </div>
-    </div>
-    <div class="container">
-        <div class="row">
-            <div class="col-md-3 d-flex align-items-end">
-                <button class="btn btn-primary btn-sm " type="button" style=" width: 10rem;" (click)="Add()"
-                    [disabled]="!form.valid">Submit</button>
-            </div>
-        </div>
-    </div>
-</form>
+<div class="branch-form-actions"><span><span class="required-star">*</span> Required fields</span><button class="btn btn-primary" type="submit" [disabled]="!form.valid"><i class="pi pi-plus" aria-hidden="true"></i> Create branch</button></div></div></form>
 
 
 <div class="container mt-5 mb-2">
@@ -103,7 +88,6 @@
                     <th>Address</th>
                     <th>Phone</th>
                     <th>Phone1</th>
-                    <th>Email</th>
                     <th>State</th>
                     <th>Action</th>
                 </thead>
@@ -117,7 +101,6 @@
                         <td> {{row.address}} </td>
                         <td> {{row.phone}} </td>
                         <td> {{row.alternateMobile}} </td>
-                        <td> {{row.email}} </td>
                         <td> {{row.state}} </td>
                         <td>
                             <a (click)="onEdit(row)" data-bs-toggle="modal" href="#exampleModalToggle"
@@ -180,11 +163,7 @@
                                         <label>Phone:</label>
                                         <input type="text" [(ngModel)]="repd.phone" formControlName="phone" class="form-control" />
                                     </div>
-                                    <div class="col-md-3 col-sm-12">
-
-                                        <label>Email:</label>
-                                        <input type="email" [(ngModel)]="repd.email" formControlName="email" class="form-control" />
-                                    </div>
+                                    
                                     <div class="col-md-3 col-sm-12">
 
                                         <label>Pincode:</label>

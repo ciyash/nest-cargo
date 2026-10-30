@@ -1,12 +1,18 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../USER/header/header.component';
 import { Component, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { BranchService } from 'src/app/service/branch.service';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 declare var $: any;
-import * as XLSX from 'xlsx';
+import type * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-dispatchedstock-report',
   templateUrl: './dispatchedstock-report.component.html',
   styleUrls: ['./dispatchedstock-report.component.scss'],
@@ -214,7 +220,8 @@ export class DispatchedstockReportComponent {
     this.setPaginatedData();
   }
 
-  exportToExcel(): void {
+  async exportToExcel(): Promise<void> {
+    const XLSX = await import('xlsx');
     if (!this.reportData || this.reportData.length === 0) return;
 
     // Header Info

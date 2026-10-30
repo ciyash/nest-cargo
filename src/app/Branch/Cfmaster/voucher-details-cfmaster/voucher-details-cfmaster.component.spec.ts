@@ -8,7 +8,7 @@ describe('VoucherDetailsCfmasterComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [VoucherDetailsCfmasterComponent]
+      imports: [VoucherDetailsCfmasterComponent]
     });
     fixture = TestBed.createComponent(VoucherDetailsCfmasterComponent);
     component = fixture.componentInstance;

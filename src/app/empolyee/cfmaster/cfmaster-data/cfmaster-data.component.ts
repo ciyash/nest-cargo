@@ -1,3 +1,8 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
+import { ButtonModule } from 'primeng/button';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -7,6 +12,8 @@ import { BranchService } from 'src/app/service/branch.service';
 
 declare var bootstrap: any;
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent, ButtonModule],
   selector: 'app-cfmaster-data',
   templateUrl: './cfmaster-data.component.html',
   styleUrls: ['./cfmaster-data.component.scss']
@@ -16,7 +23,7 @@ export class CfmasterDataComponent {
 
 
     data:any;
-    
+
     loading:boolean=true;
     visible: boolean = false;
     repd: any = {};
@@ -54,7 +61,7 @@ export class CfmasterDataComponent {
                   isActive:[false ],
                   isPostPaid:[true],
                     });
-  
+
                      this.form1 = this.fb.group({
                                    agentName: ['',],
                                    chargeName:['', Validators.required],
@@ -67,7 +74,7 @@ export class CfmasterDataComponent {
                                    isActive:[false],
                                       });
     }
-  
+
     ngOnInit(){
       this.api.GetcfmasterData().subscribe((res:any)=>{
         console.log('cfdata',res);
@@ -76,16 +83,16 @@ export class CfmasterDataComponent {
       });
       this.GetCities();
     }
-  
+
     GetCities(){
       this.api.GetCities().subscribe((res:any)=>{
         console.log('citys',res);
         this.citydata=res;
       });
     }
-  
-   
-  
+
+
+
     getsetcharges(id: any) {
       this.api.GetCFMasterChargesID(id).subscribe((res: any) => {
         console.log(res, 'charges');
@@ -94,9 +101,9 @@ export class CfmasterDataComponent {
         modal.show();
       });
     }
-  
+
     edit(id:any){
-  
+
       console.log(this.form.value);
       if (this.form.valid) {
         const val = {
@@ -120,10 +127,10 @@ export class CfmasterDataComponent {
             if (a?.data) {
               console.log(a);
               this.messageService.add({ severity: 'success', summary: 'success', detail: 'Packages Type Update Successfully' });
-             
+
             } else {
               console.log(a);
-              
+
               this.msg = 'Packages Type Successfully Updated !!!';
               setTimeout(() => {
                 this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
@@ -138,10 +145,10 @@ export class CfmasterDataComponent {
           },
         );
       }
-  
+
       return false;
     }
-  
+
     Delete(id:any) {
       this.api.DeleteCfmaster(id).subscribe(
         (a: any) => {
@@ -165,7 +172,7 @@ export class CfmasterDataComponent {
       );
     return false;
   }
-  
+
   setcharges() {
     const payload = {
       agentName: this.form1.value.agentName,
@@ -182,7 +189,7 @@ export class CfmasterDataComponent {
     this.api.AddCfmasterCharges(payload).subscribe({
       next: (response: any) => {
         console.log('Master successfully:', response);
-        
+
         setTimeout(() => {
          this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
            this.router.navigate(['/getcfmasterdata']);
@@ -195,11 +202,10 @@ export class CfmasterDataComponent {
       },
     });
   }
-  
-  
+
+
   charges(id:any){
     this.router.navigate(['/setcharges/'+id]);
   }
-  
+
   }
-  

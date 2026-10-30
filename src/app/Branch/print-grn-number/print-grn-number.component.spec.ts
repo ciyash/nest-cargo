@@ -8,7 +8,7 @@ describe('PrintGrnNumberComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [PrintGrnNumberComponent]
+      imports: [PrintGrnNumberComponent]
     });
     fixture = TestBed.createComponent(PrintGrnNumberComponent);
     component = fixture.componentInstance;

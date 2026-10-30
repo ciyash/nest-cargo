@@ -1,3 +1,7 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
 import {
   Component,
   ElementRef,
@@ -13,13 +17,15 @@ import {
   Validators,
 } from '@angular/forms';
 import { BranchService } from 'src/app/service/branch.service';
-import * as XLSX from 'xlsx';
+import type * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 import { ToastrService } from 'ngx-toastr';
 declare module 'file-saver';
 declare var $: any;
 declare const SlimSelect: any;
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-consolidate',
   templateUrl: './consolidate.component.html',
   styleUrls: ['./consolidate.component.scss']
@@ -60,14 +66,14 @@ export class ConsolidateComponent {
         branchSummary: [false],
       });
     }
-  
+
     ngOnInit() {
       this.getCities();
       this.getProfileData();
       this.api.GetBranch().subscribe((res: any) => {
         this.branchdata = res;
         console.log("branchdata:", this.branchdata);
-        
+
       });
     }
     getCities() {
@@ -84,7 +90,7 @@ export class ConsolidateComponent {
         this.filteredCityList = this.citydata.filter(
           (city: { cityName: any }) => city.cityName === this.fromCityValue
         );
-    
+
         this.form.patchValue({ fromCity: this.fromCityValue });
         // Trigger form change logic if needed
         this.onFromcitySelect({ target: { value: this.fromCityValue } });
@@ -96,7 +102,7 @@ export class ConsolidateComponent {
         }, 0);
       });
     }
-  
+
     getTodayDateString(): string {
       const today = new Date();
       const year = today.getFullYear();
@@ -104,9 +110,9 @@ export class ConsolidateComponent {
       const day = ('0' + today.getDate()).slice(-2);
       return `${year}-${month}-${day}`; // Correct format for input[type="date"]
     }
-  
-   
-  
+
+
+
     ngAfterViewInit(): void {
       setTimeout(() => {
         // From City
@@ -116,7 +122,7 @@ export class ConsolidateComponent {
           this.form.patchValue({ fromCity: selectedCity });
           this.onFromcitySelect({ target: { value: selectedCity } });
         });
-    
+
         // Pickup Branch
         $(this.branchselect.nativeElement).select2();
         $(this.branchselect.nativeElement).on('select2:select', (event: any) => {
@@ -150,24 +156,24 @@ export class ConsolidateComponent {
         pickUpBranch: this.form.value.pickUpBranch,
         bookedBy: this.form.value.bookedBy,
       };
-  
+
       console.log('payload:', payload);
       this.bdata = payload;
       this.fromDate = this.form.value.fromDate;
       this.toDate = this.form.value.toDate;
-  
+
       this.api.ConsolidatedReport(payload).subscribe({
         next: (res: any) => {
           console.log('ConsolidatedReport:', res);
-  
-          this.Cdata = res; 
+
+          this.Cdata = res;
           this.Tdata=res
           console.log("tdata:",this.Tdata)
-           
-  
+
+
             this.deliveryData=res.data
           console.log("devliveryData:",this.deliveryData);
-  
+
 
         },
         error: (err) => {
@@ -201,40 +207,40 @@ export class ConsolidateComponent {
                   font-family: Arial, sans-serif;
                   margin: 20px;
                 }
-    
+
                 table {
                   width: 100%;
                   border-collapse: collapse;
                   font-size: 12px;
                 }
-    
+
                 th, td {
                   border: 1px solid #000;
                   padding: 4px;
                   text-align: center;
                 }
-    
+
                 h4, h6, p {
                   margin: 4px 0;
                 }
-    
+
                 .text-center {
                   text-align: center;
                 }
-    
+
                 .fw-bold {
                   font-weight: bold;
                 }
-    
+
                 .text-decoration-underline {
                   text-decoration: underline;
                 }
-    
+
                 .d-flex {
                   display: flex;
                   justify-content: space-between;
                 }
-    
+
                 @media print {
                   .no-print {
                     display: none;
@@ -250,12 +256,13 @@ export class ConsolidateComponent {
         popupWin!.document.close();
       }
     }
-  
-    downloadExcel(): void {
+
+    async downloadExcel(): Promise<void> {
+    const XLSX = await import('xlsx');
       const fileName = 'Consolidated_Report.xlsx';
-  
+
       const wsData: any[][] = [];
-  
+
       // Add company info
       wsData.push([this.pfdata?.companyName || '']);
       wsData.push([
@@ -264,7 +271,7 @@ export class ConsolidateComponent {
       wsData.push([]);
       wsData.push(['Consolidated Report']);
       wsData.push([]);
-  
+
       // Add date info
       const from = new Date(this.fromDate).toLocaleDateString('en-GB');
       const to = new Date(this.toDate).toLocaleDateString('en-GB');
@@ -272,7 +279,7 @@ export class ConsolidateComponent {
       wsData.push([`From: ${from}   To: ${to}`]);
       wsData.push([`Print Date: ${today}`]);
       wsData.push([]);
-  
+
       // Add table headers
       wsData.push([
         '',
@@ -298,7 +305,7 @@ export class ConsolidateComponent {
         'SGST',
         'IGST',
       ]);
-  
+
       // Add table data
       this.Cdata?.data?.forEach((item: any, index: number) => {
         wsData.push([
@@ -314,14 +321,14 @@ export class ConsolidateComponent {
           item.igstAmount,
         ]);
       });
-  
+
       // Create worksheet and workbook
       const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(wsData);
       const workbook: XLSX.WorkBook = {
         Sheets: { 'Consolidated Report': worksheet },
         SheetNames: ['Consolidated Report'],
       };
-  
+
       // Write and save Excel file
       const excelBuffer: any = XLSX.write(workbook, {
         bookType: 'xlsx',
@@ -333,4 +340,3 @@ export class ConsolidateComponent {
       FileSaver.saveAs(blob, fileName);
     }
   }
-  

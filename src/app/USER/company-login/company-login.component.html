@@ -1,18 +1,13 @@
-
-  <div class="login-container">
-    <img src="assets/dashboard/loginback.jpg" alt="Background" class="background-image">
-    <div class="loginBox">
-      <h2>Log In Here</h2>
-      <form [formGroup]="loginForm" (ngSubmit)="CompanyLogin()">
-        <p>Email</p>
-        <input type="email" formControlName="email" placeholder="Enter Email" required>
-      
-        <p>Password</p>
-        <input type="password" formControlName="password" placeholder="Enter Password" required>
-      
-        <input type="submit" value="Sign In">
-      </form>
-      
-    </div>
+<div class="login-container">
+  <img src="assets/dashboard/loginback.jpg" alt="" class="background-image">
+  <div class="loginBox"><img src="assets/tittlelogo.svg" alt="CargoNest" class="tenant-logo"><h2>Company login</h2><p class="intro">100 free bookings per company. Then INR 1,000/month for unlimited bookings.</p><p class="intro">Sign in to manage your team and branches.</p>
+    <p *ngIf="successMessage" role="status">{{successMessage}}</p>
+    <p *ngIf="errorMessage" role="alert" class="text-danger">{{errorMessage}}</p>
+    <form [formGroup]="loginForm" (ngSubmit)="CompanyLogin()">
+      <label for="company-email">Email</label><input id="company-email" type="email" formControlName="email" autocomplete="username">
+      <label for="company-password">Password</label><input id="company-password" type="password" formControlName="password" autocomplete="current-password">
+      <button type="submit" [disabled]="loginForm.invalid || submitting">{{submitting ? 'Signing in…' : 'Sign in'}}</button>
+    </form>
+    <p><a routerLink="/signup">Register your company</a></p><a routerLink="/login">Staff login</a>
   </div>
-  
+</div>

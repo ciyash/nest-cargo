@@ -1,3 +1,7 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../USER/header/header.component';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -5,10 +9,12 @@ import { BranchService } from 'src/app/service/branch.service';
 import { AdminService } from 'src/app/service/admin.service';
 import { ToastrService } from 'ngx-toastr';
 declare var $: any;
-declare const SlimSelect: any; 
+declare const SlimSelect: any;
 import {  ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-cancel-booking',
   templateUrl: './cancel-booking.component.html',
   styleUrls: ['./cancel-booking.component.scss'],
@@ -16,7 +22,7 @@ import {  ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 export class CancelBookingComponent {
   @ViewChild('selectElem') selectElem!: ElementRef;
   @ViewChild('pickupbranch') pickupbranch!: ElementRef;
- 
+
   searchTerm: string = '';
   searchResult: any[] = [];
   data2: any;
@@ -38,7 +44,7 @@ export class CancelBookingComponent {
   pfdata: any;
   today=new Date
 
-  
+
   constructor(
     private api: BranchService,
     private activeroute: ActivatedRoute,
@@ -47,8 +53,8 @@ export class CancelBookingComponent {
     private admin: AdminService,
     private toast:ToastrService,
   ) {
-  
-  
+
+
     this.form = this.fb.group({
       grnNo: ['', Validators.required],
     });
@@ -56,7 +62,7 @@ export class CancelBookingComponent {
 
   ngOnInit(): void {
     const today = new Date();
-    this.todayDate = today.toLocaleDateString('en-GB'); 
+    this.todayDate = today.toLocaleDateString('en-GB');
     this.form1 = this.fb.group({
       refundCharge: ['', Validators.required],
       refundAmount: ['', Validators.required],
@@ -77,7 +83,7 @@ export class CancelBookingComponent {
     this.api.GetBranch().subscribe((res:any)=>{
       console.log(res);
       this.branchdata=res;
-      
+
     });
 
     this.GetAllEmployee();
@@ -89,7 +95,7 @@ export class CancelBookingComponent {
       console.log('Profile Data:', this.pfdata);
     });
   }
- 
+
 
   searchUser(): void {
     if (this.searchTerm && this.searchTerm.trim() !== '') {
@@ -112,7 +118,7 @@ export class CancelBookingComponent {
           } else {
             this.data2 = [];
           }
-          
+
           // } else {
           //   this.data2 = [];
           //   this.errorMessage = 'No results found for the given search term.';
@@ -159,7 +165,7 @@ export class CancelBookingComponent {
   cancelbooking() {
     const payload1 = {
       ...this.form1.value,
-      grnNo: this.searchTerm 
+      grnNo: this.searchTerm
     };
     console.log('Cancel Payload:', payload1);
     this.api.BookingCancel(payload1, this.searchTerm).subscribe(
@@ -173,7 +179,7 @@ export class CancelBookingComponent {
     );
   }
 
-  
+
   onFromcitySelect(event: any) {
     const selectedCity = event.target.value;
     console.log('Selected City:', selectedCity);
@@ -189,9 +195,9 @@ export class CancelBookingComponent {
       );
     }
   }
-  
-  
-  
+
+
+
   printReceipt() {
     this.showReceiptToPrint = true;
 
@@ -207,66 +213,7 @@ export class CancelBookingComponent {
       }
     }, 100);
   }
-  
 
-  
+
+
 }
-
-
-
-
-
-
-
-
-
-
-
-  
-  
-
-   
-   
-
-
-  
- 
-
-
-
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
- 
-
-
-
-  
- 
-
- 
-
-
-
- 
-  
-
-
-  
-
-
-  
-  

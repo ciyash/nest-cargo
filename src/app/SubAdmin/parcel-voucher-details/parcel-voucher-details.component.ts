@@ -1,12 +1,18 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../USER/header/header.component';
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BranchService } from 'src/app/service/branch.service';
 import { ToastrService } from 'ngx-toastr';
 declare var $: any;
-import * as XLSX from 'xlsx';
+
 import * as FileSaver from 'file-saver';
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-parcel-voucher-details',
   templateUrl: './parcel-voucher-details.component.html',
   styleUrls: ['./parcel-voucher-details.component.scss'],

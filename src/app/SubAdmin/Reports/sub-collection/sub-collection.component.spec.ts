@@ -8,7 +8,7 @@ describe('SubCollectionComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [SubCollectionComponent]
+      imports: [SubCollectionComponent]
     });
     fixture = TestBed.createComponent(SubCollectionComponent);
     component = fixture.componentInstance;

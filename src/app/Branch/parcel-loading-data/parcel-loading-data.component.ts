@@ -1,3 +1,8 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../USER/header/header.component';
+import { FooterComponent } from '../../USER/footer/footer.component';
 import { ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -7,6 +12,8 @@ declare var $: any;
 declare const SlimSelect: any;
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent, FooterComponent],
   selector: 'app-parcel-loading-data',
   templateUrl: './parcel-loading-data.component.html',
   styleUrls: ['./parcel-loading-data.component.scss']
@@ -65,14 +72,14 @@ export class ParcelLoadingDataComponent {
 
       // Set the default value from form ('' or any pre-filled value)
       $(this.selectElem.nativeElement).val(this.form1.value.fromCity).trigger('change');
-      
+
       // Handle selection
       $(this.selectElem.nativeElement).on('select2:select', (event: any) => {
         const selectedCity = event.params.data.id;
         this.form1.patchValue({ fromCity: selectedCity });
         this.onFromcitySelect({ target: { value: selectedCity } });
       });
-      
+
 
       $(this.pickupbranch.nativeElement).select2();
       $(this.pickupbranch.nativeElement).val('all').trigger('change');
@@ -137,7 +144,7 @@ export class ParcelLoadingDataComponent {
   ParcelLoad() {
     console.log('ParcelLoad() triggered');
     console.log('form1 value:', this.form1.value);
-  
+
     const payload = {
       fromDate: this.form1.value.fromDate,
       toDate: this.form1.value.toDate,
@@ -146,9 +153,9 @@ export class ParcelLoadingDataComponent {
       fromBranch: this.form1.value.fromBranch,
       dropBranch: this.form1.value.dropBranch,
     };
-  
+
     console.log("payload:", payload);
-  
+
     this.api.ParcelOfflineReport(payload).subscribe({
       next: (response: any) => {
         console.log("After Load: Response received", response);
@@ -157,10 +164,10 @@ export class ParcelLoadingDataComponent {
           fromDate: this.form1.value.fromDate,
           toDate: this.form1.value.toDate
         };
-  
+
         // Save to localStorage
         localStorage.setItem('parcelReportData', JSON.stringify(finalData8));
-  
+
         // Open new tab
         window.open('/parcelloading-offlinereport', '_blank');
       },
@@ -170,6 +177,6 @@ export class ParcelLoadingDataComponent {
       },
     });
   }
-  
+
 
 }

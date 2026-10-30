@@ -1,22 +1,27 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BranchService } from 'src/app/service/branch.service';
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule],
   selector: 'app-print-voucherslist-data',
   templateUrl: './print-voucherslist-data.component.html',
   styleUrls: ['./print-voucherslist-data.component.scss']
 })
 export class PrintVoucherslistDataComponent {
-    searchTerm: string = '';      
+    searchTerm: string = '';
     searchResult: any[] = [];
     data2: any;
     branchData: any;
     branchId: string | undefined;
   getgrndata: any;
-  
+
     constructor(private api: BranchService, private activeroute: ActivatedRoute) {}
-  
+
     ngOnInit(): void {
       this.searchTerm = this.activeroute.snapshot.params['vocherNoUnique'];
       this.api.GetVouchersListData(this.searchTerm).subscribe((res:any)=>{
@@ -39,11 +44,11 @@ export class PrintVoucherslistDataComponent {
         }
       });
     }
-  
+
     getGrandTotal(packages: any[]): number {
       return packages.reduce((sum, pkg) => sum + (pkg.totalPrice || 0), 0);
   }
-  
+
   getTotalQuantity(packages: any[]): number {
       return packages.reduce((sum, pkg) => sum + (pkg.quantity || 0), 0);
   }

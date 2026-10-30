@@ -1,3 +1,6 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { Component, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { BranchService } from 'src/app/service/branch.service';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
@@ -5,6 +8,8 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 declare var $: any;
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule],
   selector: 'app-dispatched-stock-report',
   templateUrl: './dispatched-stock-report.component.html',
   styleUrls: ['./dispatched-stock-report.component.scss']
@@ -26,7 +31,7 @@ export class DispatchedStockReportComponent {
     branchdata: any;
     allgetvechicle: any;
     pfdata: any;
-    today = new Date(); 
+    today = new Date();
     payload: any;
   pdata: any;
   tbcdata: any;
@@ -42,7 +47,7 @@ export class DispatchedStockReportComponent {
         dropBranch: [''],
       });
     }
-  
+
     getTodayDateString(): string {
       const today = new Date();
       const day = ('0' + today.getDate()).slice(-2);
@@ -50,15 +55,15 @@ export class DispatchedStockReportComponent {
       const year = today.getFullYear();
       return `${year}-${month}-${day}`; // ✔ HTML date input format
     }
-    
-  
+
+
     ngOnInit() {
       // Fetch cities
       this.api.GetCities().subscribe((res: any) => {
         console.log('citydata', res);
         this.citydata = res;
       });
-  
+
       // Fetch branches
 
       this.api.GetBranch().subscribe((res: any) => {
@@ -66,7 +71,7 @@ export class DispatchedStockReportComponent {
         console.log('branchdata:', this.branchdata);
       });
 
-  
+
       // Fetch vehicles
       this.api.VehicleData().subscribe((res: any) => {
         console.log('allvechicle:', res);
@@ -86,22 +91,22 @@ export class DispatchedStockReportComponent {
         dropBranch: this.form.value.dropBranch,
       };
       console.log("payload:", this.payload);
-    
+
       this.api.DeliveryStockReport(this.payload).subscribe(
         (res: any) => {
           this.reportData = res.data;
           console.log('Luggage Report:', this.reportData);
           const  ddsts = res.data
-          
+
           const finalData = {
             ...this.reportData,
             fromDate: this.payload.fromDate,
             toDate: this.payload.toDate
           };
-    
+
           // Save to localStorage
           localStorage.setItem('incomingReportData', JSON.stringify(finalData));
-    
+
           // Open new tab
           window.open('/parcel-incoming-report', '_blank');
         },
@@ -110,14 +115,14 @@ export class DispatchedStockReportComponent {
         }
       );
     }
-    
-  
+
+
     getProfileData() {
       this.api.GetProfileData().subscribe((res: any) => {
         this.pfdata = res;
         console.log('profiledata:', this.pfdata);
       });
-    
+
   }
 
     ngAfterViewInit(): void {
@@ -130,7 +135,7 @@ export class DispatchedStockReportComponent {
           this.form.patchValue({ fromCity: selectedCity });
           this.onFromcitySelect({ target: { value: selectedCity } });
         });
-    
+
         // Pickup Branch
         $(this.pickupbranch.nativeElement).select2();
         $(this.pickupbranch.nativeElement).val('all').trigger('change'); // ✅
@@ -138,9 +143,9 @@ export class DispatchedStockReportComponent {
           const selectedBranch = event.params.data.id;
           this.form.patchValue({ pickUpBranch: selectedBranch });
           this.onPickupBranchSelect({ target: { value: selectedBranch } });
-          
+
         });
-    
+
         // To City
         $(this.selectElem2.nativeElement).select2();
         $(this.selectElem2.nativeElement).val('all').trigger('change'); // ✅
@@ -149,7 +154,7 @@ export class DispatchedStockReportComponent {
           this.form.patchValue({ toCity: selectedToCity });
           this.onTocitySelect({ target: { value: selectedToCity } });
         });
-    
+
         // Drop Branch
         $(this.droupbranch.nativeElement).select2();
         $(this.droupbranch.nativeElement).val('all').trigger('change'); // ✅
@@ -160,7 +165,7 @@ export class DispatchedStockReportComponent {
         });
       }, 0);
     }
-    
+
     onFromcitySelect(event: any) {
       const cityName = event.target.value;
       if (cityName) {
@@ -177,7 +182,7 @@ export class DispatchedStockReportComponent {
         this.pdata = [];
       }
     }
-  
+
     onTocitySelect(event: any) {
       console.log('Event triggered:', event);
       console.log('Selected City:', event.target.value);
@@ -186,7 +191,7 @@ export class DispatchedStockReportComponent {
         this.api.GetBranchbyCity(cityName).subscribe(
           (res: any) => {
             console.log('Branches for selected city:', res);
-  
+
             this.tbcdata = res;
           },
           (error: any) => {
@@ -198,5 +203,3 @@ export class DispatchedStockReportComponent {
       }
     }
 }
-
-

@@ -1,3 +1,7 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
 import { Component, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { BranchService } from 'src/app/service/branch.service';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
@@ -5,6 +9,8 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 declare var $: any;
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-parcel-incoming-luggages-report',
   templateUrl: './parcel-incoming-luggages-report.component.html',
   styleUrls: ['./parcel-incoming-luggages-report.component.scss']
@@ -24,7 +30,7 @@ export class ParcelIncomingLuggagesReportComponent {
     branchdata: any;
     allgetvechicle: any;
     pfdata: any;
-    today = new Date(); 
+    today = new Date();
     payload: any;
   pdata: any;
   tbcdata: any;
@@ -40,7 +46,7 @@ export class ParcelIncomingLuggagesReportComponent {
         dropBranch: [''],
       });
     }
-  
+
     getTodayDateString(): string {
       const today = new Date();
       const day = ('0' + today.getDate()).slice(-2);
@@ -48,15 +54,15 @@ export class ParcelIncomingLuggagesReportComponent {
       const year = today.getFullYear();
       return `${year}-${month}-${day}`; // ✔ HTML date input format
     }
-    
-  
+
+
     ngOnInit() {
       // Fetch cities
       this.api.GetCities().subscribe((res: any) => {
         console.log('citydata', res);
         this.citydata = res;
       });
-  
+
       // Fetch branches
 
       this.api.GetBranch().subscribe((res: any) => {
@@ -64,7 +70,7 @@ export class ParcelIncomingLuggagesReportComponent {
         console.log('branchdata:', this.branchdata);
       });
 
-  
+
       // Fetch vehicles
       this.api.VehicleData().subscribe((res: any) => {
         console.log('allvechicle:', res);
@@ -84,19 +90,19 @@ export class ParcelIncomingLuggagesReportComponent {
     //     dropBranch: this.form.value.dropBranch,
     //   };
     //   console.log("payload:", this.payload);
-    
+
     //   this.api.ParcelIncomingReport(this.payload).subscribe(
     //     (res: any) => {
     //       this.reportData = res.data;
     //       console.log('Luggage Report:', this.reportData);
     //       const  ddsts = res.data
-          
+
     //       const finalData = {
     //         ...this.reportData,
     //         fromDate: this.payload.fromDate,
     //         toDate: this.payload.toDate
     //       };
-    
+
     //       // Save to localStorage
     //       // localStorage.setItem('incomingReportData', JSON.stringify(finalData));
     //       // // Open new tab
@@ -106,14 +112,14 @@ export class ParcelIncomingLuggagesReportComponent {
     //       const baseUrl = window.location.origin;
     //       const parcelincomingreportUrl = `${baseUrl}/cloud/parcelincomingreport`;
     //       window.open(parcelincomingreportUrl, '_blank');
-    
+
     //     },
     //     (error) => {
     //       console.error('API Error:', error);
     //     }
     //   );
     // }
-    
+
     LuaggageReport() {
       this.payload = {
         fromDate: this.form.value.fromDate,
@@ -124,20 +130,20 @@ export class ParcelIncomingLuggagesReportComponent {
         dropBranch: this.form.value.dropBranch,
       };
       console.log("payload:", this.payload);
-    
+
       this.api.ParcelIncomingReport(this.payload).subscribe(
         (res: any) => {
           this.reportData = res.data;
           console.log('Luggage Report:', this.reportData);
-    
+
           const finalData = {
             data: this.reportData, // Wrap array inside `data`
             fromDate: this.payload.fromDate,
             toDate: this.payload.toDate
           };
-    
+
           localStorage.setItem('incomingReportData', JSON.stringify(finalData));
-    
+
           const baseUrl = window.location.origin;
           const parcelincomingreportUrl = `${baseUrl}/cloud/parcelincomingreport`;
           window.open(parcelincomingreportUrl, '_blank');
@@ -147,14 +153,14 @@ export class ParcelIncomingLuggagesReportComponent {
         }
       );
     }
-    
-  
+
+
     getProfileData() {
       this.api.GetProfileData().subscribe((res: any) => {
         this.pfdata = res;
         console.log('profiledata:', this.pfdata);
       });
-    
+
   }
 
     ngAfterViewInit(): void {
@@ -167,7 +173,7 @@ export class ParcelIncomingLuggagesReportComponent {
           this.form.patchValue({ fromCity: selectedCity });
           this.onFromcitySelect({ target: { value: selectedCity } });
         });
-    
+
         // Pickup Branch
         $(this.pickupbranch.nativeElement).select2();
         $(this.pickupbranch.nativeElement).val('all').trigger('change'); // ✅
@@ -175,9 +181,9 @@ export class ParcelIncomingLuggagesReportComponent {
           const selectedBranch = event.params.data.id;
           this.form.patchValue({ pickUpBranch: selectedBranch });
           this.onPickupBranchSelect({ target: { value: selectedBranch } });
-          
+
         });
-    
+
         // To City
         $(this.selectElem2.nativeElement).select2();
         $(this.selectElem2.nativeElement).val('all').trigger('change'); // ✅
@@ -186,7 +192,7 @@ export class ParcelIncomingLuggagesReportComponent {
           this.form.patchValue({ toCity: selectedToCity });
           this.onTocitySelect({ target: { value: selectedToCity } });
         });
-    
+
         // Drop Branch
         $(this.droupbranch.nativeElement).select2();
         $(this.droupbranch.nativeElement).val('all').trigger('change'); // ✅
@@ -197,7 +203,7 @@ export class ParcelIncomingLuggagesReportComponent {
         });
       }, 0);
     }
-    
+
     onFromcitySelect(event: any) {
       const cityName = event.target.value;
       if (cityName) {
@@ -214,7 +220,7 @@ export class ParcelIncomingLuggagesReportComponent {
         this.pdata = [];
       }
     }
-  
+
     onTocitySelect(event: any) {
       console.log('Event triggered:', event);
       console.log('Selected City:', event.target.value);
@@ -223,7 +229,7 @@ export class ParcelIncomingLuggagesReportComponent {
         this.api.GetBranchbyCity(cityName).subscribe(
           (res: any) => {
             console.log('Branches for selected city:', res);
-  
+
             this.tbcdata = res;
           },
           (error: any) => {

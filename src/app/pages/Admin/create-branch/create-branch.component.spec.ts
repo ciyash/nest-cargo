@@ -8,7 +8,7 @@ describe('CreateBranchComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [CreateBranchComponent]
+      imports: [CreateBranchComponent]
     });
     fixture = TestBed.createComponent(CreateBranchComponent);
     component = fixture.componentInstance;

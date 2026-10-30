@@ -1,17 +1,23 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../USER/header/header.component';
 import { Component } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BranchService } from 'src/app/service/branch.service';
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-voucer-offline-list',
   templateUrl: './voucer-offline-list.component.html',
   styleUrls: ['./voucer-offline-list.component.scss']
 })
 export class VoucerOfflineListComponent {
 
-  
-     citydata: any = []; // Ensure it's initialized to prevent undefined 
+
+     citydata: any = []; // Ensure it's initialized to prevent undefined
       form: FormGroup;
       vdata:any;
       data1:any = [];;
@@ -31,7 +37,7 @@ export class VoucerOfflineListComponent {
           fromBranch: ['', ],
         });
       }
-    
+
       ngOnInit() {
         this.api.GetBranch().subscribe({
           next: (res: any) => {
@@ -61,7 +67,7 @@ export class VoucerOfflineListComponent {
         const day = ('0' + today.getDate()).slice(-2);
         return `${year}-${month}-${day}`; // yyyy-MM-dd
       }
-    
+
       onFromcitySelect(event: any) {
         const cityName = event.target.value;
         if (cityName) {
@@ -78,19 +84,19 @@ export class VoucerOfflineListComponent {
           this.pdata = [];
         }
       }
-    
+
        setFormArray(controlName: string, values: any[]) {
           const formArray = this.form.get(controlName) as FormArray;
           formArray.clear(); // ✅ Clear previous values
-        
+
           values.forEach(value => {
             formArray.push(this.fb.control(value));
           });
         }
-    
+
         onGrnNoChange(event: any, grnNo: string) {
           const formArray = this.form.get('grnNo') as FormArray;
-        
+
           if (event.target.checked) {
             // Add if not already selected
             if (!formArray.value.includes(grnNo)) {
@@ -103,13 +109,13 @@ export class VoucerOfflineListComponent {
               formArray.removeAt(index);
             }
           }
-        
+
           // ✅ Update "Select All" status based on selected values
           this.allSelected = this.data1.length === formArray.value.length;
           console.log('Selected GRN Numbers:', formArray.value);
         }
-        
-        
+
+
         VoucherLoad() {
           const payload = {
             fromDate: this.form.value.fromDate,
@@ -119,15 +125,15 @@ export class VoucerOfflineListComponent {
             toCity: this.form.value.toCity,
             fromBranch: this.form.value.fromBranch,
           };
-        
+
           console.log('Final Payload:', payload);
-          
+
           this.api.ParcelVouchersDetails(payload).subscribe({
             next: (response: any) => {
               console.log('Parcel loaded successfully:', response);
               // alert('Parcel Loaded Successfully!');
               this.data1=response;
-              
+
             },
             error: (error: any) => {
               console.error('Parcel loading failed:', error);

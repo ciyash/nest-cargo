@@ -1,11 +1,17 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { BranchService } from 'src/app/service/branch.service';
-import * as XLSX from 'xlsx';
+import type * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-all-parcel-booking-report',
   templateUrl: './all-parcel-booking-report.component.html',
   styleUrls: ['./all-parcel-booking-report.component.scss']
@@ -15,11 +21,11 @@ export class AllParcelBookingReportComponent {
   pfdata: any;
   today = new Date();
 
-  constructor(private router: 
+  constructor(private router:
     Router,private api:BranchService,private toast:ToastrService) {
 
   }
-  
+
   // ngOnInit(): void {
   //   this.getProfileData();
   //   const storedData = localStorage.getItem('allParcelBookingData');
@@ -32,7 +38,7 @@ export class AllParcelBookingReportComponent {
   // }
   ngOnInit(): void {
     this.getProfileData();
-    
+
     const storedData = localStorage.getItem('allparcelReportData'); // ✅ Use the correct key
     if (storedData) {
       this.data1 = JSON.parse(storedData);
@@ -41,8 +47,8 @@ export class AllParcelBookingReportComponent {
       this.toast.error('No booking data found!');
     }
   }
-  
-  
+
+
   getProfileData() {
     this.api.GetProfileData().subscribe((res: any) => {
       this.pfdata = res;
@@ -101,7 +107,8 @@ export class AllParcelBookingReportComponent {
 
 
 
-ExpoetExcel(): void {
+async ExpoetExcel(): Promise<void> {
+    const XLSX = await import('xlsx');
   const element = document.getElementById('print-section');
   if (!element) {
     console.error('print-section not found!');
@@ -217,5 +224,5 @@ ExpoetExcel(): void {
   FileSaver.saveAs(blob, `Parcel_Report_${new Date().toISOString().slice(0, 10)}.xlsx`);
 }
 
-  
+
 }

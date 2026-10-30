@@ -1,10 +1,16 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { BranchService } from 'src/app/service/branch.service';
-import * as XLSX from 'xlsx';
+import type * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-parcel-incoming-report',
   templateUrl: './parcel-incoming-report.component.html',
   styleUrls: ['./parcel-incoming-report.component.scss']
@@ -20,7 +26,7 @@ export class ParcelIncomingReportComponent {
   constructor(private router: Router, private api: BranchService) {
     const navigation = this.router.getCurrentNavigation();
     const state = navigation?.extras?.state as { data: any };
-  
+
     if (state?.data) {
       console.log('Received from state:', state.data);
       this.prow = state.data;
@@ -38,7 +44,7 @@ export class ParcelIncomingReportComponent {
       }
     }
   }
-  
+
 
   ngOnInit() {
     this.getProfileData();
@@ -130,7 +136,8 @@ export class ParcelIncomingReportComponent {
 
 
 
-  exportToExcel(): void {
+  async exportToExcel(): Promise<void> {
+    const XLSX = await import('xlsx');
     const excelData: any[] = [];
 
     // Add Header Info
@@ -218,5 +225,3 @@ export class ParcelIncomingReportComponent {
 }
 
 const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-
-

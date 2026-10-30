@@ -1,26 +1,10 @@
-  <app-header></app-header>
-  <div class="container" style="padding-top: 8%;">
-    <form class="row mt-4 text-center" (ngSubmit)="searchUser()">
-      <div class="row justify-content-center">
-        <div class="col-md-4 mb-2">
-          <select class="form-select" [(ngModel)]="searchField" name="searchField" required>
-            <option [value]="'grnNo'">GRN No</option>
-            <option [value]="'lrNumber'">LR NO</option>
-            <option [value]="'senderMobile'">Mobile</option>
-            <option [value]="'senderName'">Search Customer</option>
-          </select>
-        </div>
-        <div class="col-md-4 mb-2">
-          <input required type="text" name="searchTerm" placeholder="Enter Search Value"
-            class="form-control" [(ngModel)]="searchTerm" />
-        </div>
-        <div class="col-md-4">
-          <button type="button" class="btn btn-secondary me-2" >Clear</button>
-          <button class="btn btn-primary" type="submit" data-bs-toggle="modal" data-bs-target="#extraLargeModal" >Load</button>
-        </div>
-      </div>
-    </form>
-</div>
+<app-header *ngIf="!embedded"></app-header>
+<div class="shipment-search-wrap"><form class="shipment-search" (ngSubmit)="searchUser()">
+<span class="shipment-search-label"><i class="pi pi-search" aria-hidden="true"></i>Find a shipment</span>
+<select class="form-select" aria-label="Search by" [(ngModel)]="searchField" name="searchField" required><option value="grnNo">GRN number</option><option value="lrNumber">LR number</option><option value="senderMobile">Mobile number</option><option value="senderName">Customer name</option></select>
+<input required type="text" name="searchTerm" aria-label="Shipment search value" placeholder="Enter shipment number or customer details" class="form-control" [(ngModel)]="searchTerm">
+<div class="shipment-search-actions"><button type="button" class="btn btn-outline-secondary" (click)="searchTerm = ''; data2 = []; errorMessage = ''">Clear</button><button type="submit" class="btn btn-primary" [disabled]="!(searchTerm || '').trim()" data-bs-toggle="modal" data-bs-target="#extraLargeModal">Find shipment</button></div>
+</form></div>
 <!-- Modal -->
 <div class="modal fade" id="extraLargeModal" tabindex="-1" aria-labelledby="extraLargeModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-xl">

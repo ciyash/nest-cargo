@@ -1,3 +1,7 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
 import {
   Component,
   ElementRef,
@@ -13,6 +17,8 @@ import { BranchService } from 'src/app/service/branch.service';
 declare var $: any;
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-parcel-status-date-different',
   templateUrl: './parcel-status-date-different.component.html',
   styleUrls: ['./parcel-status-date-different.component.scss']
@@ -77,19 +83,19 @@ export class ParcelStatusDateDifferentComponent implements OnInit, AfterViewInit
     const year = today.getFullYear();
     return `${year}-${month}-${day}`; // ✔ HTML date input format
   }
-  
+
 
   // StatusDate() {
   //   const payload = this.form.value;
   //   console.log('payload:', payload);
-  
+
   //   this.api.ParcelStatusdateReport(payload).subscribe({
   //     next: (res: any) => {
   //       console.log('data:', res);
   //       // Show success message from backend, fallback to generic if not found
   //       const successMessage = res?.message || 'Report fetched successfully';
   //       this.toast.success(successMessage);
-  
+
   //       this.gstdata = res;
   //       const finalData = {
   //         ...this.gstdata,
@@ -100,7 +106,7 @@ export class ParcelStatusDateDifferentComponent implements OnInit, AfterViewInit
   //     },
   //     error: (err: any) => {
   //       console.error('Error fetching report:', err);
-  
+
   //       // Show error message from backend, fallback to generic if not found
   //       const errorMessage = err?.error?.message || 'Failed to fetch report';
   //       this.toast.error(errorMessage);
@@ -110,22 +116,22 @@ export class ParcelStatusDateDifferentComponent implements OnInit, AfterViewInit
   StatusDate() {
     const payload = this.form.value;
     console.log('payload:', payload);
-  
+
     this.api.ParcelStatusdateReport(payload).subscribe({
       next: (res: any) => {
         console.log('data:', res);
-  
+
         const successMessage = res?.message || 'Report fetched successfully';
         this.toast.success(successMessage);
-  
+
         this.gstdata = res;
-  
+
         const finalData = {
           ...this.gstdata,
           fromDate: payload.startDate,
           toDate: payload.endDate
         };
-  
+
         // Store data in localStorage or sessionStorage
         // localStorage.setItem('dateReportData', JSON.stringify(finalData));
         // window.open('/datereport', '_blank');
@@ -143,8 +149,8 @@ export class ParcelStatusDateDifferentComponent implements OnInit, AfterViewInit
       }
     });
   }
-  
-  
 
-  
-}  
+
+
+
+}

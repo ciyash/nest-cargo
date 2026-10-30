@@ -8,7 +8,7 @@ describe('ParcelloadingComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [ParcelloadingComponent]
+      imports: [ParcelloadingComponent]
     });
     fixture = TestBed.createComponent(ParcelloadingComponent);
     component = fixture.componentInstance;

@@ -8,7 +8,7 @@ describe('AddDispatchTypeComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [AddDispatchTypeComponent]
+      imports: [AddDispatchTypeComponent]
     });
     fixture = TestBed.createComponent(AddDispatchTypeComponent);
     component = fixture.componentInstance;

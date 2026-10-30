@@ -8,7 +8,7 @@ describe('CollectionDataComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [CollectionDataComponent]
+      imports: [CollectionDataComponent]
     });
     fixture = TestBed.createComponent(CollectionDataComponent);
     component = fixture.componentInstance;

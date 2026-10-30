@@ -1,13 +1,19 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { BranchService } from 'src/app/service/branch.service';
 import { Location } from '@angular/common';
-import * as XLSX from 'xlsx';
+import type * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 import { ToastrService } from 'ngx-toastr';
 
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-parcel-booking-summary',
   templateUrl: './parcel-booking-summary.component.html',
   styleUrls: ['./parcel-booking-summary.component.scss']
@@ -21,33 +27,33 @@ export class ParcelBookingSummaryComponent {
   constructor(private router: Router, private api: BranchService, private location: Location ,private toast:ToastrService) {}
   // ngOnInit(): void {
   //   const storedData = localStorage.getItem('bookingSummaryData');
-  
+
   //   if (storedData) {
   //     const parsedData = JSON.parse(storedData);
-  
+
   //     this.summaryData = parsedData.data || []; // ← FIXED ✅
   //     this.fromDate = parsedData.fromDate;
   //     this.toDate = parsedData.toDate;
-  
+
   //     console.log('Parsed Summary Data from LocalStorage:', this.summaryData);
   //   } else {
   //     this.toast.error('No summary data found. Please generate the report again.');
   //     this.router.navigate(['/home']);
   //   }
-  
+
   //   this.getProfileData();
   // }
-  
+
   ngOnInit(): void {
     const storedData = localStorage.getItem('bookingSummaryData');
-  
+
     if (storedData) {
       try {
         const parsedData = JSON.parse(storedData);
         this.summaryData = Array.isArray(parsedData.data) ? parsedData.data : [];
         this.fromDate = parsedData.fromDate || '';
         this.toDate = parsedData.toDate || '';
-  
+
         console.log('Parsed Summary Data from LocalStorage:', this.summaryData);
       } catch (err) {
         this.toast.error('Invalid report data format. Please try again.');
@@ -57,10 +63,10 @@ export class ParcelBookingSummaryComponent {
       this.toast.error('No summary data found. Please generate the report again.');
       this.router.navigate(['/home']);
     }
-  
+
     this.getProfileData();
   }
-  
+
 
   getProfileData() {
     this.api.GetProfileData().subscribe((res: any) => {
@@ -97,9 +103,10 @@ export class ParcelBookingSummaryComponent {
     }
   }
 
-  Exportexcel(): void {
+  async Exportexcel(): Promise<void> {
+    const XLSX = await import('xlsx');
     const header: any[][] = [];
-  
+
     // Add Company Info
     if (this.pfdata) {
       header.push([this.pfdata.companyName]);
@@ -107,10 +114,10 @@ export class ParcelBookingSummaryComponent {
         `Address: ${this.pfdata.location} - ${this.pfdata.branchId?.name} | Phone No: ${this.pfdata.phone}`,
       ]);
     }
-  
+
     // Report Title
     header.push(['Parcel Booking Summary Report']);
-  
+
     // Date Info
     const fromDate = this.fromDate ? new Date(this.fromDate).toLocaleDateString() : '';
     const toDate = this.toDate ? new Date(this.toDate).toLocaleDateString() : '';
@@ -120,15 +127,15 @@ export class ParcelBookingSummaryComponent {
       `Print Date: ${today.toLocaleDateString()}`,
       `Time: ${today.toLocaleTimeString()}`,
     ]);
-  
+
     // Printed By
     if (this.pfdata?.name) {
       header.push([`Print By: ${this.pfdata.name}`]);
     }
-  
+
     // Empty Row
     header.push([]);
-  
+
     // Table Header
     header.push([
       'S.No',
@@ -142,7 +149,7 @@ export class ParcelBookingSummaryComponent {
       'Hamali ToPaid',
       'Total',
     ]);
-  
+
     // Table Data
     const rows = this.summaryData.map((item: any, index: number) => [
       index + 1,
@@ -156,23 +163,23 @@ export class ParcelBookingSummaryComponent {
       item.hamaliCharges,
       item.grandTotal,
     ]);
-  
+
     const fullData = [...header, ...rows];
-  
+
     // Create Worksheet
     const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(fullData);
     const workbook: XLSX.WorkBook = {
       Sheets: { 'Summary Report': worksheet },
       SheetNames: ['Summary Report'],
     };
-  
+
     const excelBuffer: any = XLSX.write(workbook, {
       bookType: 'xlsx',
       type: 'array',
     });
-  
+
     const fileName = `Parcel-Booking-Summary-${today.toISOString().slice(0, 10)}.xlsx`;
     FileSaver.saveAs(new Blob([excelBuffer], { type: 'application/octet-stream' }), fileName);
   }
-  
+
 }

@@ -1,27 +1,42 @@
-# CRM16
+# Logistics CRM
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.2.16.
+Angular 16 application with standalone screens and route-level lazy loading.
 
-## Development server
+## Local setup
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+Use Node.js 18. Angular 16 predates Node.js 24; pin an Angular-supported Node version for reproducible builds, or plan an Angular upgrade before adopting a newer Node release.
 
-## Code scaffolding
+```sh
+npm ci
+npm start
+```
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+Open http://localhost:4200. The local backend defaults to http://localhost:4000 in `src/environments/environment.development.ts`.
 
-## Build
+## Configuration
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+- Development uses `environment.development.ts` through Angular file replacement.
+- Production uses `environment.ts`. Set its `baseUrl` to the deployed backend before publishing. The existing localhost value is retained for local use.
+- All API services derive their endpoint prefix from `environment.baseUrl`.
+- Never store secrets in environment files: Angular includes these values in the browser bundle.
+- Configure hosting to serve `index.html` for application routes, including direct links to report and print URLs.
 
-## Running unit tests
+## Validation and builds
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+```sh
+npm run typecheck
+npm run build:dev
+npm run build
+npm run build:stats
+npm run test:ci
+```
 
-## Running end-to-end tests
+Chrome or Chromium is needed for headless tests. Set `CHROME_BIN` when it is not automatically found. PowerShell installations that block npm.ps1 can run `npm.cmd` instead.
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+## Loading and performance
 
-## Further help
+Routes in `src/app/app-routing.module.ts` use `loadComponent`, loading each screen when visited. Shared standalone components are imported by their consumers. Keep new screens out of AppModule and add explicit component imports for template dependencies. Production enables AOT, script/style optimization, hashed output, license extraction, and disables source maps. Font inlining is disabled so production builds do not need to download Google Fonts.
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+jQuery and Select2 load once through angular.json. SlimSelect, Choices, Bootstrap, Font Awesome, and fonts still use external resources and need network access at runtime.
+
+See CODE_REVIEW.md for review findings and remaining work.

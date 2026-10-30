@@ -1,3 +1,7 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -8,6 +12,8 @@ import { ToastrService } from 'ngx-toastr';
 
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-admin-profile',
   templateUrl: './admin-profile.component.html',
   styleUrls: ['./admin-profile.component.scss']
@@ -26,22 +32,22 @@ export class AdminProfileComponent {
   showDialog() {
       this.visible = true;
   }
-  constructor(private api:AdminService, private activeroute:ActivatedRoute, 
+  constructor(private api:AdminService, private activeroute:ActivatedRoute,
     private fb:FormBuilder, private messageService:MessageService,
      private router:Router , private toastr:ToastrService){
     this.form = this.fb.group({
-      companyName: ['', ], 
-      name: ['', ], 
-      username: ['', ], 
-      location: ['', ], 
-      address: ['', ], 
-      email: ['', ], 
-      phone: ['', ], 
+      companyName: ['', ],
+      name: ['', ],
+      username: ['', ],
+      location: ['', ],
+      address: ['', ],
+      email: ['', ],
+      phone: ['', ],
       branchId:['',],
     });
     this.form1 = this.fb.group({
-      oldPassword: ['', Validators.required], 
-      newPassword: ['', Validators.required],  
+      oldPassword: ['', Validators.required],
+      newPassword: ['', Validators.required],
     });
   }
 
@@ -58,11 +64,11 @@ export class AdminProfileComponent {
       console.log(res,'branch');
       this.ALLbranchdata=res;
       console.log("GET ALL BRANCHES:",this.ALLbranchdata);
-      
-      
+
+
     });
   }
-  
+
 
   changePassword(){
     console.log(this.form1.value);

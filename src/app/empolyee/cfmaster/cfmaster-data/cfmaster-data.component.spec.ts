@@ -8,7 +8,7 @@ describe('CfmasterDataComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [CfmasterDataComponent]
+      imports: [CfmasterDataComponent]
     });
     fixture = TestBed.createComponent(CfmasterDataComponent);
     component = fixture.componentInstance;

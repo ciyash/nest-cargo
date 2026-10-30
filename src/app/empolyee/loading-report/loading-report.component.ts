@@ -1,3 +1,8 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../USER/header/header.component';
+import { FooterComponent } from '../../USER/footer/footer.component';
 import { ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -6,6 +11,8 @@ import { BranchService } from 'src/app/service/branch.service';
 declare var $: any;
 declare const SlimSelect: any;
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent, FooterComponent],
   selector: 'app-loading-report',
   templateUrl: './loading-report.component.html',
   styleUrls: ['./loading-report.component.scss']
@@ -14,7 +21,7 @@ export class LoadingReportComponent {
     @ViewChild('selectElem') selectElem!: ElementRef;
     @ViewChild('demoSelect') demoSelect!: ElementRef;
     @ViewChild('pickupbranch') pickupbranch!: ElementRef;
-  
+
     branchdata: any;
     pdata: any[] = [];
     data1: any[] = [];
@@ -23,7 +30,7 @@ export class LoadingReportComponent {
   ffdata: any;
   pfdata: any;
   profileData: any;
-  
+
     constructor(
       private api: BranchService,
       private fb: FormBuilder,
@@ -40,7 +47,7 @@ export class LoadingReportComponent {
         dropBranch: ['']
       });
     }
-  
+
     ngOnInit() {
       this.getProfileData();
       this.getCities();
@@ -49,7 +56,7 @@ export class LoadingReportComponent {
         console.log('branchdata:', this.branchdata);
       });
     }
-  
+
     getTodayDateString(): string {
       const today = new Date();
       const year = today.getFullYear();
@@ -57,30 +64,30 @@ export class LoadingReportComponent {
       const day = ('0' + today.getDate()).slice(-2);
       return `${year}-${month}-${day}`;
     }
-  
+
     ngAfterViewInit(): void {
       new SlimSelect({
         select: this.demoSelect.nativeElement
       });
-  
+
       setTimeout(() => {
         $(this.selectElem.nativeElement).select2();
-  
+
         // Set the default value from form ('' or any pre-filled value)
         $(this.selectElem.nativeElement).val(this.form1.value.fromCity).trigger('change');
-        
+
         // Handle selection
         $(this.selectElem.nativeElement).on('select2:select', (event: any) => {
           const selectedCity = event.params.data.id;
           this.form1.patchValue({ fromCity: selectedCity });
           this.onFromcitySelect({ target: { value: selectedCity } });
         });
-        
+
 
 
       }, 0);
     }
-  
+
     getCities() {
       this.api.GetCities().subscribe({
         next: (response: any) => {
@@ -92,11 +99,11 @@ export class LoadingReportComponent {
         },
       });
     }
-  
+
     get toCityArray() {
       return this.form1.get('toCity') as FormArray;
     }
-  
+
     onFromcitySelect(event: any) {
       const cityName = event.target.value;
       if (cityName) {
@@ -123,7 +130,7 @@ export class LoadingReportComponent {
         this.pdata = [];
       }
     }
-  
+
     onToCityChange(event: any) {
       const selectedOptions = Array.from(event.target.selectedOptions).map((option: any) => option.value);
       const toCityArray = this.form1.get('toCity') as FormArray;
@@ -131,11 +138,11 @@ export class LoadingReportComponent {
       selectedOptions.forEach(city => toCityArray.push(new FormControl(city)));
       console.log('Selected To Cities:', toCityArray.value);
     }
-  
+
     ParcelLoad() {
       console.log('ParcelLoad() triggered');
       console.log('form1 value:', this.form1.value);
-    
+
       const payload = {
         fromDate: this.form1.value.fromDate,
         toDate: this.form1.value.toDate,
@@ -144,9 +151,9 @@ export class LoadingReportComponent {
         fromBranch: this.form1.value.fromBranch,
         dropBranch: this.form1.value.dropBranch,
       };
-    
+
       console.log("payload:", payload);
-    
+
       this.api.ParcelOfflineReport(payload).subscribe({
         next: (response: any) => {
           console.log("After Load: Response received", response);
@@ -155,10 +162,10 @@ export class LoadingReportComponent {
             fromDate: this.form1.value.fromDate,
             toDate: this.form1.value.toDate
           };
-    
+
           // Save to localStorage
           localStorage.setItem('parcelReportData', JSON.stringify(finalData8));
-    
+
           // Open new tab
           window.open('/parcelloading-offlinereport', '_blank');
         },
@@ -168,7 +175,7 @@ export class LoadingReportComponent {
         },
       });
     }
-    
+
     getProfileData() {
       this.api.GetProfileData().subscribe((res: any) => {
         console.log('profile', res);
@@ -176,14 +183,14 @@ export class LoadingReportComponent {
         this.pfdata = res.branchId.city;
         this.profileData = res;
         console.log("profileData:", this.profileData);
-    
+
         // Update form controls with profile data
         this.form1.patchValue({
           fromCity: this.pfdata || '', // Set fromCity to the city from branchId
           fromBranch: this.ffdata?.branchUniqueId || '' // Set pickUpBranch to branchUniqueId
         });
-    
+
       });
     }
-  
+
   }

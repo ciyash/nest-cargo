@@ -8,7 +8,7 @@ describe('SubMemoDispatchedComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [SubMemoDispatchedComponent]
+      imports: [SubMemoDispatchedComponent]
     });
     fixture = TestBed.createComponent(SubMemoDispatchedComponent);
     component = fixture.componentInstance;

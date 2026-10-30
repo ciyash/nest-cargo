@@ -8,7 +8,7 @@ describe('CollectionreportComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [CollectionreportComponent]
+      imports: [CollectionreportComponent]
     });
     fixture = TestBed.createComponent(CollectionreportComponent);
     component = fixture.componentInstance;

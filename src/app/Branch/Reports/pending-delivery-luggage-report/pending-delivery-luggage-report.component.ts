@@ -1,12 +1,18 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
 import { Component, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { BranchService } from 'src/app/service/branch.service';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
-import * as XLSX from 'xlsx';
+import type * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 import { ToastrService } from 'ngx-toastr';
 
 declare var $: any;
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-pending-delivery-luggage-report',
   templateUrl: './pending-delivery-luggage-report.component.html',
   styleUrls: ['./pending-delivery-luggage-report.component.scss']
@@ -22,7 +28,7 @@ export class PendingDeliveryLuggageReportComponent {
   branchdata: any;
   allgetvechicle: any;
   pfdata: any;
-  today = new Date(); 
+  today = new Date();
   payload: any;
   onPickupBranchSelect: any;
   onDropBranchSelect: any;
@@ -49,7 +55,7 @@ export class PendingDeliveryLuggageReportComponent {
     const year = today.getFullYear();
     return `${year}-${month}-${day}`; // ✔ HTML date input format
   }
-  
+
 
   ngOnInit() {
     // Fetch cities
@@ -72,9 +78,9 @@ export class PendingDeliveryLuggageReportComponent {
     this.getProfileData();
   }
 
-  
- 
-  
+
+
+
 
 
   itemsPerPage = 10;
@@ -111,7 +117,7 @@ totalPagesArray() {
       (res: any) => {
         console.log("res:",res);
           this.reportData = res.data;
-        
+
           this.toast.success(res.message || 'Report fetched successfully.');
           console.log('Luggage Report:', this.reportData);
 
@@ -278,10 +284,11 @@ ngAfterViewInit(): void {
 
 
     readonly EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-  
-    exportToExcel(): void {
+
+    async exportToExcel(): Promise<void> {
+    const XLSX = await import('xlsx');
       const headerRows: any[][] = [];
-  
+
       // Add company details
       if (this.pfdata) {
         headerRows.push([this.pfdata.companyName]);
@@ -289,7 +296,7 @@ ngAfterViewInit(): void {
           `Address: ${this.pfdata.location} - ${this.pfdata.branchId?.name} | Phone No: ${this.pfdata.phone}`
         ]);
       }
-  
+
       headerRows.push(['Pending Delivery Luggage Report']);
       headerRows.push([
         `From: ${this.formatDate(this.payload?.fromDate)} To: ${this.formatDate(this.payload?.toDate)}`,
@@ -297,7 +304,7 @@ ngAfterViewInit(): void {
         `Print Date: ${this.formatDate(this.today)} ${this.formatTime(this.today)}`
       ]);
       headerRows.push([]); // empty row
-  
+
       // Add table headers
       headerRows.push([
         'No',
@@ -315,7 +322,7 @@ ngAfterViewInit(): void {
         'Quantity',
         'Amount'
       ]);
-  
+
       // Add table data
       const dataRows = this.reportData.map((item: { grnNo: any; receiverDate: any; source: any; destination: any; consignor: any; consignee: any; consigneeNo: any; bookingType: any; dayDiff: any; itemName: any; manualTKTNo: any; quantity: any; amount: any; }, index: number) => [
         index + 1,
@@ -333,24 +340,24 @@ ngAfterViewInit(): void {
         item.quantity,
         item.amount
       ]);
-  
+
       const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet([...headerRows, ...dataRows]);
       const workbook: XLSX.WorkBook = {
         Sheets: { 'Pending Delivery Report': worksheet },
         SheetNames: ['Pending Delivery Report']
       };
-  
+
       const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
       const fileName = `Pending_Delivery_Report_${this.formatDate(this.today)}.xlsx`;
       const data: Blob = new Blob([excelBuffer], { type: this.EXCEL_TYPE });
       FileSaver.saveAs(data, fileName);
     }
-  
+
     formatDate(date: any): string {
       const d = new Date(date);
       return `${('0' + d.getDate()).slice(-2)}-${('0' + (d.getMonth() + 1)).slice(-2)}-${d.getFullYear()}`;
     }
-  
+
     formatTime(date: any): string {
       const d = new Date(date);
       let hours = d.getHours();
@@ -361,13 +368,3 @@ ngAfterViewInit(): void {
     }
 
 }
-
- 
-  
-
-
-  
-
-  
-  
-

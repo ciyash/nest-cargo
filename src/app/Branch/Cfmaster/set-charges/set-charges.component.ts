@@ -1,9 +1,15 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BranchService } from 'src/app/service/branch.service';
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-set-charges',
   templateUrl: './set-charges.component.html',
   styleUrls: ['./set-charges.component.scss']
@@ -48,7 +54,7 @@ export class SetChargesComponent {
     this.api.AddCfmasterCharges(payload).subscribe({
       next: (response: any) => {
         console.log('Master successfully:', response);
-        
+
         setTimeout(() => {
          this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
            this.router.navigate(['/getcfmasterdata']);

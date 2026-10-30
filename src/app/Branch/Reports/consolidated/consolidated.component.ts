@@ -1,3 +1,7 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
 import {
   Component,
   ElementRef,
@@ -13,7 +17,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { BranchService } from 'src/app/service/branch.service';
-import * as XLSX from 'xlsx';
+import type * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 import { ToastrService } from 'ngx-toastr';
 declare module 'file-saver';
@@ -21,6 +25,8 @@ declare var $: any;
 declare const SlimSelect: any;
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-consolidated',
   templateUrl: './consolidated.component.html',
   styleUrls: ['./consolidated.component.scss'],
@@ -177,10 +183,10 @@ export class ConsolidatedComponent {
       next: (res: any) => {
         console.log('ConsolidatedReport:', res);
 
-        this.Cdata = res; 
+        this.Cdata = res;
         this.Tdata=res
         console.log("tdata:",this.Tdata)
-         
+
 
           this.deliveryData=res.data
         console.log("devliveryData:",this.deliveryData);
@@ -191,9 +197,9 @@ export class ConsolidatedComponent {
         //   this.Cdata = res;
         //   this.deliveryData=res.data.deliveredAmountByType
         //   console.log("devliveryData:",this.deliveryData);
-          
 
-          
+
+
         // } else {
         //   // No data scenario
         //   this.toast.info('No data available for the given filter.');
@@ -233,40 +239,40 @@ export class ConsolidatedComponent {
                 font-family: Arial, sans-serif;
                 margin: 20px;
               }
-  
+
               table {
                 width: 100%;
                 border-collapse: collapse;
                 font-size: 12px;
               }
-  
+
               th, td {
                 border: 1px solid #000;
                 padding: 4px;
                 text-align: center;
               }
-  
+
               h4, h6, p {
                 margin: 4px 0;
               }
-  
+
               .text-center {
                 text-align: center;
               }
-  
+
               .fw-bold {
                 font-weight: bold;
               }
-  
+
               .text-decoration-underline {
                 text-decoration: underline;
               }
-  
+
               .d-flex {
                 display: flex;
                 justify-content: space-between;
               }
-  
+
               @media print {
                 .no-print {
                   display: none;
@@ -283,7 +289,8 @@ export class ConsolidatedComponent {
     }
   }
 
-  downloadExcel(): void {
+  async downloadExcel(): Promise<void> {
+    const XLSX = await import('xlsx');
     const fileName = 'Consolidated_Report.xlsx';
 
     const wsData: any[][] = [];

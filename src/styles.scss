@@ -1,5 +1,121 @@
-/* You can add global styles to this file, and also import other style files */
-@import "primeicons/primeicons.css";
-   @import url(https://fonts.googleapis.com/css?family=Lato:300,400,700);
-   
+﻿@import "primeicons/primeicons.css";
+@import "styles/workspace-navigation";
+:root{--cn-ink:#192d46;--cn-muted:#738297;--cn-accent:#12776c;--cn-line:#e3eaf0;--cn-bg:#f4f7fa;--cn-radius:16px}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Segoe UI",Arial,sans-serif;color:var(--cn-ink);background:var(--cn-bg)}
+.form-after::after{content:" *";color:#bd4454;font-weight:700}
+@media screen{
+app-root.cargo-workspace{display:block;min-height:100vh;background:var(--cn-bg);color:var(--cn-ink);font-family:Inter,"Segoe UI",Arial,sans-serif;padding-bottom:32px}
+.cargo-workspace router-outlet+*{display:block;min-height:100vh}
+.cargo-workspace app-header{display:block;position:sticky;top:0;z-index:1030;margin-bottom:20px}
+.cargo-workspace :is(.container,.container-fluid){width:100%;max-width:1480px;padding-left:clamp(16px,3vw,40px);padding-right:clamp(16px,3vw,40px)}
+.cargo-workspace :is(h1,h2,h3,h4,h5,h6){font-family:inherit!important;color:var(--cn-ink);font-weight:700;letter-spacing:-.5px}
+.cargo-workspace :is(h4.text-center,h5.text-center){text-align:left!important;text-decoration:none!important;max-width:1400px;margin:26px auto 22px!important;padding:0 clamp(16px,3vw,40px);font-size:25px!important;line-height:1.35}
+.cargo-workspace :is(h4,h5) u{text-decoration:none}
+.cargo-workspace :is(.card,.panel,form>.container:first-of-type,.border.p-5){background:#fff!important;border:1px solid var(--cn-line)!important;border-radius:var(--cn-radius)!important;box-shadow:0 5px 18px #19314c04;overflow:visible}
+.cargo-workspace form>.container{padding:26px!important;margin-top:20px;margin-bottom:26px;width:calc(100% - 32px);max-width:1400px}
+.cargo-workspace .card{padding:26px!important;margin-bottom:24px}
+.cargo-workspace .card .card{box-shadow:none;padding:18px!important;border-radius:12px!important}
+.cargo-workspace .border.p-5{padding:26px!important}
+.cargo-workspace :is(.card-header,.card-footer){background:#f8fafc;border-color:var(--cn-line);padding:16px 22px}
+.cargo-workspace :is(.form-label,label:not(.form-check-label)){font-family:inherit!important;font-size:12px!important;font-weight:650!important;line-height:1.5;color:#45576f!important;margin-bottom:8px;letter-spacing:.1px}
+.cargo-workspace :is(.form-control,.form-select,input:not([type=checkbox]):not([type=radio]):not([type=button]):not([type=submit]):not([type=hidden]),select,textarea){font-family:inherit!important;color:#243951!important;font-size:13px!important;background-color:#fbfcfe!important;border:1px solid #dce4ec!important;border-radius:9px!important;min-height:44px;padding:10px 13px!important;box-shadow:none;transition:border-color .15s,box-shadow .15s}
+.cargo-workspace :is(input,select,textarea):focus{outline:0;border-color:#29998c!important;background-color:#fff!important;box-shadow:0 0 0 3px #16887914!important}
+.cargo-workspace :is(input,textarea)::placeholder{color:#9aa8b8!important;opacity:1}
+.cargo-workspace :is(input,select,textarea):disabled{background:#f0f3f7!important;color:#8a98a8!important;cursor:not-allowed}
+.cargo-workspace input[readonly]{background:#f2f5f8!important;color:#62748a!important}
+.cargo-workspace input[type=checkbox],.cargo-workspace input[type=radio]{accent-color:var(--cn-accent);width:16px;height:16px;min-height:0}
+.cargo-workspace .input-group-text{border-color:#dce4ec;background:#f0f5f8;color:#6b8098;font-size:13px;border-radius:9px}
+.cargo-workspace textarea{min-height:90px!important}
+.cargo-workspace :is(.row.g-3,form .row){row-gap:18px}
+.cargo-workspace :is(.btn,.p-button){font-family:inherit!important;font-size:12px!important;font-weight:650;min-height:40px;padding:10px 17px!important;letter-spacing:.1px;border-radius:9px!important;box-shadow:none!important;transition:background .15s,transform .15s}
+.cargo-workspace :is(.btn-primary,.btn-success,.p-button:not(.p-button-danger):not(.p-button-text):not(.p-button-outlined)){background:var(--cn-accent)!important;border:1px solid var(--cn-accent)!important;color:#fff!important}
+.cargo-workspace :is(.btn-primary,.btn-success):hover:not(:disabled){background:#0b6259!important;border-color:#0b6259!important;transform:translateY(-1px)}
+.cargo-workspace :is(.btn-secondary,.btn-outline-primary,.btn-outline-secondary){color:#425973!important;background:#fff!important;border:1px solid #d7e1eb!important}
+.cargo-workspace .btn-danger{background:#fff0f0!important;border:1px solid #f2d4d4!important;color:#b23e48!important}
+.cargo-workspace .btn-warning{background:#fff4db!important;border:1px solid #f2dfb5!important;color:#8a641b!important}
+.cargo-workspace .btn-link{background:transparent!important;border:0!important;color:var(--cn-accent)!important}
+.cargo-workspace button:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+.cargo-workspace :is(a,button,input,select):focus-visible{outline:3px solid #73c4b5;outline-offset:3px}
+.cargo-workspace :is(.table-responsive,.table-scroll){border:1px solid var(--cn-line);border-radius:12px;overflow:auto;background:white;margin-top:18px}
+.cargo-workspace :is(table,.table){width:100%;font-family:inherit!important;font-size:12px!important;border-collapse:separate;border-spacing:0;background:#fff;color:#334b65;margin-bottom:0}
+.cargo-workspace :is(table,.table) :is(thead,thead tr,th){background:#f1f5f8!important;color:#64788d!important;border-color:#e5ebf1!important;box-shadow:none!important}
+.cargo-workspace :is(table,.table) th{font-size:10px!important;font-weight:750!important;text-transform:uppercase;letter-spacing:.65px;padding:14px 16px!important;white-space:nowrap;vertical-align:middle;border-width:0 0 1px!important}
+.cargo-workspace :is(table,.table) :is(td,tbody tr){background:#fff!important;color:#334b65!important;border-color:#edf1f5!important;box-shadow:none!important}
+.cargo-workspace :is(table,.table) td{padding:13px 16px!important;border-width:0 0 1px!important;vertical-align:middle;font-weight:450}
+.cargo-workspace :is(table,.table) tbody tr:nth-child(even) td{background:#fbfcfe!important}
+.cargo-workspace :is(table,.table) tbody tr:hover td{background:#f0f8f6!important}
+.cargo-workspace :is(table,.table) :is(tfoot td,tfoot th){background:#ecf4f2!important;color:#235d53!important;font-weight:750!important}
+.cargo-workspace :is(table,.table) td :is(input,select){min-height:34px!important;font-size:12px!important;padding:6px 9px!important}
+.cargo-workspace .highlight-row td{font-weight:750!important;background:#edf7f3!important}
+.cargo-workspace .p-datatable{border:1px solid var(--cn-line);border-radius:12px;overflow:hidden}
+.cargo-workspace .p-paginator{padding:15px;border-color:var(--cn-line);gap:4px}
+.cargo-workspace .p-paginator .p-paginator-page.p-highlight{background:#e5f4ee;color:#12776c;border-radius:8px}
+.cargo-workspace :is(.p-dropdown,.p-multiselect){min-height:44px;border:1px solid #dce4ec;border-radius:9px;background:#fbfcfe}
+.cargo-workspace .p-dropdown-label{font-size:13px;padding:11px 13px}
+.cargo-workspace .alert{font-size:13px;border-radius:10px;padding:14px 18px;line-height:1.6}
+.cargo-workspace .alert-success{background:#edf8f2;border-color:#cde9d8;color:#236a4c}
+.cargo-workspace .alert-danger{background:#fff2f2;border-color:#f0d9dc;color:#a34450}
+.cargo-workspace .badge{font-size:10px;font-weight:700;padding:6px 10px;border-radius:6px;letter-spacing:.3px}
+.cargo-workspace :is(.modal-content,.p-dialog){border:1px solid var(--cn-line);border-radius:18px;box-shadow:0 24px 80px #152b4926}
+.cargo-workspace .modal-header{border-color:var(--cn-line);padding:20px 24px}
+.cargo-workspace .modal-body{padding:24px}
+.cargo-workspace .modal-footer{border-color:var(--cn-line);padding:16px 24px}
+.cargo-workspace .dashboard{padding-top:8px!important;background:var(--cn-bg)}
+.cargo-workspace .quick-actions>a{border-radius:15px;border-color:var(--cn-line);padding:21px}
+.cargo-workspace .stats article{border-radius:15px;border-color:var(--cn-line);position:relative;overflow:hidden}
+.cargo-workspace .stats article::before{content:"";position:absolute;left:0;top:22px;bottom:22px;width:3px;background:#168778;border-radius:0 3px 3px 0}
+.cargo-workspace .billing-card{background:linear-gradient(110deg,#f0f8f5,#fafdfc);border-color:#d2e7de}
+@media(max-width:767px){.cargo-workspace .card,.cargo-workspace .border.p-5{padding:18px!important;border-radius:12px!important}.cargo-workspace form>.container{padding:18px!important}.cargo-workspace :is(h4.text-center,h5.text-center){font-size:21px!important;margin-top:18px!important}.cargo-workspace :is(table,.table) :is(td,th){padding:11px 12px!important}.cargo-workspace app-header{margin-bottom:16px}.cargo-workspace :is(.container,.container-fluid){padding-left:16px;padding-right:16px}}
+@media(prefers-reduced-motion:reduce){.cargo-workspace *{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+}
+@media print{body{background:#fff;color:#000}app-header{display:none!important}.cargo-workspace{padding:0!important}}
 
+@media screen{
+.cargo-workspace .company-workspace-heading{display:grid;grid-template-columns:1fr auto;gap:8px 24px;background:#fff;border:1px solid var(--cn-line);border-radius:18px;padding:24px 28px;margin-bottom:24px;align-items:center}
+.cargo-workspace .workspace-eyebrow{grid-column:1/-1;font-size:9px;letter-spacing:1.7px;color:#7b8fa4;font-weight:750}
+.cargo-workspace .company-workspace-heading app-company-logo{display:inline-block}
+.cargo-workspace .company-workspace-heading p{font-size:12px;color:#8291a3;margin:8px 0 0}
+.cargo-workspace .select2-container .select2-selection--single{height:44px!important;border:1px solid #dce4ec!important;border-radius:9px!important;background:#fbfcfe!important}
+.cargo-workspace .select2-container .select2-selection__rendered{line-height:42px!important;padding-left:13px!important;font-size:13px!important;color:#243951!important}
+.cargo-workspace .select2-container .select2-selection__arrow{height:42px!important}
+.cargo-workspace :is(table,.table) a.text-white{color:#ba4a57!important}
+.cargo-workspace :is(table,.table) .fa-trash{color:#ba4a57!important}
+.cargo-workspace :is(table,.table) td.text-danger{color:#b44854!important}
+.cargo-workspace :is(table,.table) td.text-success{color:#187d60!important}
+.cargo-workspace form h6{font-size:13px;border-top:1px solid #e9eef3;padding-top:22px;margin:24px 0 14px!important;color:#2f5b64!important;letter-spacing:.1px}
+.cargo-workspace .cn-form-section{display:flex;align-items:center;gap:10px;border-top:1px solid #e8edf3;padding:22px 0 4px;margin:20px 0 14px;font-size:13px;font-weight:700;color:#334e68}
+.cargo-workspace .cn-form-section .section-number{display:grid;place-items:center;width:26px;height:26px;font-size:10px;background:#e9f4ef;color:#15786a;border:1px solid #dcece5;border-radius:7px}
+@media(max-width:600px){.cargo-workspace .company-workspace-heading{padding:20px;grid-template-columns:1fr}.cargo-workspace .company-workspace-heading>button{justify-self:start}}
+}
+
+@media screen{
+.cargo-workspace .shipment-search-wrap{padding:0;margin:0 0 20px}
+.cargo-workspace .shipment-search{display:grid;grid-template-columns:auto 165px minmax(180px,1fr) auto;align-items:center;gap:12px;padding:15px 18px;background:#fff;border:1px solid #e3eaf0;border-radius:12px;margin:0}
+.cargo-workspace .shipment-search-label{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:650;white-space:nowrap;color:#536c84}
+.cargo-workspace .shipment-search-label .pi{color:#168578;font-size:13px}
+.cargo-workspace .shipment-search-actions{display:flex;gap:8px}
+.cargo-workspace .booking-charges{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;padding:20px;background:#f7f9fb;border:1px solid #e4ebf1;border-radius:12px;margin-bottom:24px}
+.cargo-workspace .charge-field{min-width:0}.cargo-workspace .charge-field label{display:block}
+.cargo-workspace .charge-total{padding:12px;margin:-12px;background:#e9f5f0;border:1px solid #cde6da;border-radius:9px}
+.cargo-workspace .charge-total input{background:#fff!important;font-weight:750;color:#156c5b!important}
+@media(min-width:1400px){.cargo-workspace .booking-charges{grid-template-columns:repeat(7,minmax(0,1fr))}}
+@media(max-width:991px){.cargo-workspace .shipment-search{grid-template-columns:165px minmax(0,1fr)}.cargo-workspace .shipment-search-label{grid-column:1/-1}.cargo-workspace .shipment-search-actions{grid-column:1/-1;justify-content:flex-end}.cargo-workspace .booking-charges{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:575px){.cargo-workspace .shipment-search{grid-template-columns:1fr;padding:14px}.cargo-workspace .shipment-search-actions{grid-column:auto}.cargo-workspace .shipment-search-actions button{flex:1}.cargo-workspace .booking-charges{padding:15px;gap:18px 12px}.cargo-workspace .charge-total{margin:0;padding:10px;grid-column:1/-1}}
+}
+
+@media screen{.cargo-workspace :is(form,label,input,select,textarea,button,.shipment-search,.charge-field,.cn-form-section){font-family:Inter,"Segoe UI",Arial,sans-serif!important}.cargo-workspace .btn{white-space:nowrap}}
+
+@media screen{
+.cargo-workspace .branch-page-heading{margin:0 auto 18px;max-width:1350px}
+.cargo-workspace .branch-eyebrow{display:block;font-size:9px;letter-spacing:1.6px;font-weight:700;color:#7d91a6;margin-bottom:7px}
+.cargo-workspace .branch-page-heading h1{font-size:25px;margin:0 0 7px;letter-spacing:-.6px}
+.cargo-workspace .branch-page-heading p{font-size:12px;color:#7d8da1;margin:0}
+.cargo-workspace .branch-create-form>.container{max-width:1350px;margin-top:0;padding:24px!important}
+.cargo-workspace .branch-create-form .row{row-gap:19px}
+.cargo-workspace .branch-form-actions{display:flex;justify-content:space-between;align-items:center;gap:18px;border-top:1px solid #e5ecf2;margin-top:24px;padding-top:18px}
+.cargo-workspace .branch-form-actions>span{font-size:11px;color:#8a98a9}
+.cargo-workspace .required-star{color:#b84655}
+.cargo-workspace .branch-form-actions button{display:flex;align-items:center;gap:8px;min-width:150px;justify-content:center}
+@media(max-width:575px){.cargo-workspace .branch-create-form>.container{padding:18px!important}.cargo-workspace .branch-form-actions{flex-direction:column;align-items:stretch}.cargo-workspace .branch-form-actions button{width:100%}}
+}

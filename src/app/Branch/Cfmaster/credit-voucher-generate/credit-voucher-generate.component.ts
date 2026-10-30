@@ -1,3 +1,7 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -5,6 +9,8 @@ import { ToastrService } from 'ngx-toastr';
 import { BranchService } from 'src/app/service/branch.service';
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-credit-voucher-generate',
   templateUrl: './credit-voucher-generate.component.html',
   styleUrls: ['./credit-voucher-generate.component.scss']
@@ -15,25 +21,25 @@ export class CreditVoucherGenerateComponent {
   userList: any[] = [];
   showDropdown:boolean=true;
   searchTerm: string = '';
-  loading:boolean=true; 
+  loading:boolean=true;
   form1:FormGroup;
   constructor(private api:BranchService, private fb:FormBuilder, private toast:ToastrService, private router:Router){
      this.form = this.fb.group({
       fromDate: [this.getTodayDateString(), Validators.required],
       toDate: [this.getTodayDateString(), Validators.required],
-      senderName: [''],               
+      senderName: [''],
           });
 
           this.form1 = this.fb.group({
             fromDate: ['', ],
             toDate: ['', ],
-            grnNo: ['', ],   
+            grnNo: ['', ],
             creditForAgent: ['', ],
             fromBranch: ['', ],
-            toBranch: ['', ],    
+            toBranch: ['', ],
             consignor: ['', ],
             bookingStatus: ['', ],
-            charge: ['', ],                
+            charge: ['', ],
                 });
   }
 
@@ -54,9 +60,9 @@ export class CreditVoucherGenerateComponent {
       toDate: this.form.value.toDate,
       senderName: this.form.value.senderName,
     };
-  
+
     console.log('Final Payload:', payload);
-    
+
     this.api.LoadVouchers(payload).subscribe({
       next: (response: any) => {
         console.log('Parcel loaded successfully:', response);
@@ -74,11 +80,11 @@ export class CreditVoucherGenerateComponent {
             consignor: this.vldata[0]?.senderName,
             bookingStatus: this.vldata[0]?.bookingStatus,
             charge: this.vldata[0]?.grandTotal,
-            
+
           });
-  
+
         }
-        
+
       },
       error: (error: any) => {
         console.error('Parcel loading failed:', error);
@@ -100,7 +106,7 @@ export class CreditVoucherGenerateComponent {
       bookingStatus: this.form1.value.bookingStatus,
       charge: this.form1.value.charge,
     };
-  
+
     console.log('Final Payload:', payload);
     this.api.VoucherGenerate(payload).subscribe({
       next: (response: any) => {
@@ -140,7 +146,7 @@ export class CreditVoucherGenerateComponent {
       this.showDropdown = false;
     }
   }
-  
+
   selectUser(user: any): void {
     this.form.patchValue({
       senderName: user.name,
@@ -150,12 +156,12 @@ export class CreditVoucherGenerateComponent {
     });
     this.showDropdown = false;
   }
-  
+
   hideDropdown(): void {
     setTimeout(() => {
       this.showDropdown = false;
     }, 200); // Small delay to allow selection click
   }
-  
+
 
 }

@@ -1,3 +1,10 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
+import { FooterComponent } from '../../../USER/footer/footer.component';
+import { DialogModule } from 'primeng/dialog';
+import { ButtonModule } from 'primeng/button';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -6,6 +13,8 @@ import { MessageService } from 'primeng/api';
 import { AdminService } from 'src/app/service/admin.service';
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent, FooterComponent, DialogModule, ButtonModule],
   selector: 'app-add-dispatch-type',
   templateUrl: './add-dispatch-type.component.html',
   styleUrls: ['./add-dispatch-type.component.scss']
@@ -28,12 +37,12 @@ export class AddDispatchTypeComponent {
               this.form = this.fb.group({
                 name: ['', Validators.required],
                   });
-  
+
                   this.form1 = this.fb.group({
                     name: ['', ],
                       });
           }
-        
+
           ngOnInit(){
             this.api.GetDispatchtypeData().subscribe((res:any)=>{
                 console.log(res);
@@ -41,19 +50,19 @@ export class AddDispatchTypeComponent {
                 this.loading=false;
             })
           }
-        
+
           Add() {
             const payload = {
               name: this.form.value.name,
             };
-          
+
             console.log('Final Payload:', payload);
-            
+
             this.api.createdispatch(payload).subscribe({
               next: (response: any) => {
                 console.log('Parcel loaded successfully:', response);
                 this.toastr.success('Create Dispatch Type successfully', 'Success');
-  
+
                 setTimeout(() => {
                  this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
                    this.router.navigate(['/adddispatchtype']);
@@ -64,11 +73,11 @@ export class AddDispatchTypeComponent {
                 console.error('Create Dispatch type failed:', error);
                 // alert('Create City Failed. Please try again.');
                 this.toastr.error('Create Dispatch Failed!', 'Error');
-  
+
               },
             });
           }
-  
+
           edit(id:any) {
             console.log(this.form1.value);
             if (this.form1.valid) {
@@ -96,10 +105,10 @@ export class AddDispatchTypeComponent {
                 },
               );
             }
-        
+
             return false;
           }
-  
+
           Delete(id:any) {
             this.api.Deletedispatch(id).subscribe(
               (a: any) => {

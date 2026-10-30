@@ -1,3 +1,7 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
 import {
   Component,
   ElementRef,
@@ -12,6 +16,8 @@ import { BranchService } from 'src/app/service/branch.service';
 
 declare var $: any;
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-sub-status-date-different',
   templateUrl: './sub-status-date-different.component.html',
   styleUrls: ['./sub-status-date-different.component.scss']
@@ -19,7 +25,7 @@ declare var $: any;
 export class SubStatusDateDifferentComponent implements OnInit, AfterViewInit  {
     @ViewChild('selectElem') selectElem!: ElementRef;
     @ViewChild('selectElem2') selectElem2!: ElementRef;
-  
+
     form: FormGroup;
     citydata: any;
     branchdata: any;
@@ -28,7 +34,7 @@ export class SubStatusDateDifferentComponent implements OnInit, AfterViewInit  {
   fromCityValue: any;
   filteredCityList: any;
   pdata: any;
-  
+
     constructor(
       private fb: FormBuilder,
       private api: BranchService,
@@ -43,7 +49,7 @@ export class SubStatusDateDifferentComponent implements OnInit, AfterViewInit  {
         bookingStatus: ['', Validators.required],
       });
     }
-  
+
     ngOnInit() {
       this.getProfileData();
       this.api.GetCities().subscribe((res: any) => {
@@ -52,7 +58,7 @@ export class SubStatusDateDifferentComponent implements OnInit, AfterViewInit  {
 
         console.log('citydata:', this.citydata);
       });
-  
+
       this.api.GetBranch().subscribe((res: any) => {
         this.branchdata = res;
         console.log('branchdata:', this.branchdata);
@@ -65,9 +71,9 @@ export class SubStatusDateDifferentComponent implements OnInit, AfterViewInit  {
         this.filteredCityList = this.citydata.filter(
           (city: { cityName: any }) => city.cityName === this.fromCityValue
         );
-    
+
         this.form.patchValue({ fromCity: this.fromCityValue });
-  
+
         // Trigger form change logic if needed
         this.onFromcitySelect({ target: { value: this.fromCityValue } });
           setTimeout(() => {
@@ -94,7 +100,7 @@ export class SubStatusDateDifferentComponent implements OnInit, AfterViewInit  {
         this.pdata = [];
       }
     }
-  
+
     ngAfterViewInit(): void {
       setTimeout(() => {
         $(this.selectElem.nativeElement).select2();
@@ -102,7 +108,7 @@ export class SubStatusDateDifferentComponent implements OnInit, AfterViewInit  {
           const selectedCity = event.params.data.id;
           this.form.patchValue({ fromCity: selectedCity });
         });
-  
+
         $(this.selectElem2.nativeElement).select2();
         $(this.selectElem2.nativeElement).on('select2:select', (event: any) => {
           const selectedToCity = event.params.data.id;
@@ -110,7 +116,7 @@ export class SubStatusDateDifferentComponent implements OnInit, AfterViewInit  {
         });
       }, 0);
     }
-  
+
     getTodayDateString(): string {
       const today = new Date();
       const day = ('0' + today.getDate()).slice(-2);
@@ -118,31 +124,31 @@ export class SubStatusDateDifferentComponent implements OnInit, AfterViewInit  {
       const year = today.getFullYear();
       return `${year}-${month}-${day}`; // ✔ HTML date input format
     }
-    
-  
-   
+
+
+
     StatusDate() {
       const payload = this.form.value;
       console.log('payload:', payload);
-    
+
       this.api.ParcelStatusdateReport(payload).subscribe({
         next: (res: any) => {
           console.log('data:', res);
-    
+
           const successMessage = res?.message || 'Report fetched successfully';
           this.toast.success(successMessage);
-    
+
           this.gstdata = res;
-    
+
           const finalData = {
             ...this.gstdata,
             fromDate: payload.startDate,
             toDate: payload.endDate
           };
-    
+
           // Store data in localStorage or sessionStorage
           localStorage.setItem('dateReportData', JSON.stringify(finalData));
-    
+
           // Open new tab to the target route
           window.open('/datereport', '_blank');
         },
@@ -153,9 +159,8 @@ export class SubStatusDateDifferentComponent implements OnInit, AfterViewInit  {
         }
       });
     }
-    
-    
-  
-    
-  }  
-  
+
+
+
+
+  }

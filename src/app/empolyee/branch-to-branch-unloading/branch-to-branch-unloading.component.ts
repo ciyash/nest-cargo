@@ -1,3 +1,8 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../USER/header/header.component';
+import { ToastModule } from 'primeng/toast';
 
 import { Component,ViewChild,ElementRef } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -7,6 +12,8 @@ import { ToastrService } from 'ngx-toastr';
 declare var $: any;
 declare const SlimSelect: any;
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent, ToastModule],
   selector: 'app-branch-to-branch-unloading',
   templateUrl: './branch-to-branch-unloading.component.html',
   styleUrls: ['./branch-to-branch-unloading.component.scss']
@@ -14,7 +21,7 @@ declare const SlimSelect: any;
 export class BranchToBranchUnloadingComponent {
   @ViewChild('toBranch') toBranch!: ElementRef;
 
-     citydata: any = []; 
+     citydata: any = [];
       form: FormGroup;
       vdata:any;
       data:any;
@@ -32,7 +39,7 @@ export class BranchToBranchUnloadingComponent {
           fromBranch: ['', Validators.required],
           toBranch: ['', Validators.required]
         });
-    
+
         this.form1 = this.fb.group({
           lrNumber: this.fb.array([], ),
           grnNo: this.fb.array([], ),
@@ -42,9 +49,9 @@ export class BranchToBranchUnloadingComponent {
           unloadBranch:['', ],
           remarks: ['', Validators.required],
         });
-    
+
       }
-    
+
       ngOnInit() {
         this.api.GetBranch().subscribe({
           next: (res: any) => {
@@ -63,8 +70,8 @@ export class BranchToBranchUnloadingComponent {
         // })
         this.getProfileData();
       }
-  
-     
+
+
       getTodayDateString(): string {
         const today = new Date();
         const year = today.getFullYear();
@@ -72,8 +79,8 @@ export class BranchToBranchUnloadingComponent {
         const day = ('0' + today.getDate()).slice(-2);
         return `${year}-${month}-${day}`; // yyyy-MM-dd
       }
-    
-      
+
+
       ngAfterViewInit(): void {
         setTimeout(() => {
           // To Branch select2
@@ -85,31 +92,31 @@ export class BranchToBranchUnloadingComponent {
           });
         }, 0);
       }
-      
-  
+
+
       loaddata() {
         if (this.form.invalid) {
-  
+
           return;
         }
-      
+
         const payload = {
           fromLoadingDate: this.form.value.fromLoadingDate,
           toLoadingDate: this.form.value.toLoadingDate,
           fromBranch: this.form.value.fromBranch,
           toBranch: this.form.value.toBranch,
         };
-      
+
         console.log('Final Payload:', payload);
-      
+
         this.api.postBranchtobranchUnLoadingFilter(payload).subscribe({
           next: (response: any) => {
             console.log('loaded successfully:', response);
             this.toast.success('ParcelBranch to Branch Unloaded Successfully', 'Success');
-  
+
             this.data = response;
             this.LoadSuccess = true;
-      
+
             if (this.data.length > 0) {
               this.form1.patchValue({
                 fromDate: payload.fromLoadingDate,
@@ -117,7 +124,7 @@ export class BranchToBranchUnloadingComponent {
                 branch: payload.fromBranch,
                 unloadBranch: payload.toBranch,
               });
-      
+
               this.setFormArray('grnNo', this.data.map((d: any) => d.grnNo));
               this.setFormArray('lrNumber', this.data.map((d: any) => d.lrNumber));
             }
@@ -125,27 +132,27 @@ export class BranchToBranchUnloadingComponent {
           error: (error: any) => {
             console.error('loading failed:', error);
             this.toast.error('NO Parcel Loading. Please try again.', 'failed');
-  
+
           },
         });
       }
-      
-  
-    
-    
-    
+
+
+
+
+
        setFormArray(controlName: string, values: any[]) {
           const formArray = this.form1.get(controlName) as FormArray;
           formArray.clear(); // ✅ Clear previous values
-        
+
           values.forEach(value => {
             formArray.push(this.fb.control(value));
           });
         }
-    
+
         onGrnNoChange(event: any, grnNo: string) {
           const formArray = this.form1.get('grnNo') as FormArray;
-        
+
           if (event.target.checked) {
             // Add if not already selected
             if (!formArray.value.includes(grnNo)) {
@@ -158,16 +165,16 @@ export class BranchToBranchUnloadingComponent {
               formArray.removeAt(index);
             }
           }
-        
+
           // ✅ Update "Select All" status based on selected values
           this.allSelected = this.data.length === formArray.value.length;
           console.log('Selected GRN Numbers:', formArray.value);
         }
-        
+
         // ✅ Handle "Select All" checkbox
         onSelectAllChange(event: any) {
           const formArray = this.form1.get('grnNo') as FormArray;
-        
+
           if (event.target.checked) {
             // ✅ Select all if checked
             this.data.forEach((row:any) => {
@@ -179,12 +186,12 @@ export class BranchToBranchUnloadingComponent {
             // ✅ Deselect all if unchecked
             formArray.clear();
           }
-        
+
           // ✅ Update "Select All" status
           this.allSelected = event.target.checked;
           console.log('All GRN Numbers Selected:', formArray.value);
         }
-    
+
         ParcelLoad() {
           const payload = {
             grnNo: this.form1.value.grnNo,
@@ -195,9 +202,9 @@ export class BranchToBranchUnloadingComponent {
             unloadBranch:this.form1.value.unloadBranch,
             remarks: this.form1.value.remarks,
           };
-        
+
           console.log('Final Payload:', payload);
-          
+
           this.api.BranchtobranchUnLoading(payload).subscribe({
             next: (response: any) => {
               console.log('Parcel loaded successfully:', response);
@@ -221,16 +228,15 @@ export class BranchToBranchUnloadingComponent {
             this.pfdata = res.branchId.city;
             this.profileData = res;
             console.log("profileData:", this.profileData);
-        
+
             // Update form controls with profile data
             this.form.patchValue({
               fromCity: this.pfdata || '', // Set fromCity to the city from branchId
               fromBranch: this.ffdata?.branchUniqueId || '' // Set pickUpBranch to branchUniqueId
             });
-        
-    
+
+
           });
         }
-  
+
   }
-  

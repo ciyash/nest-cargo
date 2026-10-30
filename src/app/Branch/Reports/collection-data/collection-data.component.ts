@@ -1,7 +1,11 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { BranchService } from 'src/app/service/branch.service';
-import * as XLSX from 'xlsx';
+import type * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute } from '@angular/router';
@@ -12,6 +16,8 @@ declare const SlimSelect: any;
 
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-collection-data',
   templateUrl: './collection-data.component.html',
   styleUrls: ['./collection-data.component.scss']
@@ -22,7 +28,7 @@ export class CollectionDataComponent {
   pfdata: any;
   today = new Date();
 
-  constructor(private router: Router, private api: 
+  constructor(private router: Router, private api:
     BranchService, private toast: ToastrService,private route: ActivatedRoute) {
     }
 
@@ -41,10 +47,10 @@ export class CollectionDataComponent {
         this.toast.error('No collection data found.');
       }
     }
-    
-  
-    
-  
+
+
+
+
   getProfileData() {
     this.api.GetProfileData().subscribe((res: any) => {
       this.pfdata = res;
@@ -66,40 +72,40 @@ export class CollectionDataComponent {
                 font-family: Arial, sans-serif;
                 margin: 20px;
               }
-  
+
               table {
                 width: 100%;
                 border-collapse: collapse;
                 font-size: 12px;
               }
-  
+
               th, td {
                 border: 1px solid #000;
                 padding: 4px;
                 text-align: center;
               }
-  
+
               h4, h6, p {
                 margin: 4px 0;
               }
-  
+
               .text-center {
                 text-align: center;
               }
-  
+
               .fw-bold {
                 font-weight: bold;
               }
-  
+
               .text-decoration-underline {
                 text-decoration: underline;
               }
-  
+
               .d-flex {
                 display: flex;
                 justify-content: space-between;
               }
-  
+
               @media print {
                 .no-print {
                   display: none;
@@ -116,7 +122,8 @@ export class CollectionDataComponent {
     }
   }
 
-exportToExcel(): void {
+async exportToExcel(): Promise<void> {
+    const XLSX = await import('xlsx');
   const exportData: any[] = [];
 
   // 1. Header Information
@@ -195,6 +202,5 @@ exportToExcel(): void {
 
 
 
-  
-}
 
+}

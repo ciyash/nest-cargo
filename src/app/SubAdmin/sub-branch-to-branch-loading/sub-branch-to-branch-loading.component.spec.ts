@@ -8,7 +8,7 @@ describe('SubBranchToBranchLoadingComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [SubBranchToBranchLoadingComponent]
+      imports: [SubBranchToBranchLoadingComponent]
     });
     fixture = TestBed.createComponent(SubBranchToBranchLoadingComponent);
     component = fixture.componentInstance;

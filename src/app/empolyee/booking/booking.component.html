@@ -1,6 +1,7 @@
 <app-header></app-header>
+<div class="container"><app-billing></app-billing></div>
 <div class="container">
-    <app-search-grn-number></app-search-grn-number>
+    <app-search-grn-number [embedded]="true"></app-search-grn-number>
 </div>
 <h4 class="text-center  " style="color: #3C3C3C;
 font-size: 20px;
@@ -11,6 +12,7 @@ word-wrap: break-word">Parcel Booking</h4>
 <div class="container mt-4">
     <div class="card p-4">
         <form [formGroup]="form">
+<div class="cn-form-section" style="border-top:0;margin-top:0;padding-top:0"><span class="section-number">01</span>Shipment route &amp; booking details</div>
             <div *ngIf="bookingSuccess" class="alert alert-success alert-dismissible fade show" role="alert">
                 Successfully created booking!
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -84,7 +86,7 @@ word-wrap: break-word">Parcel Booking</h4>
             </div>
 
 
-            <h6 class="mt-0 text-success">Items</h6>
+            <div class="cn-form-section"><span class="section-number">02</span>Package details</div>
             <div formArrayName="packages">
                 <div class="table-responsive">
                     <table class="table table-striped">
@@ -142,30 +144,8 @@ word-wrap: break-word">Parcel Booking</h4>
                 </div>
             </div>
             <!-- <button type="button" class="btn btn-danger btn-sm" (click)="addOrderItem()">Add +</button> -->
-            <tr style="font-size: small;">
-                <!-- <button type="button" class="btn btn-danger btn-sm" (click)="addOrderItem()">Add +</button> -->
-            <tr style="font-size: 13px;">
-                <th>GSt(+)</th>
-                <th>Service Charges(+)</th>
-                <th>Hamali Charges(+)</th>
-                <th>Door Delivery Charges(+)</th>
-                <th>Door Pickup Charges(+)</th>
-                <th>Value of Goods</th>
-                <th>Grand Total</th>
-            </tr>
-            <tr>
-                <th><input type="number" class="form-control form-select-sm" readonly></th>
-                <th><input type="number" class="form-control form-select-sm" value="{{sdata}}"
-                        formControlName="serviceCharges" (input)="calculateGrandTotal()"></th>
-                <th><input type="number" class="form-control form-select-sm" formControlName="hamaliCharges"
-                        (input)="calculateGrandTotal()"></th>
-                <th><input type="number" class="form-control form-select-sm" formControlName="doorDeliveryCharges"
-                        (input)="calculateGrandTotal()"></th>
-                <th><input type="number" class="form-control form-select-sm" formControlName="doorPickupCharges"
-                        (input)="calculateGrandTotal()"></th>
-                <th><input type="number" class="form-control form-select-sm" formControlName="valueOfGoods"></th>
-                <th><input type="number" class="form-control form-select-sm" formControlName="grandTotal" readonly></th>
-            </tr>
+            <div class="cn-form-section"><span class="section-number">03</span>Charges &amp; payment summary</div><div class="booking-charges"><div class="charge-field "><label for="booking-tax">GST</label><input id="booking-tax" type="number" class="form-control"   readonly></div><div class="charge-field "><label for="booking-service">Service charges</label><input id="booking-service" value="{{sdata}}" type="number" class="form-control" formControlName="serviceCharges" (input)="calculateGrandTotal()" ></div><div class="charge-field "><label for="booking-hamali">Hamali charges</label><input id="booking-hamali" type="number" class="form-control" formControlName="hamaliCharges" (input)="calculateGrandTotal()" ></div><div class="charge-field "><label for="booking-delivery">Door delivery</label><input id="booking-delivery" type="number" class="form-control" formControlName="doorDeliveryCharges" (input)="calculateGrandTotal()" ></div><div class="charge-field "><label for="booking-pickup">Door pickup</label><input id="booking-pickup" type="number" class="form-control" formControlName="doorPickupCharges" (input)="calculateGrandTotal()" ></div><div class="charge-field "><label for="booking-value">Value of goods</label><input id="booking-value" type="number" class="form-control" formControlName="valueOfGoods"  ></div><div class="charge-field charge-total"><label for="booking-total">Grand total</label><input id="booking-total" type="number" class="form-control" formControlName="grandTotal"  readonly></div></div>
+
 
             <div class="container mt-0">
                 <div class="row">

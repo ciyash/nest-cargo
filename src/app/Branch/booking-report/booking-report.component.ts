@@ -1,3 +1,11 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../USER/header/header.component';
+import { PrintGrnNumberComponent } from '../print-grn-number/print-grn-number.component';
+import { SearchGrnNumberComponent } from '../Widgets/search-grn-number/search-grn-number.component';
+import { TableModule } from 'primeng/table';
+import { DialogModule } from 'primeng/dialog';
 // import { Component } from '@angular/core';
 // import { Router } from '@angular/router';
 // import { ColumnFilter } from 'primeng/table';
@@ -9,6 +17,7 @@
 // }
 
 // @Component({
+
 //   selector: 'app-booking-report',
 //   templateUrl: './booking-report.component.html',
 //   styleUrls: ['./booking-report.component.scss']
@@ -36,45 +45,45 @@
 //   getbookingData() {
 //     this.api.GetBookings().subscribe((res: any) => {
 //       console.log(res);
-      
+
 //       if (Array.isArray(res.data)) {  // Ensure it's an array
 //         this.data1 = res.data;
 //       } else {
 //         console.error("Error: Expected an array but received", res.data);
 //         this.data1 = [];  // Prevent issues
 //       }
-  
+
 //       this.loading = false;
 //     });
 //   }
-  
-  
+
+
 
 //   orderinvoice(id:any){
 //     this.router.navigate(['/printgrn/'+id]);
 //   }
 
- 
-  
+
+
 //   loadUsers(event: any) {
-//     const first = event.first;  
-//     const rows = event.rows;    
-//     const page = Math.floor(first / rows) + 1; 
-//     const perPage = rows;  
-  
+//     const first = event.first;
+//     const rows = event.rows;
+//     const page = Math.floor(first / rows) + 1;
+//     const perPage = rows;
+
 //     this.api.BookingsPage(page, perPage).subscribe((res: any) => {
 //       console.log(res);
-      
+
 //       if (Array.isArray(res.bookings)) {  // Ensure `res.data` is an array
-//         this.data1 = res.bookings; 
-//         this.totalBookings = res.totalBookings; 
+//         this.data1 = res.bookings;
+//         this.totalBookings = res.totalBookings;
 //       } else {
 //         console.error("Error: Expected an array but received", res.bookings);
 //         this.data1 = [];  // Set an empty array to prevent issues
 //       }
 //     });
 //   }
-  
+
 // }
 
 import { Component } from '@angular/core';
@@ -82,6 +91,8 @@ import { Router } from '@angular/router';
 import { BranchService } from 'src/app/service/branch.service';
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent, PrintGrnNumberComponent, SearchGrnNumberComponent, TableModule, DialogModule],
   selector: 'app-booking-report',
   templateUrl: './booking-report.component.html',
   styleUrls: ['./booking-report.component.scss'],
@@ -153,4 +164,3 @@ export class BookingReportComponent {
     console.log(this.repd);
   }
 }
-

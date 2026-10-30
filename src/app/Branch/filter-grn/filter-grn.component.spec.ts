@@ -8,7 +8,7 @@ describe('FilterGrnComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [FilterGrnComponent]
+      imports: [FilterGrnComponent]
     });
     fixture = TestBed.createComponent(FilterGrnComponent);
     component = fixture.componentInstance;

@@ -8,7 +8,7 @@ describe('ParcelLoadingOfflineReportComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [ParcelLoadingOfflineReportComponent]
+      imports: [ParcelLoadingOfflineReportComponent]
     });
     fixture = TestBed.createComponent(ParcelLoadingOfflineReportComponent);
     component = fixture.componentInstance;

@@ -8,7 +8,7 @@ describe('SubDashboardComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [SubDashboardComponent]
+      imports: [SubDashboardComponent]
     });
     fixture = TestBed.createComponent(SubDashboardComponent);
     component = fixture.componentInstance;

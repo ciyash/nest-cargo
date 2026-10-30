@@ -8,7 +8,7 @@ describe('SubDashboardBookingComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [SubDashboardBookingComponent]
+      imports: [SubDashboardBookingComponent]
     });
     fixture = TestBed.createComponent(SubDashboardBookingComponent);
     component = fixture.componentInstance;

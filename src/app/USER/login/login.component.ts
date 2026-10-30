@@ -1,13 +1,18 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AdminService } from 'src/app/service/admin.service';
 import { AuthService } from 'src/app/service/auth.service';
 import { TokenService } from 'src/app/service/token.service';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule],
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
@@ -22,6 +27,7 @@ export class LoginComponent implements OnInit {
   isLoading: boolean = false; // Spinner flag
 
   constructor(
+    private route: ActivatedRoute,
     private fb: FormBuilder,
     private authService: AuthService,
     private token: TokenService,
@@ -97,7 +103,7 @@ export class LoginComponent implements OnInit {
 
       case 'subadmin':
         return '/sub-booking';
-        
+
       case 'employee':
         return '/employee-booking';
       default:

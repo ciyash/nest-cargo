@@ -8,7 +8,7 @@ describe('ParcelCancelComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [ParcelCancelComponent]
+      imports: [ParcelCancelComponent]
     });
     fixture = TestBed.createComponent(ParcelCancelComponent);
     component = fixture.componentInstance;

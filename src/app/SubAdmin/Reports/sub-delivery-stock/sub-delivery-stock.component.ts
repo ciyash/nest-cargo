@@ -1,12 +1,18 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
 import { Component, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { BranchService } from 'src/app/service/branch.service';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import * as XLSX from 'xlsx';
+import type * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 declare var $: any;
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-sub-delivery-stock',
   templateUrl: './sub-delivery-stock.component.html',
   styleUrls: ['./sub-delivery-stock.component.scss']
@@ -17,8 +23,8 @@ export class SubDeliveryStockComponent {
     @ViewChild('pickupbranch') pickupbranch!: ElementRef;
     @ViewChild('selectElem2') selectElem2!: ElementRef;
     @ViewChild('droupbranch') droupbranch!: ElementRef;
-  
-  
+
+
     onPickupBranchSelect: any;
     onDropBranchSelect: any;
       form!: FormGroup;
@@ -27,7 +33,7 @@ export class SubDeliveryStockComponent {
       branchdata: any;
       allgetvechicle: any;
       pfdata: any;
-      today = new Date(); 
+      today = new Date();
       payload: any;
     pdata: any;
     tbcdata: any;
@@ -48,7 +54,7 @@ export class SubDeliveryStockComponent {
           dropBranch: [''],
         });
       }
-    
+
       getTodayDateString(): string {
         const today = new Date();
         const day = ('0' + today.getDate()).slice(-2);
@@ -56,26 +62,26 @@ export class SubDeliveryStockComponent {
         const year = today.getFullYear();
         return `${year}-${month}-${day}`; // ✔ HTML date input format
       }
-      
-    
+
+
       ngOnInit() {
         // Fetch cities
         this.api.GetCities().subscribe((res: any) => {
           console.log('citydata', res);
-          
+
           this.citydata = res;
           this.getProfileData();
 
         });
-    
+
         // Fetch branches
-  
+
         this.api.GetBranch().subscribe((res: any) => {
           this.branchdata = res;
           console.log('branchdata:', this.branchdata);
         });
-  
-    
+
+
         // Fetch vehicles
         this.api.VehicleData().subscribe((res: any) => {
           console.log('allvechicle:', res);
@@ -83,7 +89,7 @@ export class SubDeliveryStockComponent {
         });
         this.getProfileData();
       }
-  
+
       getProfileData() {
         this.api.GetProfileData().subscribe((res: any) => {
           this.fromCityValue = res.branchId.city;
@@ -93,9 +99,9 @@ export class SubDeliveryStockComponent {
           );
           this.pfdata = res;
 
-      
+
           this.form.patchValue({ fromCity: this.fromCityValue });
-    
+
           // Trigger form change logic if needed
           this.onFromcitySelect({ target: { value: this.fromCityValue } });
             setTimeout(() => {
@@ -106,7 +112,7 @@ export class SubDeliveryStockComponent {
           }, 0);
         });
       }
-  
+
       DeliveryReport() {
         this.payload = {
           fromDate: this.form.value.fromDate,
@@ -116,30 +122,30 @@ export class SubDeliveryStockComponent {
           pickUpBranch: this.form.value.pickUpBranch,
           dropBranch: this.form.value.dropBranch,
         };
-      
+
         console.log("payload:", this.payload);
-      
+
         // 🧹 Clear previous data before making the API call
         this.reportData = [];
         this.Bdata = null;
-      
+
         this.api.DeliveryStockReport(this.payload).subscribe(
           (res: any) => {
-             
+
           console.log("res:",res);
           this.reportData=res.deliveries
           this.summmaryData=res.summary
           this.Bdata=res.summary.bookingTypeSummary
-  
+
           console.log("data:",this.reportData)
-          
+
           const finalData = {
             ...this.reportData,
             fromDate: this.payload.fromDate,
             toDate: this.payload.toDate
           };
-            
-      
+
+
           },
           (error) => {
             console.error('API Error:', error);
@@ -149,12 +155,12 @@ export class SubDeliveryStockComponent {
           }
         );
       }
-      
-      
-      
-    
- 
-  
+
+
+
+
+
+
       ngAfterViewInit(): void {
         setTimeout(() => {
           // From City
@@ -165,7 +171,7 @@ export class SubDeliveryStockComponent {
             this.form.patchValue({ fromCity: selectedCity });
             this.onFromcitySelect({ target: { value: selectedCity } });
           });
-      
+
           // Pickup Branch
           $(this.pickupbranch.nativeElement).select2();
           $(this.pickupbranch.nativeElement).val('all').trigger('change'); // ✅
@@ -173,9 +179,9 @@ export class SubDeliveryStockComponent {
             const selectedBranch = event.params.data.id;
             this.form.patchValue({ pickUpBranch: selectedBranch });
             this.onPickupBranchSelect({ target: { value: selectedBranch } });
-            
+
           });
-      
+
           // To City
           $(this.selectElem2.nativeElement).select2();
           $(this.selectElem2.nativeElement).val('all').trigger('change'); // ✅
@@ -184,7 +190,7 @@ export class SubDeliveryStockComponent {
             this.form.patchValue({ toCity: selectedToCity });
             this.onTocitySelect({ target: { value: selectedToCity } });
           });
-      
+
           // Drop Branch
           $(this.droupbranch.nativeElement).select2();
           $(this.droupbranch.nativeElement).val('all').trigger('change'); // ✅
@@ -195,7 +201,7 @@ export class SubDeliveryStockComponent {
           });
         }, 0);
       }
-      
+
       onFromcitySelect(event: any) {
         const cityName = event.target.value;
         if (cityName) {
@@ -212,7 +218,7 @@ export class SubDeliveryStockComponent {
           this.pdata = [];
         }
       }
-    
+
       onTocitySelect(event: any) {
         console.log('Event triggered:', event);
         console.log('Selected City:', event.target.value);
@@ -221,7 +227,7 @@ export class SubDeliveryStockComponent {
           this.api.GetBranchbyCity(cityName).subscribe(
             (res: any) => {
               console.log('Branches for selected city:', res);
-    
+
               this.tbcdata = res;
             },
             (error: any) => {
@@ -247,40 +253,40 @@ export class SubDeliveryStockComponent {
                     font-family: Arial, sans-serif;
                     margin: 20px;
                   }
-      
+
                   table {
                     width: 100%;
                     border-collapse: collapse;
                     font-size: 12px;
                   }
-      
+
                   th, td {
                     border: 1px solid #000;
                     padding: 4px;
                     text-align: center;
                   }
-      
+
                   h4, h6, p {
                     margin: 4px 0;
                   }
-      
+
                   .text-center {
                     text-align: center;
                   }
-      
+
                   .fw-bold {
                     font-weight: bold;
                   }
-      
+
                   .text-decoration-underline {
                     text-decoration: underline;
                   }
-      
+
                   .d-flex {
                     display: flex;
                     justify-content: space-between;
                   }
-      
+
                   @media print {
                     .no-print {
                       display: none;
@@ -296,11 +302,12 @@ export class SubDeliveryStockComponent {
           popupWin!.document.close();
         }
       }
-    
-  
-  exportToExcel(): void {
+
+
+  async exportToExcel(): Promise<void> {
+    const XLSX = await import('xlsx');
     const data: any[][] = [];
-  
+
     // 1. Header Info
     data.push([`Company: ${this.pfdata?.companyName || ''}`]);
     data.push([`Address: ${this.pfdata?.location || ''} - ${this.pfdata?.branchId?.name || ''} | Phone No: ${this.pfdata?.phone || ''}`]);
@@ -312,7 +319,7 @@ export class SubDeliveryStockComponent {
       `Print Date: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`
     ]);
     data.push([]); // empty row
-  
+
     // 2. Table Header for Report Data
     data.push([
       'No',
@@ -326,7 +333,7 @@ export class SubDeliveryStockComponent {
       'Pkgs',
       'Total Amount'
     ]);
-  
+
     // 3. Report Data Rows
     this.reportData?.forEach((item: any, index: number) => {
       data.push([
@@ -342,9 +349,9 @@ export class SubDeliveryStockComponent {
         item.Amount
       ]);
     });
-  
+
     data.push([]); // space between tables
-  
+
     // 4. WB Summary Table Headers
     data.push([
       'Sr. No',
@@ -354,7 +361,7 @@ export class SubDeliveryStockComponent {
       'Other Charges',
       'Net Amount'
     ]);
-  
+
     // 5. WB Summary Data (Paid / ToPay)
     let rowIndex = 1;
     if (this.Bdata?.Paid) {
@@ -367,7 +374,7 @@ export class SubDeliveryStockComponent {
         this.Bdata.Paid.netAmount
       ]);
     }
-  
+
     if (this.Bdata?.ToPay) {
       data.push([
         rowIndex++,
@@ -378,7 +385,7 @@ export class SubDeliveryStockComponent {
         this.Bdata.ToPay.netAmount
       ]);
     }
-  
+
     // 6. Grand Total Row
     if (this.summmaryData) {
       data.push([
@@ -390,15 +397,15 @@ export class SubDeliveryStockComponent {
         this.summmaryData.totalNetAmount
       ]);
     }
-  
+
     // 7. Convert and export
     const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(data);
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Delivered Report');
-  
+
     XLSX.writeFile(wb, `Delivered_Report_${new Date().getTime()}.xlsx`);
   }
-  
-      
-      
-    }    
+
+
+
+    }

@@ -1,10 +1,16 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../USER/header/header.component';
 import { Component,ViewChild,ElementRef } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BranchService } from 'src/app/service/branch.service';
 declare var $: any;
-declare const SlimSelect: any; 
+declare const SlimSelect: any;
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-voucher-details-list',
   templateUrl: './voucher-details-list.component.html',
   styleUrls: ['./voucher-details-list.component.scss']
@@ -12,7 +18,7 @@ declare const SlimSelect: any;
 export class VoucherDetailsListComponent {
   @ViewChild('selectElem2') selectElem2!: ElementRef;
 
-       citydata: any = []; // Ensure it's initialized to prevent undefined 
+       citydata: any = []; // Ensure it's initialized to prevent undefined
         form: FormGroup;
         vdata:any;
         data1:any = [];ffdata: any;
@@ -36,7 +42,7 @@ export class VoucherDetailsListComponent {
             fromBranch: ['', ],
           });
         }
-      
+
         ngOnInit() {
           this.getProfileData();
           this.api.GetBranch().subscribe({
@@ -54,13 +60,13 @@ export class VoucherDetailsListComponent {
             console.log('citydata',res);
             this.citydata=res;
         });
-       
+
         }
 
         ngAfterViewInit(): void {
           setTimeout(() => {
-      
-        
+
+
             // Initialize Select2 for To City
             $(this.selectElem2.nativeElement).select2();
             $(this.selectElem2.nativeElement).on('select2:select', (event: any) => {
@@ -74,7 +80,7 @@ export class VoucherDetailsListComponent {
         }
 
 
-  
+
         getTodayDateString(): string {
           const today = new Date();
           const year = today.getFullYear();
@@ -82,21 +88,21 @@ export class VoucherDetailsListComponent {
           const day = ('0' + today.getDate()).slice(-2);
           return `${year}-${month}-${day}`; // yyyy-MM-dd
         }
-      
-   
-      
+
+
+
          setFormArray(controlName: string, values: any[]) {
             const formArray = this.form.get(controlName) as FormArray;
             formArray.clear(); // ✅ Clear previous values
-          
+
             values.forEach(value => {
               formArray.push(this.fb.control(value));
             });
           }
-      
+
           onGrnNoChange(event: any, grnNo: string) {
             const formArray = this.form.get('grnNo') as FormArray;
-          
+
             if (event.target.checked) {
               // Add if not already selected
               if (!formArray.value.includes(grnNo)) {
@@ -109,13 +115,13 @@ export class VoucherDetailsListComponent {
                 formArray.removeAt(index);
               }
             }
-          
+
             // ✅ Update "Select All" status based on selected values
             this.allSelected = this.data1.length === formArray.value.length;
             console.log('Selected GRN Numbers:', formArray.value);
           }
-          
-          
+
+
           VoucherLoad() {
             const payload = {
               fromDate: this.form.value.fromDate,
@@ -125,15 +131,15 @@ export class VoucherDetailsListComponent {
               toCity: this.form.value.toCity,
               fromBranch: this.form.value.fromBranch,
             };
-          
+
             console.log('Final Payload:', payload);
-            
+
             this.api.ParcelVouchersDetails(payload).subscribe({
               next: (response: any) => {
                 console.log('Parcel loaded successfully:', response);
                 // alert('Parcel Loaded Successfully!');
                 this.data1=response;
-                
+
               },
               error: (error: any) => {
                 console.error('Parcel loading failed:', error);
@@ -141,7 +147,7 @@ export class VoucherDetailsListComponent {
               },
             });
           }
-  
+
             getvouchersdata(id:any){
           this.api.GetVouchersListData(id).subscribe((res)=>{
               console.log('vouchersdata',res);
@@ -149,7 +155,7 @@ export class VoucherDetailsListComponent {
               console.log("thisvladata:",this.vldata)
           })
         }
-  
+
           printgrnData(id:any){
             this.router.navigateByUrl('/printvouchersdata/'+id);
           }
@@ -160,13 +166,13 @@ export class VoucherDetailsListComponent {
               this.pfdata = res.branchId.city;
               this.profileData = res;
               console.log("profileData:", this.profileData);
-          
+
               // Update form controls with profile data
               this.form.patchValue({
                 fromCity: this.pfdata || '', // Set fromCity to the city from branchId
                 fromBranch: this.ffdata?.branchUniqueId || '' // Set pickUpBranch to branchUniqueId
               });
-          
+
               // Fetch service charges after setting fromCity
             });
           }
@@ -187,8 +193,8 @@ export class VoucherDetailsListComponent {
               this.pdata = [];
             }
           }
-          
-          
+
+
           onTocitySelect(event: any) {
             console.log('Event triggered:', event);
             console.log('Selected City:', event.target.value);
@@ -197,9 +203,9 @@ export class VoucherDetailsListComponent {
               this.api.GetBranchbyCity(cityName).subscribe(
                 (res: any) => {
                   console.log('Branches for selected city:', res);
-          
+
                   this.tbcdata = res;
-                 
+
                 },
                 (error: any) => {
                   console.error('Error fetching branches:', error);
@@ -208,8 +214,7 @@ export class VoucherDetailsListComponent {
             } else {
               this.tbcdata = [];
             }
-            
+
           }
-  
+
   }
-  

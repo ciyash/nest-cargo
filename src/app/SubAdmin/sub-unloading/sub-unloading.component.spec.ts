@@ -8,7 +8,7 @@ describe('SubUnloadingComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [SubUnloadingComponent]
+      imports: [SubUnloadingComponent]
     });
     fixture = TestBed.createComponent(SubUnloadingComponent);
     component = fixture.componentInstance;

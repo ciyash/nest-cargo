@@ -8,7 +8,7 @@ describe('VoucherDetailsListComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [VoucherDetailsListComponent]
+      imports: [VoucherDetailsListComponent]
     });
     fixture = TestBed.createComponent(VoucherDetailsListComponent);
     component = fixture.componentInstance;

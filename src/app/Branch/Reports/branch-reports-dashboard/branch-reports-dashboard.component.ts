@@ -1,3 +1,7 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
 import { Component, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 declare var $: any;
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -8,6 +12,8 @@ import { ChangeDetectorRef, NgZone } from '@angular/core';
 
 // jsdhdfbhddshn
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-branch-reports-dashboard',
   templateUrl: './branch-reports-dashboard.component.html',
   styleUrls: ['./branch-reports-dashboard.component.scss'],
@@ -41,7 +47,7 @@ export class BranchReportsDashboardComponent implements AfterViewInit {
   @ViewChild('reportdroup') reportdroup!: ElementRef;
   @ViewChild('vechile') vechile!: ElementRef;
 
-  
+
 
   // Form groups
   form: FormGroup;
@@ -205,7 +211,7 @@ export class BranchReportsDashboardComponent implements AfterViewInit {
           });
         });
       };
-    
+
 
 
 
@@ -348,14 +354,14 @@ export class BranchReportsDashboardComponent implements AfterViewInit {
 
         // Open the reports route in a new tab
         // window.open(`/reports`, '_blank');
-// 
+//
         localStorage.setItem('parcelReportData', JSON.stringify(finalData));
 
       // Open the /cloud/reports route correctly in new tab
       const baseUrl = window.location.origin;
       const reportUrl = `${baseUrl}/cloud/reports`;
       window.open(reportUrl, '_blank');
-      
+
       },
       error: (error: any) => {
         console.error('Parcel loading failed:', error);
@@ -364,7 +370,7 @@ export class BranchReportsDashboardComponent implements AfterViewInit {
     });
   }
 
- 
+
   AllParcelBooking() {
     const payload1 = {
       startDate: this.form1.value.startDate,
@@ -376,19 +382,19 @@ export class BranchReportsDashboardComponent implements AfterViewInit {
       bookingStatus: this.form1.value.bookingStatus,
       vehicalNumber: this.form1.value.vehicalNumber || null,
     };
-  
+
     console.log('All Parcel Booking Payload:', payload1);
-  
+
     this.api.AllParcelBookingReport(payload1).subscribe({
       next: (response: any) => {
         console.log('All Parcel loaded successfully:', response);
-  
+
         const finalData1 = {
           ...response,
           startDate: this.form1.value.startDate,
           endDate: this.form1.value.endDate,
         };
-  
+
         // localStorage.setItem('allParcelBookingData', JSON.stringify(finalData1));
         // window.open('/allpercelbooking', '_blank');
 
@@ -471,7 +477,7 @@ export class BranchReportsDashboardComponent implements AfterViewInit {
       next: (response: any) => {
         this.summaryData = response;
         console.log("summaryData:",this.summaryData);
-        
+
 
         const successMessage =
           response.message || 'Booking summary report loaded successfully!';
@@ -559,7 +565,7 @@ export class BranchReportsDashboardComponent implements AfterViewInit {
       next: (response: any) => {
         this.mobiledata = response;
         console.log("mobiledata:",this.mobiledata);
-        
+
 
         const successMessage =
           response?.message || 'Parcel Booking Report loaded successfully';

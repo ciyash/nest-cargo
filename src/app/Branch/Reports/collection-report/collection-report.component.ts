@@ -1,3 +1,7 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
 import { Component, ElementRef, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BranchService } from 'src/app/service/branch.service';
@@ -6,6 +10,8 @@ import { ToastrService } from 'ngx-toastr';
 declare var $: any;
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-collection-report',
   templateUrl: './collection-report.component.html',
   styleUrls: ['./collection-report.component.scss']
@@ -18,11 +24,11 @@ export class CollectionReportComponent implements OnInit, AfterViewInit {
   citydata: any;
   branchdata: any;
   pfdata: any;
-  collectiondata: any;  
+  collectiondata: any;
   pdata: any;
   onPickupBranchSelect:any;
   constructor(private fb: FormBuilder, private api: BranchService, private router: Router,private toast:ToastrService) {
-    this.form = this.fb.group({ 
+    this.form = this.fb.group({
       fromDate: [this.getTodayDateString(), Validators.required],
       toDate: [this.getTodayDateString(), Validators.required],
       fromCity: [''],
@@ -30,7 +36,7 @@ export class CollectionReportComponent implements OnInit, AfterViewInit {
       bookedBy: [''],
       reportType: ['']
     });
-    
+
   }
 
   ngOnInit() {
@@ -42,7 +48,7 @@ export class CollectionReportComponent implements OnInit, AfterViewInit {
     this.api.GetBranch().subscribe((res: any) => {
       this.branchdata = res;
       console.log("branchdata:", this.branchdata);
-      
+
     });
 
     this.getProfileData();
@@ -63,7 +69,7 @@ export class CollectionReportComponent implements OnInit, AfterViewInit {
         this.form.patchValue({ fromCity: selectedCity });
         this.onFromcitySelect({ target: { value: selectedCity } });
       });
-  
+
       // Pickup Branch
       $(this.pickupbranch.nativeElement).select2();
       $(this.pickupbranch.nativeElement).on('select2:select', (event: any) => {
@@ -73,7 +79,7 @@ export class CollectionReportComponent implements OnInit, AfterViewInit {
       });
     }, 0);
   }
-  
+
   getProfileData() {
     this.api.GetProfileData().subscribe((res: any) => {
       this.pfdata = res;
@@ -105,7 +111,7 @@ export class CollectionReportComponent implements OnInit, AfterViewInit {
     this.api.ParcelBranchWiseReport(payload).subscribe({
       next: (res: any) => {
         console.log("collectiodata:",res);
-        
+
         const successMsg = res?.message || 'Report fetched successfully';
         this.toast.success(successMsg);
         const finalData = {
@@ -129,7 +135,7 @@ export class CollectionReportComponent implements OnInit, AfterViewInit {
         // window.open(url, '_blank');
         // console.log("dataStr:",dataStr);
 
-        
+
       },
 
       error: (err: any) => {

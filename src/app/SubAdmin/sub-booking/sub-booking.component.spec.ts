@@ -8,7 +8,7 @@ describe('SubBookingComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [SubBookingComponent]
+      imports: [SubBookingComponent]
     });
     fixture = TestBed.createComponent(SubBookingComponent);
     component = fixture.componentInstance;

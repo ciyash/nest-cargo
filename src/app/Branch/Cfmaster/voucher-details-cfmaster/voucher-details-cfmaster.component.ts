@@ -1,3 +1,7 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -5,6 +9,8 @@ import { ToastrService } from 'ngx-toastr';
 import { BranchService } from 'src/app/service/branch.service';
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-voucher-details-cfmaster',
   templateUrl: './voucher-details-cfmaster.component.html',
   styleUrls: ['./voucher-details-cfmaster.component.scss']
@@ -16,23 +22,23 @@ export class VoucherDetailsCfmasterComponent {
     userList: any[] = [];
     showDropdown:boolean=true;
     searchTerm: string = '';
-    loading:boolean=true; 
+    loading:boolean=true;
     form1:FormGroup;
     constructor(private api:BranchService, private fb:FormBuilder, private toast:ToastrService, private router:Router){
        this.form = this.fb.group({
         fromDate: [this.getTodayDateString(), Validators.required],
         toDate: [this.getTodayDateString(), Validators.required],
-        senderName: ['', Validators.required],               
+        senderName: ['', Validators.required],
             });
-  
+
             this.form1 = this.fb.group({
-           
-              senderName: ['', ],                 
+
+              senderName: ['', ],
                   });
     }
-  
+
     ngOnInit(){
-  
+
     }
 
     getTodayDateString(): string {
@@ -42,16 +48,16 @@ export class VoucherDetailsCfmasterComponent {
       const day = ('0' + today.getDate()).slice(-2);
       return `${year}-${month}-${day}`; // yyyy-MM-dd
     }
-  
+
     VoucherDetailsLoad() {
       const payload = {
         fromDate: this.form.value.fromDate,
         toDate: this.form.value.toDate,
         senderName: this.form.value.senderName,
       };
-    
+
       console.log('Final Payload:', payload);
-      
+
       this.api.VoucherDetailsLoad(payload).subscribe({
         next: (response: any) => {
           console.log('Parcel loaded successfully:', response);
@@ -63,31 +69,31 @@ export class VoucherDetailsCfmasterComponent {
               fromDate: this.form.value.fromDate,
               toDate: this.form.value.toDate,
               senderName: this.form.value.senderName,
-              
+
             });
-    
+
           }
-          
+
         },
         error: (error: any) => {
           console.error('Parcel loading failed:', error);
           this.toast.error('Parcel Loading Failed. Please try again', 'Error')
-  
+
         },
       });
     }
 
-    
-  
+
+
     VoucherDetailsGenerate() {
       const payload = {
         fromDate: this.form1.value.fromDate,
         toDate: this.form1.value.toDate,
         senderName: this.form1.value.senderName,
       };
-    
+
       console.log('Final Payload:', payload);
-      
+
       this.api.GetVoucherDetails(payload).subscribe({
         next: (response: any) => {
           console.log('Parcel loaded successfully:', response);
@@ -101,11 +107,11 @@ export class VoucherDetailsCfmasterComponent {
         error: (error: any) => {
           console.error('Parcel loading failed:', error);
           this.toast.error('Parcel Loading Failed. Please try again', 'Error')
-  
+
         },
       });
     }
-  
+
     searchUser(): void {
       const searchTerm = this.form.get('senderName')?.value?.trim();
       if (searchTerm) {
@@ -126,7 +132,7 @@ export class VoucherDetailsCfmasterComponent {
         this.showDropdown = false;
       }
     }
-    
+
 
     selectUser(user: any): void {
       this.form.patchValue({
@@ -137,7 +143,7 @@ export class VoucherDetailsCfmasterComponent {
       });
       this.showDropdown = false;
     }
-    
+
     hideDropdown(): void {
       setTimeout(() => {
         this.showDropdown = false;
@@ -147,21 +153,21 @@ export class VoucherDetailsCfmasterComponent {
 
     printName(agentName: string) {
       console.log('Agent Name:', agentName);
-    
+
       const payload = {
         fromDate: this.form.value.fromDate,
         toDate: this.form.value.toDate,
         senderName: agentName
       };
-    
+
       this.api.GetVoucherDetails(payload).subscribe({
         next: (response: any) => {
           console.log('Voucher Details:', response);
-    
+
           this.form1.patchValue({
             senderName: response.senderName || agentName
           });
-    
+
           localStorage.setItem('voucherDetails', JSON.stringify(response));
           this.toast.success('Voucher details loaded', 'Success');
           window.open('/voucher-report', '_blank');
@@ -172,11 +178,11 @@ export class VoucherDetailsCfmasterComponent {
         }
       });
     }
-    
 
 
-    
 
-    
-    
+
+
+
+
 }

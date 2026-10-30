@@ -1,3 +1,7 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../USER/header/header.component';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -6,6 +10,8 @@ import { AdminService } from 'src/app/service/admin.service';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-parcel-delivery',
   templateUrl: './parcel-delivery.component.html',
   styleUrls: ['./parcel-delivery.component.scss']
@@ -73,7 +79,7 @@ export class ParcelDeliveryComponent {
         (res: any) => {
           console.log("data:",res);
           this.GetAllEmployee();
-          
+
           if (res && res.booking) {
             this.data2 = [res.booking]; // Flattened structure
             this.errorMessage = '';
@@ -98,7 +104,7 @@ export class ParcelDeliveryComponent {
       next: (res) => {
         this.employee = res;
         console.log("emolyee:",this.employee);
-        
+
       },
       error: (err) => {
         this.errorMessage = 'Failed to fetch employee data.';
@@ -164,5 +170,3 @@ export class ParcelDeliveryComponent {
     }, 100);
   }
 }
-
-

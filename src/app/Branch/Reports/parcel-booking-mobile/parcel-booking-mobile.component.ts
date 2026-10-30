@@ -1,9 +1,15 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
 import { Component, OnInit } from '@angular/core';
 import { BranchService } from 'src/app/service/branch.service';
-import * as XLSX from 'xlsx';
+import type * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-parcel-booking-mobile',
   templateUrl: './parcel-booking-mobile.component.html',
   styleUrls: ['./parcel-booking-mobile.component.scss']
@@ -18,7 +24,7 @@ export class ParcelBookingMobileComponent implements OnInit {
 
   // ngOnInit(): void {
   //   this.getProfileData();
-  
+
   //   const storedData = localStorage.getItem('mobileBookingData');
   //   if (storedData) {
   //     this.mdata = JSON.parse(storedData);
@@ -29,7 +35,7 @@ export class ParcelBookingMobileComponent implements OnInit {
   // }
   ngOnInit(): void {
     this.getProfileData();
-  
+
     const storedData = localStorage.getItem('mobileBookingData');
     if (storedData) {
       try {
@@ -43,8 +49,8 @@ export class ParcelBookingMobileComponent implements OnInit {
     }
   }
 
-  
-  
+
+
 
   getProfileData() {
     this.api.GetProfileData().subscribe((res: any) => {
@@ -119,7 +125,8 @@ export class ParcelBookingMobileComponent implements OnInit {
   }
 
 
-ExportExcel(): void {
+async ExportExcel(): Promise<void> {
+    const XLSX = await import('xlsx');
   const exportData: any[][] = [];
 
   // 1. Top Info

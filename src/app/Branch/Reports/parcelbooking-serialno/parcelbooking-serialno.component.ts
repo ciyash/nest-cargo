@@ -1,10 +1,16 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { BranchService } from 'src/app/service/branch.service';
-import * as XLSX from 'xlsx';
+
 import { saveAs } from 'file-saver';
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-parcelbooking-serialno',
   templateUrl: './parcelbooking-serialno.component.html',
   styleUrls: ['./parcelbooking-serialno.component.scss']
@@ -35,10 +41,10 @@ export class ParcelbookingSerialnoComponent implements OnInit {
     } else {
       console.error('No booking serial data found in localStorage.')
     }
-  
+
     this.getProfileData();
   }
-  
+
 
   getProfileData() {
     this.api.GetProfileData().subscribe((res: any) => {
@@ -60,9 +66,10 @@ export class ParcelbookingSerialnoComponent implements OnInit {
     }
   }
 
-    exportToExcel() {
+    async exportToExcel() {
+    const XLSX = await import('xlsx');
       const wb = XLSX.utils.book_new();
-  
+
       // Company Info Sheet
       const companyInfo = [
         ['Company Name', this.pfdata?.companyName || 'N/A'],
@@ -75,11 +82,11 @@ export class ParcelbookingSerialnoComponent implements OnInit {
       ];
       const wsCompany = XLSX.utils.aoa_to_sheet(companyInfo);
       XLSX.utils.book_append_sheet(wb, wsCompany, 'Company Info');
-  
+
       // Helper to convert booking array to sheet data
       const createSheetData = (bookings: any[], title: string) => {
         if (!bookings || bookings.length === 0) return null;
-  
+
         const header = [
           'S.NO', 'GRN No', 'Date', 'Source', 'Destination', 'Package Details', 'Pkgs', 'Amount'
         ];
@@ -102,45 +109,43 @@ export class ParcelbookingSerialnoComponent implements OnInit {
         const sheetData = [[title], [], header, ...data];
         return sheetData;
       };
-  
+
       // Add sheets for each booking type if data exists
       const paidSheetData = createSheetData(this.paidBookings, 'Paid Bookings');
       if (paidSheetData) {
         const wsPaid = XLSX.utils.aoa_to_sheet(paidSheetData);
         XLSX.utils.book_append_sheet(wb, wsPaid, 'Paid Bookings');
       }
-  
+
       const creditSheetData = createSheetData(this.creditBookings, 'Credit Bookings');
       if (creditSheetData) {
         const wsCredit = XLSX.utils.aoa_to_sheet(creditSheetData);
         XLSX.utils.book_append_sheet(wb, wsCredit, 'Credit Bookings');
       }
-  
+
       const focSheetData = createSheetData(this.focBookings, 'FOC Bookings');
       if (focSheetData) {
         const wsFOC = XLSX.utils.aoa_to_sheet(focSheetData);
         XLSX.utils.book_append_sheet(wb, wsFOC, 'FOC Bookings');
       }
-  
+
       const clrSheetData = createSheetData(this.clrBookings, 'CLR Bookings');
       if (clrSheetData) {
         const wsCLR = XLSX.utils.aoa_to_sheet(clrSheetData);
         XLSX.utils.book_append_sheet(wb, wsCLR, 'CLR Bookings');
       }
-  
+
       const topaySheetData = createSheetData(this.topayBookings, 'To Pay Bookings');
       if (topaySheetData) {
         const wsTopay = XLSX.utils.aoa_to_sheet(topaySheetData);
         XLSX.utils.book_append_sheet(wb, wsTopay, 'To Pay Bookings');
       }
-  
+
       // Generate Excel file and trigger download
       const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
       saveAs(new Blob([wbout], { type: 'application/octet-stream' }), 'ParcelBookingReport.xlsx');
-    
+
   }
-  
+
 
 }
-
-  

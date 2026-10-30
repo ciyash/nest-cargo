@@ -1,3 +1,7 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
 import {
   Component,
   ElementRef,
@@ -11,6 +15,8 @@ import { ToastrService } from 'ngx-toastr';
 import { BranchService } from 'src/app/service/branch.service';
 declare var $: any;
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-pendingdelivery-stock',
   templateUrl: './pendingdelivery-stock.component.html',
   styleUrls: ['./pendingdelivery-stock.component.scss']
@@ -18,7 +24,7 @@ declare var $: any;
 export class PendingdeliveryStockComponent {
 
 
-  
+
 
     @ViewChild('selectElem') selectElem!: ElementRef;
     @ViewChild('pickupbranch') pickupbranch!: ElementRef;
@@ -49,22 +55,22 @@ export class PendingdeliveryStockComponent {
         pickUpBranch: ['all', Validators.required],
         dropBranch: ['all', Validators.required],
       });
-  
+
     }
-  
+
     ngOnInit() {
       this.getProfileData();
       this.api.GetCities().subscribe((res: any) => {
         this.citydata = res;
         console.log('citydata:', this.citydata);
       });
-  
+
       this.api.GetBranch().subscribe((res: any) => {
         this.branchdata = res;
         console.log('branchdata:', this.branchdata);
       });
     }
-  
+
     getTodayDateString(): string {
       const today = new Date();
       const year = today.getFullYear();
@@ -76,10 +82,10 @@ export class PendingdeliveryStockComponent {
       setTimeout(() => {
         // From City
 
-    
+
         // Pickup Branch
 
-    
+
         // To City
         $(this.selectElem2.nativeElement).select2();
         $(this.selectElem2.nativeElement).val('all').trigger('change'); // ✅
@@ -88,7 +94,7 @@ export class PendingdeliveryStockComponent {
           this.form.patchValue({ toCity: selectedToCity });
           this.onTocitySelect({ target: { value: selectedToCity } });
         });
-    
+
         // Drop Branch
         $(this.droupbranch.nativeElement).select2();
         $(this.droupbranch.nativeElement).val('all').trigger('change'); // ✅
@@ -99,7 +105,7 @@ export class PendingdeliveryStockComponent {
         });
       }, 0);
     }
-    
+
     onFromcitySelect(event: any) {
       const cityName = event.target.value;
       if (cityName) {
@@ -116,7 +122,7 @@ export class PendingdeliveryStockComponent {
         this.pdata = [];
       }
     }
-  
+
     onTocitySelect(event: any) {
       console.log('Event triggered:', event);
       console.log('Selected City:', event.target.value);
@@ -125,7 +131,7 @@ export class PendingdeliveryStockComponent {
         this.api.GetBranchbyCity(cityName).subscribe(
           (res: any) => {
             console.log('Branches for selected city:', res);
-  
+
             this.tbcdata = res;
           },
           (error: any) => {
@@ -136,25 +142,25 @@ export class PendingdeliveryStockComponent {
         this.tbcdata = [];
       }
     }
-  
-  
-    
+
+
+
     DeliveryStockReport() {
       const payload = this.form.value;
       console.log('payload:', payload);
       this.api.PendingDeliveryStockReport(payload).subscribe({
         next: (res: any) => {
           console.log('pending delivery:', res);
-          
+
           const message = res?.message || 'Report fetched successfully';
           this.toast.success(message);
-    
+
           this.gstdata = res;
           console.log('gstdata:', this.gstdata);
-    
+
           // Save data to localStorage
           localStorage.setItem('gstData', JSON.stringify(this.gstdata));
-    
+
           // Open new tab
           window.open('/devliveryreport', '_blank');
         },
@@ -165,7 +171,7 @@ export class PendingdeliveryStockComponent {
         },
       });
     }
-    
+
     getProfileData() {
       this.api.GetProfileData().subscribe((res: any) => {
         console.log('profile', res);
@@ -173,7 +179,7 @@ export class PendingdeliveryStockComponent {
         this.pfdata = res.branchId.city;
         this.profileData = res;
         console.log("profileData:", this.profileData);
-    
+
         // Update form controls with profile data
         this.form.patchValue({
           fromCity: this.pfdata || '', // Set fromCity to the city from branchId
@@ -182,4 +188,3 @@ export class PendingdeliveryStockComponent {
           });
     }
   }
-  

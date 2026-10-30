@@ -1,15 +1,21 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../USER/header/header.component';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BranchService } from 'src/app/service/branch.service';
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-filter-grn',
   templateUrl: './filter-grn.component.html',
   styleUrls: ['./filter-grn.component.scss']
 })
 export class FilterGrnComponent implements OnInit {
 
-  searchTerm: string = '';      
+  searchTerm: string = '';
   searchResult: any[] = [];
   data2: any;
   idselectmsg: string = '';
@@ -30,13 +36,13 @@ export class FilterGrnComponent implements OnInit {
       this.data2 = [];
       return;
     }
-  
+
     console.log('Search Term:', this.searchTerm);
-  
+
     this.api.GetGRNnumber(this.searchTerm.trim()).subscribe(
       (res: any) => {
         console.log('API Response:', res);
-  
+
         if (res && Array.isArray(res.data)) {
           this.data2 = res.data;
           if (this.data2.length > 0) {
@@ -60,7 +66,7 @@ export class FilterGrnComponent implements OnInit {
       }
     );
   }
-  
-  
-  
+
+
+
 }

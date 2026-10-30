@@ -1,20 +1,53 @@
-import { Component, OnInit } from '@angular/core';
+import { CompanyLogoComponent } from '../../shared/company-logo/company-logo.component';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { ServiceService } from 'src/app/service.service';
 import { BranchService } from 'src/app/service/branch.service';
 import { TokenService } from 'src/app/service/token.service';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
+  standalone: true,
+  imports: [CompanyLogoComponent, CommonModule, FormsModule, ReactiveFormsModule, RouterModule],
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent implements OnInit {
+  get homeRoute() {
+    if (this.token.isCompany()) return '/create-admin';
+    switch (this.token.getRole()) {
+      case 'admin': return '/dashboard';
+      case 'subadmin': return '/sub-booking';
+      case 'employee': return '/employee-booking';
+      case 'accountant': return '/reports';
+      case 'superviser': return '/tasks';
+      case 'driver': return '/delivery';
+      default: return '/login';
+    }
+  }
+  get profileRoute() { return this.token.isAdmin() ? '/adminprofile' : '/profile'; }
+  profileOpen = false;
+  isCompanyAccount = false;
+  openMenu: number | null = null;
+  mobileOpen = false;
+  closeMenus() { this.openMenu = null; this.mobileOpen = false; this.profileOpen = false; }
+  toggleMenu(index: number) { this.profileOpen = false; this.openMenu = this.openMenu === index ? null : index; }
+  toggleProfile() { this.profileOpen = !this.profileOpen; this.openMenu = null; this.mobileOpen = false; }
+  toggleMobile() { this.mobileOpen = !this.mobileOpen; this.profileOpen = false; this.openMenu = null; }
+  menuLabel(label: string) { return (label || '').replace(/[^a-zA-Z0-9 /&()-]/g,'').trim(); }
+  linkActive(item: any) { const [path, fragment] = this.router.url.split('#'); return item.routerLink?.[0] === path.split('?')[0] && (item.fragment || '') === (fragment || ''); }
+  groupActive(item: any) { return !!item.items?.some((child: any) => child.routerLink?.[0] === this.router.url.split('?')[0]); }
+  @HostListener('document:click', ['$event'])
+  outsideClick(event: MouseEvent) { if (!(event.target as Element)?.closest?.('app-header')) this.closeMenus(); }
   model: any[] = [];
   id: any;
   data: any;
 
   constructor(
+    private router: Router,
     private token: TokenService,
     private api: BranchService,
     private activeroute: ActivatedRoute
@@ -26,6 +59,19 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit() {
     this.model = [];
+    this.isCompanyAccount = this.token.isCompany();
+    if (this.isCompanyAccount) {
+      const company = this.token.getUser()?.company;
+      this.data = {companyId: company, name: company?.customerName || company?.name || 'Company owner', role: 'Company owner'};
+      this.model = [
+        {label:'Overview',icon:'pi pi-home',routerLink:['/create-admin']},
+        {label:'Team',icon:'pi pi-users',routerLink:['/create-admin'],fragment:'company-team'},
+        {label:'Branches',icon:'pi pi-building',routerLink:['/create-admin'],fragment:'company-branches'},
+        {label:'Plan & Billing',icon:'pi pi-credit-card',routerLink:['/create-admin'],fragment:'company-billing'},
+        {label:'Company logo',icon:'pi pi-palette',routerLink:['/create-admin'],fragment:'company-brand'}
+      ];
+      return;
+    }
 
     if (this.token.isAdmin()) {
       this.model = [
@@ -50,7 +96,7 @@ export class HeaderComponent implements OnInit {
             { label: 'Vouchers List Offline', routerLink: ['/voucherslistoffline'] },
           ]
         },
-        
+
         {
           label: 'Parcel Agent ▼',
           icon: 'pi pi-fw pi-file',
@@ -80,14 +126,14 @@ export class HeaderComponent implements OnInit {
             { label: 'Parcel Incoming Report', routerLink: ['/incoming-report'] },
           ],
         },
-        // { 
+        // {
         //   label: 'Others ▼',
         //   icon: 'pi pi-fw pi-database',
         //   items: [
         //     { label: 'Add Package Type', icon: 'pi pi-fw pi-user-edit', routerLink: ['/addpackagetype'] },
         //   ]
         //  },
-    
+
 
 
 
@@ -114,7 +160,7 @@ export class HeaderComponent implements OnInit {
             },
           ],
         },
-        
+
         {
           // label: 'Setting',
           label: 'Others ▼',
@@ -127,7 +173,7 @@ export class HeaderComponent implements OnInit {
             { label: 'Add Package Type', icon: 'pi pi-fw pi-user-edit', routerLink: ['/addpackagetype'] },
           ],
         },
-              { 
+              {
           label: 'Setting ▼',
           icon: 'pi pi-fw pi-database',
           // items: [
@@ -188,7 +234,7 @@ export class HeaderComponent implements OnInit {
             { label: 'Parcel Incoming Report', routerLink: ['/incomingreport'] },
           ],
         },
-        
+
         {
           label: 'Profile',
           icon: 'pi pi-fw pi-user-edit',
@@ -220,7 +266,7 @@ export class HeaderComponent implements OnInit {
             { label: 'Vouchers List Offline', routerLink: ['/sub-parcelvoucher-details'] },
           ]
         },
-        
+
         {
           label: 'Parcel Agent ▼',
           icon: 'pi pi-fw pi-file',
@@ -250,7 +296,7 @@ export class HeaderComponent implements OnInit {
             { label: 'Parcel Incoming Report', routerLink: ['/sub-incoming-luggage'] },
           ],
         },
-        { 
+        {
           label: 'Others ▼',
           icon: 'pi pi-fw pi-database',
           items: [
@@ -259,7 +305,7 @@ export class HeaderComponent implements OnInit {
          },
       ];
       // ;;
-      
+
       // this.model = [//
       //   {
       //     label: 'Dashboard',
@@ -281,7 +327,7 @@ export class HeaderComponent implements OnInit {
       //       { label: 'Vouchers List Offline', routerLink: ['/voucherslistoffline'] },
       //     ]
       //   },
-        
+
       //   {
       //     label: 'Parcel Agent ▼',
       //     icon: 'pi pi-fw pi-file',
@@ -311,7 +357,7 @@ export class HeaderComponent implements OnInit {
       //       { label: 'Parcel Incoming Report', routerLink: ['/incoming-report'] },
       //     ],
       //   },
-      //   { 
+      //   {
       //     label: 'Others ▼',
       //     icon: 'pi pi-fw pi-database',
       //     items: [
@@ -351,6 +397,10 @@ export class HeaderComponent implements OnInit {
         },
       ];
     }
+    // Account navigation lives only in the user dropdown.
+    this.model = this.model
+      .filter(item => this.menuLabel(item.label).toLowerCase() !== 'profile')
+      .map(item => item.items ? {...item, items: item.items.filter((child: any) => this.menuLabel(child.label).toLowerCase() !== 'profile')} : item);
     // profile data
     this.id = this.activeroute.snapshot.params['id'];
     this.api.GetProfileData().subscribe((res: any) => {

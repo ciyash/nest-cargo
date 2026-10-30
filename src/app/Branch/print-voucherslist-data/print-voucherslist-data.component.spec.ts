@@ -8,7 +8,7 @@ describe('PrintVoucherslistDataComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [PrintVoucherslistDataComponent]
+      imports: [PrintVoucherslistDataComponent]
     });
     fixture = TestBed.createComponent(PrintVoucherslistDataComponent);
     component = fixture.componentInstance;

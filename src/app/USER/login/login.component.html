@@ -1,31 +1,31 @@
-<div class="d-flex justify-content-center pt-5">
+<div class="auth-page">
   <div class="login-container">
     <div class="left-side">
       <img src="assets/login.png" alt="Delivery Image" />
     </div>
 
     <div class="right-side">
-      <img src="assets/tittlelogo.svg" alt="Company Logo" class="logo" />
-      <h6 class="company-name">SREE KALESWARI LOGISTICS</h6>
+<img src="assets/tittlelogo.svg" alt="CargoNest" class="tenant-logo">
       <div class="welcome-text">Welcome</div>
 
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <label class="form-label">User Id / Mobile Number</label>
         <div class="input-group">
           <i class="fas fa-user"></i>
-          <input type="text" formControlName="identifier" autocomplete="off" placeholder="Username" />
+          <input type="text" formControlName="identifier" autocomplete="username" placeholder="Username" />
         </div>
 
         <label class="form-label mt-3">Password</label>
         <div class="input-group">
           <i class="fas fa-lock"></i>
-          <input type="password" formControlName="password" autocomplete="new-password" placeholder="Password" />
+          <input type="password" formControlName="password" autocomplete="current-password" placeholder="Password" />
         </div>
 
         <div class="forgot-password" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">Forgot your password?</div>
 
-        <button type="submit" class="btn btn-login" [disabled]="form.invalid">LOGIN</button>
+        <button type="submit" class="btn btn-login" [disabled]="form.invalid || isLoading">LOGIN</button>
       </form>
+<nav class="auth-links" aria-label="Company accounts"><p>New to our platform? <a routerLink="/signup">Register your company</a></p><a class="company-entry" routerLink="/clogin">Sign in as a company</a></nav>
     </div>
   </div>
 </div>

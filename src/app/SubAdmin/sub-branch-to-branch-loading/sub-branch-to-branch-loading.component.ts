@@ -1,3 +1,8 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../USER/header/header.component';
+import { ToastModule } from 'primeng/toast';
 import { ChangeDetectorRef, Component, OnInit,ElementRef, ViewChild  } from '@angular/core';
 
 import { BranchService } from 'src/app/service/branch.service';
@@ -5,14 +10,16 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 declare var $: any;
-declare const SlimSelect: any; 
+declare const SlimSelect: any;
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent, ToastModule],
   selector: 'app-sub-branch-to-branch-loading',
   templateUrl: './sub-branch-to-branch-loading.component.html',
   styleUrls: ['./sub-branch-to-branch-loading.component.scss']
 })
 export class SubBranchToBranchLoadingComponent {
-  citydata: any = []; // Ensure it's initialized to prevent undefined 
+  citydata: any = []; // Ensure it's initialized to prevent undefined
   form: FormGroup;
   vdata:any;
   data:any;
@@ -32,7 +39,7 @@ export class SubBranchToBranchLoadingComponent {
       toBookingDate: [this.getTodayDateString(), Validators.required],
       fromBranch: ['', Validators.required]
     });
-    
+
 
     this.form1 = this.fb.group({
       loadingType: ['branchLoad'],
@@ -65,7 +72,7 @@ export class SubBranchToBranchLoadingComponent {
     //   console.log('profile',res);
     //   this.pdata=res.branchId;
     //   console.log("branchDETAILS",this.pdata);
-      
+
     // })
   }
 
@@ -100,28 +107,28 @@ export class SubBranchToBranchLoadingComponent {
         console.log('Selected Vehicle Number:', selectedVehicle);
       });
   }, 0);}
-  
+
   loaddata() {
     const payload = {
       fromBookingDate: this.form.value.fromBookingDate,
       toBookingDate: this.form.value.toBookingDate,
       fromBranch: this.form.value.fromBranch,
     };
-  
+
     console.log('Final Payload:', payload);
-  
+
     this.api.postBranchLoading(payload).subscribe({
       next: (response: any) => {
         console.log('loaded successfully:', response);
-  
+
         // Show success message from backend (assuming response contains a message property)
         const successMessage = response?.message || 'Parcel Branch loading successfully';
         this.toast.success(successMessage, 'Success');
-  
+
         // Store the data and set the success flag
         this.data = response;
         this.LoadSuccess = true;
-  
+
         // ✅ Assign loaded data to form1 fields
         if (this.data.length > 0) {
           this.form1.patchValue({
@@ -134,7 +141,7 @@ export class SubBranchToBranchLoadingComponent {
             driverName: '',
             driverNo: '',
           });
-  
+
           // ✅ Set `toCity`, `grnNo`, and `lrNumber` as FormArray
           this.setFormArray('grnNo', this.data.map((d: any) => d.grnNo));
           this.setFormArray('lrNumber', this.data.map((d: any) => d.lrNumber));
@@ -152,7 +159,7 @@ export class SubBranchToBranchLoadingComponent {
    setFormArray(controlName: string, values: any[]) {
       const formArray = this.form1.get(controlName) as FormArray;
       formArray.clear(); // ✅ Clear previous values
-    
+
       values.forEach(value => {
         formArray.push(this.fb.control(value));
       });
@@ -160,7 +167,7 @@ export class SubBranchToBranchLoadingComponent {
 
     onGrnNoChange(event: any, grnNo: string) {
       const formArray = this.form1.get('grnNo') as FormArray;
-    
+
       if (event.target.checked) {
         // Add if not already selected
         if (!formArray.value.includes(grnNo)) {
@@ -173,16 +180,16 @@ export class SubBranchToBranchLoadingComponent {
           formArray.removeAt(index);
         }
       }
-    
+
       // ✅ Update "Select All" status based on selected values
       this.allSelected = this.data.length === formArray.value.length;
       console.log('Selected GRN Numbers:', formArray.value);
     }
-    
+
     // ✅ Handle "Select All" checkbox
     onSelectAllChange(event: any) {
       const formArray = this.form1.get('grnNo') as FormArray;
-    
+
       if (event.target.checked) {
         // ✅ Select all if checked
         this.data.forEach((row:any) => {
@@ -194,7 +201,7 @@ export class SubBranchToBranchLoadingComponent {
         // ✅ Deselect all if unchecked
         formArray.clear();
       }
-    
+
       // ✅ Update "Select All" status
       this.allSelected = event.target.checked;
       console.log('All GRN Numbers Selected:', formArray.value);
@@ -212,9 +219,9 @@ export class SubBranchToBranchLoadingComponent {
         grnNo: this.form1.value.grnNo,
         lrNumber: this.form1.value.lrNumber,
       };
-    
+
       console.log('Final Payload:', payload);
-      
+
       this.api.BranchtoBranchLoad(payload).subscribe({
         next: (response: any) => {
           console.log('Parcel loaded successfully:', response);
@@ -237,7 +244,7 @@ export class SubBranchToBranchLoadingComponent {
       this.api.GetProfileData().subscribe(
         (res: any) => {
           this.fromCityValue = res.branchId?.city || null;
-    
+
           if (this.fromCityValue) {
             this.api.GetBranchbyCity(this.fromCityValue).subscribe(
               (branches: any) => {
@@ -259,6 +266,6 @@ export class SubBranchToBranchLoadingComponent {
         }
       );
     }
-    
+
 
 }

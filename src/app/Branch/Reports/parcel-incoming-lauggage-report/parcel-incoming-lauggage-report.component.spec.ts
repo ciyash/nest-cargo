@@ -8,7 +8,7 @@ describe('ParcelIncomingLauggageReportComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [ParcelIncomingLauggageReportComponent]
+      imports: [ParcelIncomingLauggageReportComponent]
     });
     fixture = TestBed.createComponent(ParcelIncomingLauggageReportComponent);
     component = fixture.componentInstance;

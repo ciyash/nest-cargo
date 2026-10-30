@@ -1,3 +1,7 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
 import { Component,OnInit } from '@angular/core';
 import { ChangeDetectorRef } from '@angular/core'
 import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
@@ -7,12 +11,14 @@ import { TokenService } from 'src/app/service/token.service';
 import { AdminService } from 'src/app/service/admin.service';
 import { ToastrService } from 'ngx-toastr';
 declare var $: any;
-declare const SlimSelect: any; 
+declare const SlimSelect: any;
 import {  ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 
-import * as XLSX from 'xlsx';
+import type * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-pending-dispatched-stock-report',
   templateUrl: './pending-dispatched-stock-report.component.html',
   styleUrls: ['./pending-dispatched-stock-report.component.scss']
@@ -29,7 +35,7 @@ export class PendingDispatchedStockReportComponent {
   reportData: any; // your summary + bookings data
   pfdata: any;     // your profile/company info
   totalamount: number = 0;
-  
+
     cdata: any;
     grnNo: any;
     grnnumber: any;
@@ -38,7 +44,7 @@ export class PendingDispatchedStockReportComponent {
     form!:FormGroup;
     id:any;
     citydata:any;
-    branchdata:any;   
+    branchdata:any;
     bookingSuccess: boolean = false;
     packdata:any;
     fbcdata:any;
@@ -47,12 +53,12 @@ export class PendingDispatchedStockReportComponent {
     dptype:any;
   dispacthedReport: any;
   dispatchedReport: any;
- 
+
 
   today=new Date()
-  
+
     constructor(private fb: FormBuilder, private api: BranchService, private token:TokenService,
-       private cdr: ChangeDetectorRef,  private route: ActivatedRoute,private toastr:ToastrService, 
+       private cdr: ChangeDetectorRef,  private route: ActivatedRoute,private toastr:ToastrService,
        private router:Router, private admin:AdminService) {
       this.form = this.fb.group({
         fromDate: [this.getTodayDateString(), Validators.required],
@@ -62,7 +68,7 @@ export class PendingDispatchedStockReportComponent {
         pickUpBranch: ['all',],
           });
      }
-  
+
     ngOnInit() {
       // const id = this.activate.snapshot.paramMap.get('id');
       this.api.GetCities().subscribe((res:any)=>{
@@ -72,10 +78,10 @@ export class PendingDispatchedStockReportComponent {
       //get branches
       this.api.GetBranch().subscribe((res:any)=>{
         this.branchdata=res;
-        
+
       });
       this.getProfileData()
-    
+
 
     }
     getTodayDateString(): string {
@@ -85,14 +91,14 @@ export class PendingDispatchedStockReportComponent {
       const year = today.getFullYear();
       return `${year}-${month}-${day}`; // ✔ HTML date input format
     }
-    
 
 
- 
-    
-    
-   
-    
+
+
+
+
+
+
     ngAfterViewInit(): void {
       setTimeout(() => {
         // Initialize Select2 for From City
@@ -104,7 +110,7 @@ export class PendingDispatchedStockReportComponent {
           console.log('Updated form value:', this.form.value);
           this.onFromcitySelect({ target: { value: selectedCity } });
         });
-    
+
         // Initialize Select2 for Pickup Branch
         $(this.pickupbranch.nativeElement).select2();
         $(this.pickupbranch.nativeElement).on('select2:select', (event: any) => {
@@ -114,7 +120,7 @@ export class PendingDispatchedStockReportComponent {
           console.log('Updated form value:', this.form.value);
           this.onPickupBranchSelect({ target: { value: selectedBranch } });
         });
-    
+
         // Initialize Select2 for To City
         $(this.selectElem2.nativeElement).select2();
         $(this.selectElem2.nativeElement).on('select2:select', (event: any) => {
@@ -123,7 +129,7 @@ export class PendingDispatchedStockReportComponent {
           this.form.patchValue({ toCity: selectedToCity });
           console.log('Updated form value:', this.form.value);
           this.onTocitySelect({ target: { value: selectedToCity } });
-        });  
+        });
       }, 0);
     }
 
@@ -150,8 +156,8 @@ export class PendingDispatchedStockReportComponent {
       this.pdata = [];
     }
   }
-  
-  
+
+
   onTocitySelect(event: any) {
     console.log('Event triggered:', event);
     console.log('Selected City:', event.target.value);
@@ -160,9 +166,9 @@ export class PendingDispatchedStockReportComponent {
       this.api.GetBranchbyCity(cityName).subscribe(
         (res: any) => {
           console.log('Branches for selected city:', res);
-  
+
           this.tbcdata = res;
-         
+
         },
         (error: any) => {
           console.error('Error fetching branches:', error);
@@ -171,13 +177,13 @@ export class PendingDispatchedStockReportComponent {
     } else {
       this.tbcdata = [];
     }
-    
+
   }
-  
+
   DispatchedStockReport() {
     const payload = this.form.value;
     console.log("payload:", payload);
-  
+
     this.api.PendingDispatchedStockReport(payload).subscribe({
       next: (res: any) => {
         this.reportData = res;
@@ -191,8 +197,8 @@ export class PendingDispatchedStockReportComponent {
       }
     });
   }
-  
-  
+
+
 
      printReport() {
       const printContents = document.getElementById('print-section')?.innerHTML;
@@ -209,40 +215,40 @@ export class PendingDispatchedStockReportComponent {
                   font-family: Arial, sans-serif;
                   margin: 20px;
                 }
-    
+
                 table {
                   width: 100%;
                   border-collapse: collapse;
                   font-size: 12px;
                 }
-    
+
                 th, td {
                   border: 1px solid #000;
                   padding: 4px;
                   text-align: center;
                 }
-    
+
                 h4, h6, p {
                   margin: 4px 0;
                 }
-    
+
                 .text-center {
                   text-align: center;
                 }
-    
+
                 .fw-bold {
                   font-weight: bold;
                 }
-    
+
                 .text-decoration-underline {
                   text-decoration: underline;
                 }
-    
+
                 .d-flex {
                   display: flex;
                   justify-content: space-between;
                 }
-    
+
                 @media print {
                   .no-print {
                     display: none;
@@ -268,9 +274,10 @@ calculateTotalAmount() {
 
 
 
-  
 
-  downloadExcel(): void {
+
+  async downloadExcel(): Promise<void> {
+    const XLSX = await import('xlsx');
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
 
     // 1️⃣ Add Company Header Sheet
@@ -303,12 +310,3 @@ calculateTotalAmount() {
     FileSaver.saveAs(blob, `Pending_Dispatch_Report_${new Date().toISOString().slice(0, 10)}.xlsx`);
   }
 }
-
-
-  
-   
-    
-    
-    
-    
-  

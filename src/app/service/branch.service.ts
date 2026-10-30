@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { TokenService } from './token.service';
 
-const AUTH_API = 'https://cargo-backend-bpq4.onrender.com/'
+const AUTH_API = environment.baseUrl.replace(/\/+$/, '') + '/';
 
 @Injectable({
   providedIn: 'root'
@@ -42,12 +42,11 @@ export class BranchService {
     return this.http.get(
       AUTH_API + 'subadmin-auth/profile',
       httpOptions
-    );   
+    );
   }
 
   GetCities(){
     const token1 = this.token.getToken();
-    console.log('Token:', token1); // 🔍 This will log the token to the console
 
     const httpOptions = {
       headers: new HttpHeaders({
@@ -59,7 +58,7 @@ export class BranchService {
   }
 
 
-  
+
   GetBranch(){
     const token1 = this.token.getToken();
     const httpOptions = {
@@ -71,7 +70,7 @@ export class BranchService {
       return this.http.get(AUTH_API + 'branch', httpOptions);
   }
 
-  
+
     GetBranchbyCity(cityName: any) {
       const token1 = this.token.getToken();
       const httpOptions = {
@@ -81,9 +80,9 @@ export class BranchService {
         })
       };
       return this.http.get(AUTH_API + 'branch/city/' + encodeURIComponent(cityName), httpOptions);
-      
+
     }
-  
+
 
 
 
@@ -96,11 +95,11 @@ export class BranchService {
         'Authorization': 'Bearer ' + token1
       })
     };
-    return this.http.post(AUTH_API + 'extra-charge/filter-city-wise', 
-      { 
+    return this.http.post(AUTH_API + 'extra-charge/filter-city-wise',
+      {
         fromCity: value.fromCity,
         toCity: value.toCity
-      }, 
+      },
       httpOptions
     );
   }
@@ -118,13 +117,6 @@ export class BranchService {
       httpOptions
     );
   }
-
-
-  
-
-
-
-
 
 
 
@@ -165,7 +157,7 @@ export class BranchService {
       })
     };
     return this.http.post(
-      AUTH_API + 'booking',  { 
+      AUTH_API + 'booking',  {
         "bookedby": value.bookedBy,
       "fromCity": value.fromCity,
       "toCity": value.toCity,
@@ -184,39 +176,39 @@ export class BranchService {
       "receiverAddress": value.receiverAddress,
       "reciverGst":value.receiverGst,
       "adminUniqueId": value.adminUniqueId,
-      "packages":value.packages, 
+      "packages":value.packages,
       "serviceCharges": value.serviceCharges,
       "hamaliCharges": value.hamaliCharges,
       "doorDeliveryCharges": value.doorDeliveryCharges,
       "doorPickupCharges":value.doorPickupCharges,
       "valueOfGoods": value.valueOfGoods,
-      "grandTotal":value.grandTotal, 
+      "grandTotal":value.grandTotal,
       "agent":value.agent,
       },
-       httpOptions 
+       httpOptions
     );
   }
 
   // getData(endpoint: string, paramsObj?: any): Observable<any> {
-  //   const apiUrl = `${this.baseUrl}/${endpoint.replace(/^\/+/, '')}`; 
+  //   const apiUrl = `${this.baseUrl}/${endpoint.replace(/^\/+/, '')}`;
   //   let params = new HttpParams();
   //   if (paramsObj) {
   //     Object.keys(paramsObj).forEach((key) => {
   //       params = params.append(key, paramsObj[key]);
   //     });
   //   }
-  
+
   //   return this.http.get(apiUrl, { params });
   // }
   getData(endpoint: string, paramsObj?: any): Observable<any> {
     const token1 = this.token.getToken();
     const apiUrl = `${this.baseUrl}/${endpoint.replace(/^\/+/, '')}`;
-  
+
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + token1
     });
-  
+
     let params = new HttpParams();
     if (paramsObj) {
       Object.keys(paramsObj).forEach((key) => {
@@ -225,10 +217,10 @@ export class BranchService {
         }
       });
     }
-  
+
     return this.http.get(apiUrl, { headers, params });
   }
-  
+
 
 
   GetBookings(){
@@ -242,7 +234,7 @@ export class BranchService {
       return this.http.get<any>(AUTH_API + 'booking', httpOptions);
   }
 
-  
+
 BookingsPage(page: number, limit: number) {
   const token1 = this.token.getToken();
   const httpOptions = {
@@ -260,7 +252,7 @@ BookingsPage(page: number, limit: number) {
 
 GetGRNnumber(id:any){
   const token1 = this.token.getToken();
-  
+
   const httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json',
@@ -270,7 +262,7 @@ GetGRNnumber(id:any){
   return this.http.get(
     AUTH_API + 'booking/grnNo/'+id,
     httpOptions
-  );   
+  );
 }
 
 
@@ -306,7 +298,7 @@ GetQrGRNnumber(id:any){
   return this.http.get(
     AUTH_API + 'parcel-loading/grnNo/'+id,
     httpOptions
-  );   
+  );
 }
 
 GetQrUnloadGRNnumber(id:any){
@@ -320,7 +312,7 @@ GetQrUnloadGRNnumber(id:any){
   return this.http.get(
     AUTH_API + 'parcel-unloading/grnNo/'+id,
     httpOptions
-  );   
+  );
 }
 
 
@@ -339,15 +331,15 @@ FilterParcelLoading(value:{
     })
   };
   return this.http.post(
-    AUTH_API + 'parcel-loading/parcel-loding-load',  { 
+    AUTH_API + 'parcel-loading/parcel-loding-load',  {
       "startDate": value.startDate,
       "endDate": value.endDate,
     "fromCity": value.fromCity,
     "toCity": value.toCity,
     "pickUpBranch": value.pickUpBranch,
-    
+
     },
-     httpOptions 
+     httpOptions
   );
 }
 
@@ -375,7 +367,7 @@ ParcelLoading(value:{
     })
   };
   return this.http.post(
-    AUTH_API + 'parcel-loading',  { 
+    AUTH_API + 'parcel-loading',  {
       "loadingType": value.loadingType,
       "fromBranch": value.fromBranch,
       "toBranch": value.toBranch,
@@ -391,7 +383,7 @@ ParcelLoading(value:{
   "grnNo": value.grnNo,
   "lrNumber": value.lrNumber,
     },
-     httpOptions 
+     httpOptions
   );
 }
 
@@ -435,7 +427,7 @@ FilterParcelUnLoading(value:{
     })
   };
   return this.http.post(
-    AUTH_API + 'parcel-unloading/parcel-filter-Unloading',  { 
+    AUTH_API + 'parcel-unloading/parcel-filter-Unloading',  {
       "fromDate": value.fromDate,
       "toDate": value.toDate,
     "fromCity": value.fromCity,
@@ -443,7 +435,7 @@ FilterParcelUnLoading(value:{
     "vehicalNumber": value.vehicalNumber,
     "branch": value.branch,
     },
-     httpOptions 
+     httpOptions
   );
 }
 
@@ -465,7 +457,7 @@ ParcelUnLoading(value:{
     })
   };
   return this.http.post(
-    AUTH_API + 'parcel-unloading',  { 
+    AUTH_API + 'parcel-unloading',  {
     "fromBookingDate": value.fromBookingDate,
   "toBookingDate": value.toBookingDate,
   "fromCity": value.fromCity,
@@ -475,16 +467,16 @@ ParcelUnLoading(value:{
   "grnNo": value.grnNo,
   "bookingType":value.bookingType,
     },
-     httpOptions 
+     httpOptions
   );
 }
 
 ParcelOfflineReport(value:{
-  fromDate: string;  
-  toDate:string   
-  fromCity:string  
-  toCity: [];   
-  fromBranch:string;  
+  fromDate: string;
+  toDate:string
+  fromCity:string
+  toCity: [];
+  fromBranch:string;
   dropBranch:string
 }){
   const token1 = this.token.getToken();
@@ -495,7 +487,7 @@ ParcelOfflineReport(value:{
     })
   };
   return this.http.post(
-    AUTH_API + 'parcel-loading/parcel-offline-report',  { 
+    AUTH_API + 'parcel-loading/parcel-offline-report',  {
       "fromDate": value.fromDate,
       "toDate": value.toDate,
     "fromCity": value.fromCity,
@@ -503,7 +495,7 @@ ParcelOfflineReport(value:{
     "fromBranch":value.fromBranch,
     "dropBranch":value.dropBranch,
     },
-     httpOptions 
+     httpOptions
   );
 }
 
@@ -524,9 +516,9 @@ postBranchLoading(value: {
   };
 
   return this.http.post(
-    AUTH_API + 'parcel-loading/branch-to-branch-load',  
+    AUTH_API + 'parcel-loading/branch-to-branch-load',
     {
-      "fromBookingDate": value.fromBookingDate,  
+      "fromBookingDate": value.fromBookingDate,
       "toBookingDate": value.toBookingDate,
       "fromBranch": value.fromBranch
     },
@@ -555,7 +547,7 @@ BranchtoBranchLoad(value: {
   };
 
   return this.http.post(
-    AUTH_API + 'parcel-loading/branch-to-branch-post',  
+    AUTH_API + 'parcel-loading/branch-to-branch-post',
     {
       "loadingType": value.loadingType,
       "lrNumber": value.lrNumber,
@@ -587,9 +579,9 @@ postBranchtobranchUnLoadingFilter(value: {
   };
 
   return this.http.post(
-    AUTH_API + 'parcel-unloading/branch-to-branch-load',  
+    AUTH_API + 'parcel-unloading/branch-to-branch-load',
     {
-      "fromLoadingDate": value.fromLoadingDate,  
+      "fromLoadingDate": value.fromLoadingDate,
       "toLoadingDate": value.toLoadingDate,
       "fromBranch": value.fromBranch,
       "toBranch": value.toBranch,
@@ -616,9 +608,9 @@ BranchtobranchUnLoading(value: {
   };
 
   return this.http.post(
-    AUTH_API + 'parcel-unloading/branch-to-branch-post',  
+    AUTH_API + 'parcel-unloading/branch-to-branch-post',
     {
-      "grnNo": value.grnNo,  
+      "grnNo": value.grnNo,
       "lrNumber": value.lrNumber,
       "fromDate": value.fromDate,
       "toDate": value.toDate,
@@ -642,10 +634,10 @@ packageType(value:{
     })
   };
   return this.http.post(
-    AUTH_API + 'multi-router/package-types',  { 
+    AUTH_API + 'multi-router/package-types',  {
       "name": value.name,
     },
-     httpOptions 
+     httpOptions
   );
 }
 
@@ -681,7 +673,7 @@ UpdatePackagestype(id: any, value: {
 
 
 
-    cancelBooking(id:any, value:{ 
+    cancelBooking(id:any, value:{
         refundCharge:string,
         refundAmount:string,
         date:string,
@@ -700,7 +692,7 @@ UpdatePackagestype(id: any, value: {
             refundAmount:value.refundCharge,
             date:value.date,
           },
-          httpOptions     
+          httpOptions
         );
       }
 
@@ -738,11 +730,11 @@ UpdatePackagestype(id: any, value: {
           'Authorization': 'Bearer ' + token1
         })
       };
-    
+
       return this.http.post(
-        AUTH_API + 'parcel-loading/offline-parcel-voucher-details',  
+        AUTH_API + 'parcel-loading/offline-parcel-voucher-details',
         {
-          "fromDate": value.fromDate,  
+          "fromDate": value.fromDate,
           "toDate": value.toDate,
           "vehicalNumber": value.vehicalNumber,
           "fromCity": value.fromCity,
@@ -784,7 +776,7 @@ ReceivedParcelUpdate(value: {
   grnNo: string;
   receiverName:string;
   receiverMobile:string;
-  
+
 }) {
   const token1 = this.token.getToken();
   const httpOptions = {
@@ -799,7 +791,7 @@ ReceivedParcelUpdate(value: {
       grnNo: value.grnNo,
       receiverName:value.receiverName,
       receiverMobile:value.receiverMobile,
-      
+
   },
     httpOptions
   );
@@ -1347,7 +1339,7 @@ PendingDispatchedStockReport(value: {
   );
 }
 
-//parcel dispatched report 
+//parcel dispatched report
 DispatchedReport(value:{
   fromDate: string;
   toDate:string;
@@ -1363,14 +1355,14 @@ DispatchedReport(value:{
     })
   };
   return this.http.post(
-    AUTH_API + 'parcel-loading/dispatched-stock-report',  { 
+    AUTH_API + 'parcel-loading/dispatched-stock-report',  {
       "fromDate": value.fromDate,
       "toDate": value.toDate,
     "fromCity": value.fromCity,
     "toCity": value.toCity,
     "fromBranch": value.fromBranch,
     },
-     httpOptions 
+     httpOptions
   );
 }
 
@@ -1399,7 +1391,7 @@ AddCfmaster(value:{
     })
   };
   return this.http.post(
-    AUTH_API + 'cfmaster',  { 
+    AUTH_API + 'cfmaster',  {
       "gst": value.gst,
       "country": value.country,
       "state": value.state,
@@ -1414,7 +1406,7 @@ AddCfmaster(value:{
       "creditDaysLimit": value.creditDaysLimit,
       "exDate": value.exDate,
     },
-     httpOptions 
+     httpOptions
   );
 }
 
@@ -1429,7 +1421,7 @@ GetcfmasterData(){
   return this.http.get(
     AUTH_API + 'cfmaster',
     httpOptions
-  );   
+  );
 }
 
 searchCfUser(qry:string) {
@@ -1471,7 +1463,7 @@ UpdateCfmaster(id: any, value:{
     })
   };
   return this.http.patch(
-    AUTH_API + 'cfmaster/'+id,  { 
+    AUTH_API + 'cfmaster/'+id,  {
       "gst": value.gst,
       "state": value.state,
       "city": value.city,
@@ -1487,7 +1479,7 @@ UpdateCfmaster(id: any, value:{
       "isActive": value.isActive,
       "isPostPaid": value.isPostPaid,
     },
-     httpOptions 
+     httpOptions
   );
 }
 
@@ -1526,7 +1518,7 @@ AddCfmasterCharges(value:{
     })
   };
   return this.http.post(
-    AUTH_API + 'cfextra-charge',  { 
+    AUTH_API + 'cfextra-charge',  {
       "agentName": value.agentName,
       "chargeName": value.chargeName,
       "fromCity": value.fromCity,
@@ -1537,7 +1529,7 @@ AddCfmasterCharges(value:{
       "dispatchType": value.dispatchType,
       "isActive": value.isActive,
     },
-     httpOptions 
+     httpOptions
   );
 }
 
@@ -1569,12 +1561,12 @@ LoadVouchers(value:{
     })
   };
   return this.http.post(
-    AUTH_API + 'voucher-generate/credit-voucher-generate',  { 
+    AUTH_API + 'voucher-generate/credit-voucher-generate',  {
       "fromDate": value.fromDate,
       "toDate": value.toDate,
       "senderName": value.senderName,
     },
-     httpOptions 
+     httpOptions
   );
 }
 
@@ -1597,7 +1589,7 @@ VoucherGenerate(value:{
     })
   };
   return this.http.post(
-    AUTH_API + 'voucher-generate',  { 
+    AUTH_API + 'voucher-generate',  {
       "fromDate": value.fromDate,
       "toDate": value.toDate,
       "grnNo": value.grnNo,
@@ -1608,7 +1600,7 @@ VoucherGenerate(value:{
       "bookingStatus": value.bookingStatus,
       "charge": value.charge,
     },
-     httpOptions 
+     httpOptions
   );
 }
 
@@ -1625,12 +1617,12 @@ VoucherDetailsLoad(value:{
     })
   };
   return this.http.post(
-    AUTH_API + 'voucher-generate/voucher-details',  { 
+    AUTH_API + 'voucher-generate/voucher-details',  {
       "fromDate": value.fromDate,
       "toDate": value.toDate,
       "senderName": value.senderName,
     },
-     httpOptions 
+     httpOptions
   );
 }
 
@@ -1647,12 +1639,12 @@ GetVoucherDetails(value:{
     })
   };
   return this.http.post(
-    AUTH_API + 'voucher-generate/voucher-details-print',  { 
+    AUTH_API + 'voucher-generate/voucher-details-print',  {
       "fromDate": value.fromDate,
       "toDate": value.toDate,
       "senderName": value.senderName,
     },
-     httpOptions 
+     httpOptions
   );
 }
 
@@ -1682,8 +1674,8 @@ GetSearch(value: {
 
 ParcelStatusdateReport(value:{
   startDate:string,
-  endDate:string, 
-  fromCity:string, 
+  endDate:string,
+  fromCity:string,
   toCity:string,
    bookingStatus:string
 }){
@@ -1695,25 +1687,25 @@ ParcelStatusdateReport(value:{
     })
   };
   return this.http.post(
-    AUTH_API + 'booking/parcel-status-date-difference-report',  { 
+    AUTH_API + 'booking/parcel-status-date-difference-report',  {
       "endDate": value.endDate,
       "startDate": value.startDate,
       "fromCity": value.fromCity,
       "toCity":value.toCity,
       "bookingStatus":value.bookingStatus
     },
-     httpOptions 
+     httpOptions
   );
 }
 
 }
-  
 
 
 
 
 
- 
+
+
 
 
 
@@ -1784,9 +1776,5 @@ ParcelStatusdateReport(value:{
 //     },
 //     httpOptions
 //   );
-  
-// } 
 
-
-
-
+// }

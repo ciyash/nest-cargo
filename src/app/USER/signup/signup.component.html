@@ -1,25 +1,16 @@
-<div class="login-container">
-    <div class="left-side">
-        <img src="../../../assets/tittlelogo.svg" alt="Company Logo" class="logo">
-        <div class="container d-flex justify-content-end " style="margin-top: 2%;"  >
-            <div class="login-box">
-                <h4 class="welcome">Welcome</h4>
-                <h2 class="company-name">SREE KALESWARI LOGISTICS</h2>
-                <form >
-                    <div class="input-container">
-                        <label for="identifier">Enter your username or email address</label>
-                        <input type="text" id="identifier" class="form-control" placeholder="Username or email address">
-                    </div>
-                    <div class="input-container">
-                        <label for="password" >Enter your Password</label>
-                        <input type="password" id="password" class="form-control" placeholder="Password">
-                    </div>
-                    <div class="forgot-password">
-                        <a href="#">Forgot Password?</a>
-                    </div>
-                    <button type="submit" class="btn-login" >LOGIN</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+<main class="register-card">
+<img class="auth-logo" src="assets/tittlelogo.svg" alt="CargoNest"><h1>Register your company</h1><p>100 free bookings per company. Then INR 1,000/month for unlimited bookings.</p><p>Create a company account, then sign in to set up admins and subadmins.</p>
+<p *ngIf="errorMessage" class="alert alert-danger" role="alert">{{errorMessage}}</p>
+<form [formGroup]="form" (ngSubmit)="register()" class="row g-3">
+<div class="col-12"><label for="name">Company name *</label><input id="name" class="form-control" formControlName="name" autocomplete="organization"></div>
+<div class="col-12"><label for="logo-text">Logo letters (optional)</label><input id="logo-text" class="form-control" formControlName="logoText" maxlength="2" minlength="2" pattern="[A-Za-z]{2}" placeholder="Example: AL" style="text-transform:uppercase"><small>Enter two letters, or leave blank to use initials from your company name.</small><div class="p-3 mt-3 border rounded bg-white"><app-company-logo [text]="form.controls.name.value" [letters]="form.controls.logoText.value"></app-company-logo></div></div>
+<div class="col-12"><label for="email">Company email *</label><input id="email" class="form-control" type="email" formControlName="email" autocomplete="email"></div>
+<div class="col-sm-6"><label for="password">Password *</label><input id="password" class="form-control" type="password" formControlName="password" autocomplete="new-password"><small>At least 8 characters</small></div>
+<div class="col-sm-6"><label for="confirm">Confirm password *</label><input id="confirm" class="form-control" type="password" formControlName="confirmPassword" autocomplete="new-password"></div>
+<div class="col-sm-6"><label for="phone">Phone</label><input id="phone" class="form-control" formControlName="phone" type="tel"></div>
+<div class="col-sm-6"><label for="contact">Contact name</label><input id="contact" class="form-control" formControlName="customerName"></div>
+<div class="col-12"><label for="address">Address</label><input id="address" class="form-control" formControlName="address"></div>
+<div class="col-12"><label for="state">State</label><input id="state" class="form-control" formControlName="state"></div>
+<div class="col-12"><button class="btn btn-primary" [disabled]="submitting">{{submitting ? 'Registering…' : 'Register company'}}</button></div>
+</form><p class="mt-4">Already registered? <a routerLink="/clogin">Company login</a> · <a routerLink="/login">Staff login</a></p>
+</main>

@@ -1,3 +1,7 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -5,6 +9,8 @@ import { MessageService } from 'primeng/api';
 import { BranchService } from 'src/app/service/branch.service';
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-add-cfmaster',
   templateUrl: './add-cfmaster.component.html',
   styleUrls: ['./add-cfmaster.component.scss'],
@@ -42,14 +48,14 @@ export class AddCfmasterComponent {
             exDate:['', Validators.required],
               });
       }
-    
+
       ngOnInit(){
-     
-    
+
+
       }
-    
-   
-    
+
+
+
       Add() {
         const payload = {
           gst: this.form.value.gst,
@@ -71,7 +77,7 @@ export class AddCfmasterComponent {
           next: (response: any) => {
             console.log('Master successfully:', response);
             this.messageService.add({ severity: 'success', summary: 'success', detail: 'Create CF Master Type successfully' });
-            
+
             setTimeout(() => {
              this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
                this.router.navigate(['/getcfmasterdata']);
@@ -84,8 +90,8 @@ export class AddCfmasterComponent {
           },
         });
       }
-  
-  
-     
+
+
+
 
 }

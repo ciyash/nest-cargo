@@ -1,3 +1,7 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
 
 import { Component, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { BranchService } from 'src/app/service/branch.service';
@@ -5,25 +9,27 @@ import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 declare var $: any;
-import * as XLSX from 'xlsx';
+import type * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-receivedstock-report',
   templateUrl: './receivedstock-report.component.html',
   styleUrls: ['./receivedstock-report.component.scss']
 })
-export class ReceivedstockReportComponent { 
+export class ReceivedstockReportComponent {
 
     @ViewChild('selectElem2') selectElem2!: ElementRef;
     @ViewChild('droupbranch') droupbranch!: ElementRef;
-  
+
     form!: FormGroup;
     reportData: any;
     citydata: any;
     branchdata: any;
     allgetvechicle: any;
     pfdata: any;
-    today = new Date(); 
+    today = new Date();
     payload: any;
     tbcdata: any;
     onDropBranchSelect: any;
@@ -32,9 +38,9 @@ export class ReceivedstockReportComponent {
   ffdata: any;
   profileData: any;
   pffffffdata: any;
-  
+
     constructor(
-      private api: BranchService, 
+      private api: BranchService,
       private fb: FormBuilder,
       private router: Router,
       private toast: ToastrService
@@ -49,7 +55,7 @@ export class ReceivedstockReportComponent {
         receiverName: [''],
       });
     }
-  
+
     getTodayDateString(): string {
       const today = new Date();
       const day = ('0' + today.getDate()).slice(-2);
@@ -57,23 +63,23 @@ export class ReceivedstockReportComponent {
       const year = today.getFullYear();
       return `${year}-${month}-${day}`;
     }
-  
+
     ngOnInit() {
       this.api.GetCities().subscribe((res: any) => {
         this.citydata = res;
       });
-  
+
       this.api.GetBranch().subscribe((res: any) => {
         this.branchdata = res;
       });
-  
+
       this.api.VehicleData().subscribe((res: any) => {
         this.allgetvechicle = res;
       });
-  
+
       this.getProfileData();
     }
-  
+
     onFromcitySelect(event: any) {
       const cityName = event.target.value;
       if (cityName) {
@@ -89,7 +95,7 @@ export class ReceivedstockReportComponent {
         this.pdata = [];
       }
     }
-  
+
     onTocitySelect(event: any) {
       const cityName = event.target.value;
       if (cityName) {
@@ -105,7 +111,7 @@ export class ReceivedstockReportComponent {
         this.tbcdata = [];
       }
     }
-  
+
     ngAfterViewInit(): void {
       setTimeout(() => {
         // To City select2 init with empty default value
@@ -116,7 +122,7 @@ export class ReceivedstockReportComponent {
           this.form.patchValue({ toCity: selectedToCity });
           this.onTocitySelect({ target: { value: selectedToCity } });
         });
-  
+
         // Drop Branch select2 init with empty default value
         $(this.droupbranch.nativeElement).select2();
         $(this.droupbranch.nativeElement).val('').trigger('change');  // <-- empty string default
@@ -138,7 +144,7 @@ export class ReceivedstockReportComponent {
         this.pffffffdata = res;
 
         console.log("profileData:", this.profileData);
-    
+
         // Update form controls with profile data
         this.form.patchValue({
           fromCity: this.pfdata || '', // Set fromCity to the city from branchId
@@ -146,28 +152,28 @@ export class ReceivedstockReportComponent {
         });
           });
     }
-  
+
     // Other methods unchanged...
     itemsPerPage = 10;
     currentPage = 1;
     totalPages = 1;
-  
+
     pagedData() {
       if (!this.reportData) return [];
       const start = (this.currentPage - 1) * this.itemsPerPage;
       const end = start + this.itemsPerPage;
       return this.reportData.slice(start, end);
     }
-  
+
     changePage(page: number) {
       if (page < 1 || page > this.totalPages) return;
       this.currentPage = page;
     }
-  
+
     totalPagesArray() {
       return Array(this.totalPages).fill(0);
     }
-  
+
     LuaggageReport() {
       this.payload = {
         fromDate: this.form.value.fromDate,
@@ -179,13 +185,13 @@ export class ReceivedstockReportComponent {
         receiverName: this.form.value.receiverName
       };
   console.log("paload:",this.payload);
-  
+
       this.api.ParcelReceivedStockReport(this.payload).subscribe({
         next: (res: any) => {
           this.reportData = res.data;
           this.totalPages = Math.ceil(this.reportData.length / this.itemsPerPage);
           this.currentPage = 1;
-  
+
           if (res.message) {
             this.toast.success(res.message, 'Success');
           } else {
@@ -198,7 +204,7 @@ export class ReceivedstockReportComponent {
           } else {
             this.toast.error('Failed to load report', 'Error');
           }
-  
+
           // Refresh current route to reset form or state if needed
           const currentUrl = this.router.url;
           this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
@@ -207,9 +213,9 @@ export class ReceivedstockReportComponent {
         }
       });
     }
-  
 
-  
+
+
     printReport() {
       const printContents = document.getElementById('print-section')?.innerHTML;
       if (printContents) {
@@ -239,13 +245,14 @@ export class ReceivedstockReportComponent {
         popupWin!.document.close();
       }
     }
-  
-    exportToExcel(): void {
+
+    async exportToExcel(): Promise<void> {
+    const XLSX = await import('xlsx');
       if (!this.reportData || this.reportData.length === 0) {
         alert('No data to export');
         return;
       }
-    
+
       // Header info rows
       const headerRows = [
         [this.pfdata?.companyName || '', '', '', '', '', '', '', ''],
@@ -266,12 +273,12 @@ export class ReceivedstockReportComponent {
         ],
         [],
       ];
-    
+
       // Table headers
       const tableHeader = [
         'No', 'GRN No', 'Unloading Date', 'Sender', 'Receiver', 'Type', 'Packages', 'Total Amount'
       ];
-    
+
       // Data rows
       const dataRows = this.reportData.map((item: any, index: number) => [
         (this.currentPage - 1) * this.itemsPerPage + index + 1,
@@ -283,13 +290,13 @@ export class ReceivedstockReportComponent {
         item.totalPackages,
         item.grandTotal,
       ]);
-    
+
       // Combine rows
       const worksheetData = [...headerRows, tableHeader, ...dataRows];
-    
+
       // Create worksheet
       const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(worksheetData);
-    
+
       // Set column widths (optional)
       worksheet['!cols'] = [
         { wch: 5 },
@@ -301,27 +308,26 @@ export class ReceivedstockReportComponent {
         { wch: 10 },
         { wch: 15 },
       ];
-    
+
       // Create workbook
       const workbook: XLSX.WorkBook = {
         Sheets: { 'Parcel Report': worksheet },
         SheetNames: ['Parcel Report'],
       };
-    
+
       // Write workbook to buffer
       const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-    
+
       // Save file
       this.saveAsExcelFile(excelBuffer, `Parcel_Stock_Report_${new Date().toISOString().slice(0, 10)}.xlsx`);
     }
-    
+
     saveAsExcelFile(buffer: any, fileName: string): void {
       const data: Blob = new Blob([buffer], {
         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8',
       });
       FileSaver.saveAs(data, fileName);
     }
-    
-    
+
+
   }
-  

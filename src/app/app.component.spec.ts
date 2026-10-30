@@ -20,10 +20,10 @@ describe('AppComponent', () => {
     expect(app.title).toEqual('CRM16');
   });
 
-  it('should render title', () => {
+  it('should render the route outlet', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.content span')?.textContent).toContain('CRM16 app is running!');
+    expect(compiled.querySelector('router-outlet')).not.toBeNull();
   });
 });

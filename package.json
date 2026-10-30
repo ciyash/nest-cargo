@@ -6,7 +6,11 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "build:dev": "ng build --configuration development",
+    "build:stats": "ng build --stats-json",
+    "typecheck": "tsc --noEmit -p tsconfig.app.json",
+    "test:ci": "ng test --watch=false --browsers=ChromeHeadless"
   },
   "private": true,
   "dependencies": {

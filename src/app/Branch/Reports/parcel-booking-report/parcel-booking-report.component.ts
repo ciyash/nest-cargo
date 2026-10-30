@@ -1,10 +1,16 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { BranchService } from 'src/app/service/branch.service';
-import * as XLSX from 'xlsx';
+
 import * as FileSaver from 'file-saver';
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-parcel-booking-report',
   templateUrl: './parcel-booking-report.component.html',
   styleUrls: ['./parcel-booking-report.component.scss'],
@@ -40,7 +46,7 @@ console.log('Report Data:', this.reportData);
       console.warn('No report data found in localStorage');
     }
     this.data = this.parcelReportData.data;
-    this.data1 = this.parcelReportData; 
+    this.data1 = this.parcelReportData;
     console.log('Received data:', this.data);
     this.getProfileData();
 
@@ -82,7 +88,7 @@ console.log('Report Data:', this.reportData);
       window.location.reload(); // Optional: Reload to restore original content
     }, 500); // Adjust delay as needed
   }
-  
+
 
 
   // downloadAsPDF() {
@@ -100,14 +106,15 @@ console.log('Report Data:', this.reportData);
   //     });
   //   }
   // }
-  
-  
 
 
-  
-    Export(): void {
+
+
+
+    async Export(): Promise<void> {
+    const XLSX = await import('xlsx');
       const wb = XLSX.utils.book_new();
-  
+
       // Add company info and report header as the first sheet
       const headerData = [
         [this.pfdata?.companyName || ''],
@@ -122,10 +129,10 @@ console.log('Report Data:', this.reportData);
         [`Print Date: ${this.formatDate(this.currentDate)} ${this.formatTime(this.currentTime)}`],
         []
       ];
-  
+
       const wsHeader = XLSX.utils.aoa_to_sheet(headerData);
       XLSX.utils.book_append_sheet(wb, wsHeader, 'Report Info');
-  
+
       // For each category, add a sheet with its bookings
       const categories = ['toPay', 'paid', 'credit', 'FOC', 'CLR'];
       categories.forEach(category => {
@@ -136,14 +143,14 @@ console.log('Report Data:', this.reportData);
           XLSX.utils.book_append_sheet(wb, wsEmpty, category);
           return;
         }
-  
+
         // Prepare header row for the bookings table
         const tableHeader = [
           'S.No', 'GRN No', 'Status', 'Date', 'From Branch', 'To Branch',
           'Booked By', 'Sender Name', 'Receiver Name', 'Agent', 'Quantity',
           'Weight', 'Charge', 'Hamali', 'Value of Goods', 'E-way Bill No'
         ];
-  
+
         // Prepare bookings data rows
         const dataRows = bookings.map((booking: any, i: number) => ([
           i + 1,
@@ -163,7 +170,7 @@ console.log('Report Data:', this.reportData);
           booking.valueOfGoods || 0,
           booking.eWayBillNo || '-',
         ]));
-  
+
         // Add totals row
         const totalRow = [
           '', '', '', '', '', '', '', '', '', 'Total',
@@ -172,18 +179,18 @@ console.log('Report Data:', this.reportData);
           this.data[category].allGrandTotal || 0,
           '', '', ''
         ];
-  
+
         const worksheetData = [tableHeader, ...dataRows, totalRow];
         const ws = XLSX.utils.aoa_to_sheet(worksheetData);
-  
+
         XLSX.utils.book_append_sheet(wb, ws, category);
       });
-  
+
       // Export file
       const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
       FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), 'ParcelBookingReport.xlsx');
     }
-  
+
     private formatDate(date: any, format = 'dd-MM-yyyy'): string {
       if (!date) return '';
       const d = new Date(date);
@@ -194,7 +201,7 @@ console.log('Report Data:', this.reportData);
       if (format === 'dd/MM/yyyy') return `${day}/${month}/${year}`;
       return `${day}-${month}-${year}`;
     }
-  
+
     private formatTime(date: any): string {
       if (!date) return '';
       let d = new Date(date);
@@ -206,5 +213,5 @@ console.log('Report Data:', this.reportData);
       const strTime = `${hours}:${minutes.toString().padStart(2, '0')} ${ampm}`;
       return strTime;
     }
-    
+
 }

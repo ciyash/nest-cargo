@@ -1,7 +1,12 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule],
   selector: 'app-gst-data',
   templateUrl: './gst-data.component.html',
   styleUrls: ['./gst-data.component.scss']
@@ -14,10 +19,10 @@ export class GstDataComponent {
   constructor(private router: Router) {
     const navigation = this.router.getCurrentNavigation();
     const stateData = navigation?.extras?.state?.['data'];
-    
+
     this.gstdata = stateData;
     this.bookings = stateData?.bookings || [];
-    
+
 
     console.log("Bookings:", this.bookings);
   }

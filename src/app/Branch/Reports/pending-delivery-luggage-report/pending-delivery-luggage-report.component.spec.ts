@@ -8,7 +8,7 @@ describe('PendingDeliveryLuggageReportComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [PendingDeliveryLuggageReportComponent]
+      imports: [PendingDeliveryLuggageReportComponent]
     });
     fixture = TestBed.createComponent(PendingDeliveryLuggageReportComponent);
     component = fixture.componentInstance;

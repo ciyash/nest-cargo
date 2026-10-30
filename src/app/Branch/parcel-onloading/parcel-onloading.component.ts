@@ -1,17 +1,25 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../USER/header/header.component';
+import { RippleModule } from 'primeng/ripple';
+import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { ChangeDetectorRef, Component } from '@angular/core';
 import {  FormArray,  FormBuilder,  FormControl,  FormGroup,  Validators,} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { BranchService } from 'src/app/service/branch.service';
 import { ToastrService } from 'ngx-toastr';
-import * as XLSX from 'xlsx';
+import type * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
-  
+
 declare var $: any;
 declare const SlimSelect: any;
 import { ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent, RippleModule, ZXingScannerModule],
   selector: 'app-parcel-onloading',
   templateUrl: './parcel-onloading.component.html',
   styleUrls: ['./parcel-onloading.component.scss'],
@@ -46,7 +54,7 @@ export class ParcelOnloadingComponent {
   qrdata: string = '';
   showScanner: boolean = false;
   today = new Date();
-  
+
   constructor(
     private api: BranchService,
     private fb: FormBuilder,
@@ -84,11 +92,11 @@ export class ParcelOnloadingComponent {
       // lrNumber: this.fb.array([]),
       branch: [''],
       vehicalNumber: [''],
-      
+
 
 
     });
-    
+
   }
   ngOnInit() {
     this.searchTerm = this.activeroute.snapshot.params['grnNumber'];
@@ -104,7 +112,7 @@ export class ParcelOnloadingComponent {
     const year = today.getFullYear();
     return `${year}-${month}-${day}`; // ✔ HTML date input format
   }
-  
+
 formatDateDisplay(dateStr: string): string {
   const [year, month, day] = dateStr.split('-');
   return `${day}-${month}-${year}`;
@@ -133,7 +141,7 @@ formatDateDisplay(dateStr: string): string {
         console.log('Updated To City:', this.form.get('toCity')?.value);
       });
 
-   
+
       $(this.branch.nativeElement).select2();
       $(this.branch.nativeElement).on('select2:select', (event: any) => {
         const selectedBranch = event.params.data.id;
@@ -141,7 +149,7 @@ formatDateDisplay(dateStr: string): string {
         console.log('Updated Branch:', this.form.get('branch')?.value);
       });
 
-    
+
       $(this.selectvehicle.nativeElement).select2();
       $(this.selectvehicle.nativeElement).on('select2:select', (event: any) => {
         const selectedVehicle = event.params.data.id;
@@ -158,7 +166,7 @@ formatDateDisplay(dateStr: string): string {
 
   onGrnNoChange(event: any, grnNo: number) {
     const grnArray = this.form1.get('grnNo') as FormArray;
-  
+
     if (event.target.checked) {
       if (!grnArray.value.includes(grnNo)) {
         grnArray.push(this.fb.control(grnNo));
@@ -169,22 +177,22 @@ formatDateDisplay(dateStr: string): string {
         grnArray.removeAt(index);
       }
     }
-  
+
     this.allSelected = this.bkdata.length === grnArray.value.length;
   }
   onSelectAllChange(event: any) {
     const checked = event.target.checked;
     const grnArray = this.fb.array([]);
-  
+
     if (checked) {
       this.bkdata.forEach(d => grnArray.push(this.fb.control(d.grnNo)));
     }
-  
+
     this.form1.setControl('grnNo', grnArray);
     this.allSelected = checked;
   }
-  
-  
+
+
 
 
 onLoad() {
@@ -200,7 +208,7 @@ onLoad() {
     toDate: formValues.toDate,
   };
 
-  
+
 
   // if (formValues.fromCity?.length) payload.fromCity = formValues.fromCity;
   // if (formValues.toCity) payload.toCity = formValues.toCity;
@@ -227,7 +235,7 @@ onLoad() {
   //     this.apiResponse = data;
   //     this.bkdata = data.flatMap((item: any) => item.bookings);
 
-  //     // Prepare 
+  //     // Prepare
   //     this.summary = {};
   //     data.forEach((item: any) => {
   //       this.summary[item.bookingType] = {
@@ -263,7 +271,7 @@ onLoad() {
   this.api.FilterParcelUnLoading(payload).subscribe({
     next: (response: any) => {
       const data = response?.data || [];
-  
+
       if (!data.length) {
         this.apiResponse = [];
         this.bkdata = [];
@@ -272,10 +280,10 @@ onLoad() {
         this.toastr.error('No customer bookings found.', 'Error');
         return;
       }
-  
+
       this.apiResponse = data;
       this.bkdata = data; // <-- fix: directly assign response data
-  
+
       // Prepare summary
       this.summary = {};
       data.forEach((item: any) => {
@@ -286,18 +294,18 @@ onLoad() {
             totalGrandTotal: 0
           };
         }
-  
+
         this.summary[type].totalQuantity += item.totalQuantity || 0;
         this.summary[type].totalGrandTotal += item.grandTotal || 0;
       });
-  
+
       this.LoadSuccess = true;
-  
+
       // if (this.bkdata.length > 0) {
       //   this.form1.patchValue({
       //     branch: this.bkdata[0].dropBranch,
       //   });
-  
+
       //   // this.setFormArray('bookingType', this.bkdata.map(d => d.bookingType));
       //   this.setFormArray('grnNo', this.bkdata.map(d => d.grnNo));
       //   this.setFormArray('lrNumber', this.bkdata.map(d => d.lrNumber));
@@ -307,14 +315,14 @@ onLoad() {
           branch: this.bkdata[0].dropBranch,
           bookingType: this.bkdata[0].bookingType, // ✅ patch bookingType
         });
-      
+
         this.setFormArray('grnNo', this.bkdata.map(d => d.grnNo));
         this.setFormArray('lrNumber', this.bkdata.map(d => d.lrNumber));
       }
-      
+
       this.toastr.success('Parcel unloaded Successfully', 'Success');
     },
-  
+
     error: (err) => {
       console.error('API Error:', err);
       this.apiResponse = [];
@@ -324,7 +332,7 @@ onLoad() {
       this.toastr.error('Parcel unloaded Data Not Found', 'Error');
     }
   });
-  
+
 }
 
 openScanner() {
@@ -413,7 +421,7 @@ getQRdata(id: string) {
   );
 }
 
-  
+
   onTocitySelect(event: any) {
     console.log('Event triggered:', event);
     console.log('Selected City:', event.target.value);
@@ -485,7 +493,7 @@ getQRdata(id: string) {
   //       formArray.removeAt(index);
   //     }
   //   }
-  
+
   //   // ✅ Update "Select All" status based on selected values
   //   this.allSelected = this.bkdata.length === formArray.value.length;
   //   console.log('Selected GRN Numbers:', formArray.value);
@@ -524,7 +532,7 @@ getQRdata(id: string) {
   //   const grnNos = Array.isArray(this.form1.value.grnNo)
   //   ? this.form1.value.grnNo
   //   : [this.form1.value.grnNo]; // fallback in case it's a single value
-  
+
   // const payload = {
   //   fromBookingDate: this.form1.value.fromBookingDate,
   //   toBookingDate: this.form1.value.toBookingDate,
@@ -536,7 +544,7 @@ getQRdata(id: string) {
   //   grnNo: grnNos,
   //   bookingType: this.form1.value.bookingType,
   // };
-  
+
 
   //   console.log('Final Payload:', payload);
   //   this.api.ParcelUnLoading(payload).subscribe({
@@ -562,11 +570,11 @@ getQRdata(id: string) {
   ParcelLoad() {
     console.log('ParcelLoad called');  // Confirm click
     console.log('Form Value:', this.form1.value);  // Confirm data
-  
+
     const grnNos = Array.isArray(this.form1.value.grnNo)
       ? this.form1.value.grnNo
       : [this.form1.value.grnNo];
-  
+
     const payload = {
       fromBookingDate: this.form1.value.fromBookingDate,
       toBookingDate: this.form1.value.toBookingDate,
@@ -577,9 +585,9 @@ getQRdata(id: string) {
       grnNo: grnNos,
       bookingType: this.form1.value.bookingType,
     };
-  
+
     console.log('Final Payload:', payload);
-  
+
     this.api.ParcelUnLoading(payload).subscribe({
       next: (response: any) => {
         console.log('Parcel unloaded successfully:', response);
@@ -596,7 +604,7 @@ getQRdata(id: string) {
       },
     });
   }
-  
+
 
   printTable() {
     const printContent = document.getElementById('print-section');
@@ -626,18 +634,19 @@ getQRdata(id: string) {
       WindowPrt.document.close();
     }
   }
-  
 
-  ExportEXcel(): void {
+
+  async ExportEXcel(): Promise<void> {
+    const XLSX = await import('xlsx');
     const headerData = [];
-  
+
     // Optional: Add title or meta info
     headerData.push(['Parcel Booking GRN Report']);
     headerData.push([
       `Print Date: ${this.formatDate(this.today)} Time: ${this.formatTime(this.today)}`
     ]);
     headerData.push([]); // Blank row
-  
+
     // Table headers
     const tableHeaders = [
       'S.No',
@@ -653,7 +662,7 @@ getQRdata(id: string) {
       'Charges'
     ];
     headerData.push(tableHeaders);
-  
+
     // Table data rows
     const tableRows = this.bkdata.map((row: any, index: number) => [
       index + 1,
@@ -668,35 +677,35 @@ getQRdata(id: string) {
       row?.totalQuantity,
       row?.grandTotal
     ]);
-  
+
     const sheetData = [...headerData, ...tableRows];
-  
+
     const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(sheetData);
     const workbook: XLSX.WorkBook = {
       Sheets: { 'Report': worksheet },
       SheetNames: ['Report']
     };
-  
+
     const excelBuffer: any = XLSX.write(workbook, {
       bookType: 'xlsx',
       type: 'array'
     });
-  
+
     const blob: Blob = new Blob([excelBuffer], {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'
     });
-  
+
     FileSaver.saveAs(blob, 'Parcel_GRN_Report.xlsx');
   }
-  
-  
+
+
   formatDate(date: Date): string {
     const d = new Date(date);
     return `${d.getDate().toString().padStart(2, '0')}-${(d.getMonth() + 1)
       .toString()
       .padStart(2, '0')}-${d.getFullYear()}`;
   }
-  
+
   formatTime(date: Date): string {
     const d = new Date(date);
     return d.toLocaleTimeString('en-IN', {
@@ -705,15 +714,6 @@ getQRdata(id: string) {
       hour12: true
     });
   }
-  
+
 
   }
-  
-
-
-
-
-
-
-
-

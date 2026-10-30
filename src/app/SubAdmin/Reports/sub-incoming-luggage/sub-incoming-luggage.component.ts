@@ -1,3 +1,7 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
 import { Component, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { BranchService } from 'src/app/service/branch.service';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
@@ -5,6 +9,8 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 declare var $: any;
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-sub-incoming-luggage',
   templateUrl: './sub-incoming-luggage.component.html',
   styleUrls: ['./sub-incoming-luggage.component.scss']
@@ -14,8 +20,8 @@ export class SubIncomingLuggageComponent {
     @ViewChild('pickupbranch') pickupbranch!: ElementRef;
     @ViewChild('selectElem2') selectElem2!: ElementRef;
     @ViewChild('droupbranch') droupbranch!: ElementRef;
-  
-  
+
+
     onPickupBranchSelect: any;
     onDropBranchSelect: any;
       form!: FormGroup;
@@ -24,7 +30,7 @@ export class SubIncomingLuggageComponent {
       branchdata: any;
       allgetvechicle: any;
       pfdata: any;
-      today = new Date(); 
+      today = new Date();
       payload: any;
     pdata: any;
     tbcdata: any;
@@ -42,7 +48,7 @@ export class SubIncomingLuggageComponent {
           dropBranch: [''],
         });
       }
-    
+
       getTodayDateString(): string {
         const today = new Date();
         const day = ('0' + today.getDate()).slice(-2);
@@ -50,8 +56,8 @@ export class SubIncomingLuggageComponent {
         const year = today.getFullYear();
         return `${year}-${month}-${day}`; // ✔ HTML date input format
       }
-      
-    
+
+
       ngOnInit() {
         // Fetch cities
         this.api.GetCities().subscribe((res: any) => {
@@ -59,15 +65,15 @@ export class SubIncomingLuggageComponent {
           this.citydata = res;
           this.getProfileData();
         });
-    
+
         // Fetch branches
-  
+
         this.api.GetBranch().subscribe((res: any) => {
           this.branchdata = res;
           console.log('branchdata:', this.branchdata);
         });
-  
-    
+
+
         // Fetch vehicles
         this.api.VehicleData().subscribe((res: any) => {
           console.log('allvechicle:', res);
@@ -75,7 +81,7 @@ export class SubIncomingLuggageComponent {
         });
         this.getProfileData();
       }
-  
+
   // hh
       LuaggageReport() {
         this.payload = {
@@ -87,22 +93,22 @@ export class SubIncomingLuggageComponent {
           dropBranch: this.form.value.dropBranch,
         };
         console.log("payload:", this.payload);
-      
+
         this.api.ParcelIncomingReport(this.payload).subscribe(
           (res: any) => {
             this.reportData = res.data;
             console.log('Luggage Report:', this.reportData);
             const  ddsts = res.data
-            
+
             const finalData = {
               ...this.reportData,
               fromDate: this.payload.fromDate,
               toDate: this.payload.toDate
             };
-      
+
             // Save to localStorage
             localStorage.setItem('incomingReportData', JSON.stringify(finalData));
-      
+
             // Open new tab
             window.open('/parcel-incoming-report', '_blank');
           },
@@ -111,21 +117,21 @@ export class SubIncomingLuggageComponent {
           }
         );
       }
-      
-    
+
+
 
     getProfileData() {
       this.api.GetProfileData().subscribe((res: any) => {
         this.fromCityValue = res.branchId.city;
-  
+
         this.filteredCityList = this.citydata.filter(
           (city: { cityName: any }) => city.cityName === this.fromCityValue
         );
         this.pfdata = res;
 
-    
+
         this.form.patchValue({ fromCity: this.fromCityValue });
-  
+
         // Trigger form change logic if needed
         this.onFromcitySelect({ target: { value: this.fromCityValue } });
           setTimeout(() => {
@@ -136,7 +142,7 @@ export class SubIncomingLuggageComponent {
         }, 0);
       });
     }
-  
+
       ngAfterViewInit(): void {
         setTimeout(() => {
           // From City
@@ -147,7 +153,7 @@ export class SubIncomingLuggageComponent {
             this.form.patchValue({ fromCity: selectedCity });
             this.onFromcitySelect({ target: { value: selectedCity } });
           });
-      
+
           // Pickup Branch
           $(this.pickupbranch.nativeElement).select2();
           $(this.pickupbranch.nativeElement).val('all').trigger('change'); // ✅
@@ -155,9 +161,9 @@ export class SubIncomingLuggageComponent {
             const selectedBranch = event.params.data.id;
             this.form.patchValue({ pickUpBranch: selectedBranch });
             this.onPickupBranchSelect({ target: { value: selectedBranch } });
-            
+
           });
-      
+
           // To City
           $(this.selectElem2.nativeElement).select2();
           $(this.selectElem2.nativeElement).val('all').trigger('change'); // ✅
@@ -166,7 +172,7 @@ export class SubIncomingLuggageComponent {
             this.form.patchValue({ toCity: selectedToCity });
             this.onTocitySelect({ target: { value: selectedToCity } });
           });
-      
+
           // Drop Branch
           $(this.droupbranch.nativeElement).select2();
           $(this.droupbranch.nativeElement).val('all').trigger('change'); // ✅
@@ -177,7 +183,7 @@ export class SubIncomingLuggageComponent {
           });
         }, 0);
       }
-      
+
       onFromcitySelect(event: any) {
         const cityName = event.target.value;
         if (cityName) {
@@ -194,7 +200,7 @@ export class SubIncomingLuggageComponent {
           this.pdata = [];
         }
       }
-    
+
       onTocitySelect(event: any) {
         console.log('Event triggered:', event);
         console.log('Selected City:', event.target.value);
@@ -203,7 +209,7 @@ export class SubIncomingLuggageComponent {
           this.api.GetBranchbyCity(cityName).subscribe(
             (res: any) => {
               console.log('Branches for selected city:', res);
-    
+
               this.tbcdata = res;
             },
             (error: any) => {

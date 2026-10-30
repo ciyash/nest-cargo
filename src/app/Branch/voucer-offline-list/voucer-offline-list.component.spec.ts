@@ -8,7 +8,7 @@ describe('VoucerOfflineListComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [VoucerOfflineListComponent]
+      imports: [VoucerOfflineListComponent]
     });
     fixture = TestBed.createComponent(VoucerOfflineListComponent);
     component = fixture.componentInstance;

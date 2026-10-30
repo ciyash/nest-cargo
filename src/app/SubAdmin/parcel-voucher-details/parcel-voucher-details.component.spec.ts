@@ -8,7 +8,7 @@ describe('ParcelVoucherDetailsComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [ParcelVoucherDetailsComponent]
+      imports: [ParcelVoucherDetailsComponent]
     });
     fixture = TestBed.createComponent(ParcelVoucherDetailsComponent);
     component = fixture.componentInstance;

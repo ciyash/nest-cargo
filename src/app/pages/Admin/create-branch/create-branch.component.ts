@@ -1,3 +1,7 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -8,6 +12,8 @@ import { BranchService } from 'src/app/service/branch.service';
 
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-create-branch',
   templateUrl: './create-branch.component.html',
   styleUrls: ['./create-branch.component.scss']
@@ -35,7 +41,6 @@ export class CreateBranchComponent {
         location: ['', Validators.required],
         address: ['', Validators.required],
         phone: ['', Validators.required],
-        email: ['', Validators.required],
         pincode: ['', Validators.required],
         state: ['', Validators.required],
         country:['India'],
@@ -49,7 +54,6 @@ export class CreateBranchComponent {
             location: ['',],
             address: ['',],
             phone: ['',],
-            email: ['', ],
             pincode: ['', ],
             state: ['', ],
             country:['India'],
@@ -80,16 +84,15 @@ export class CreateBranchComponent {
       location: row.location,
       address: row.address,
       phone: row.phone,
-      email: row.email,
       pincode: row.pincode,
       state: row.state,
       country: row.country || 'India', // Default to India if empty
       alternateMobile: row.alternateMobile,
     });
-  
+
     console.log('Editing row:', row);
   }
-  
+
 
 getbranchemployees(id:any){
   this.api.GetUnderBranchEmployees(id).subscribe((res:any)=>{
@@ -106,15 +109,14 @@ getbranchemployees(id:any){
       location: this.form.value.location,
       address: this.form.value.address,
       phone: this.form.value.phone,
-      email: this.form.value.email,
       pincode: this.form.value.pincode,
       state: this.form.value.state,
       country: this.form.value.country,
       alternateMobile: this.form.value.alternateMobile,
     };
-  
+
     console.log('Final Payload:', payload);
-    
+
     this.api.createBranch(payload).subscribe({
       next: (response: any) => {
         console.log('Parcel loaded dat:', response);
@@ -145,7 +147,6 @@ getbranchemployees(id:any){
       location: this.form1.value.location,
       address: this.form1.value.address,
       phone: this.form1.value.phone,
-      email: this.form1.value.email,
       pincode: this.form1.value.pincode,
       state: this.form1.value.state,
       country: this.form1.value.country,
@@ -155,7 +156,7 @@ getbranchemployees(id:any){
         (a: any) => {
           if (a?.data) {
             console.log(a);
-           
+
           } else {
             console.log(a);
             this.msg = 'Branch Successfully Updated !!!';

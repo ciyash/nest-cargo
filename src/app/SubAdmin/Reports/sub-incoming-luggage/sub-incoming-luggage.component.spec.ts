@@ -8,7 +8,7 @@ describe('SubIncomingLuggageComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [SubIncomingLuggageComponent]
+      imports: [SubIncomingLuggageComponent]
     });
     fixture = TestBed.createComponent(SubIncomingLuggageComponent);
     component = fixture.componentInstance;

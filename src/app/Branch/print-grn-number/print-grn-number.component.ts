@@ -1,3 +1,8 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../USER/header/header.component';
+import { QRCodeModule } from 'angularx-qrcode';
 import { Location } from '@angular/common';
 import { Component, Input, SimpleChanges } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
@@ -6,6 +11,8 @@ import { BranchService } from 'src/app/service/branch.service';
 // import * as jspdf from 'jspdf';
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent, QRCodeModule],
   selector: 'app-print-grn-number',
   templateUrl: './print-grn-number.component.html',
   styleUrls: ['./print-grn-number.component.scss'],
@@ -43,12 +50,12 @@ export class PrintGrnNumberComponent {
   // }
   ngOnInit() {
     this.id = this.activeroute.snapshot.params['grnNo'];
-  
+
     this.api.GetGRNnumber(this.id).subscribe(
       (res: any) => {
         console.log('API Response:', res);
         this.data1 = res?.booking; // ✅ FIXED: assign correct booking data
-  
+
         if (this.id) {
           this.qrData = String(this.id).trim();
           console.log('QR Data Set:', this.qrData);
@@ -60,10 +67,10 @@ export class PrintGrnNumberComponent {
         console.error('Error fetching data:', err);
       }
     );
-  
+
     this.getProfileData();
   }
-  
+
   getProfileData() {
     this.api.GetProfileData().subscribe((res: any) => {
       this.pfdata = res;

@@ -1,14 +1,21 @@
-import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
+import { Component, Input } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { BranchService } from 'src/app/service/branch.service';
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-search-grn-number',
   templateUrl: './search-grn-number.component.html',
   styleUrls: ['./search-grn-number.component.scss'],
 })
 export class SearchGrnNumberComponent {
+  @Input() embedded = false;
   searchResult: any[] = [];
   data2: any;
   idselectmsg: string = '';
@@ -36,7 +43,7 @@ export class SearchGrnNumberComponent {
     });
   }
   ngOnInit(): void {
-    this.searchTerm = this.activeroute.snapshot.params['grnNo'];
+    this.searchTerm = String(this.activeroute.snapshot.params['grnNo'] ?? '');
   }
 
   updateParcelStatus() {
@@ -46,19 +53,19 @@ export class SearchGrnNumberComponent {
       receiverMobile: this.form.value.receiverMobile,
     };
     console.log('Final Payload:', payload);
-  
+
     this.api.ReceivedParcelUpdate(payload).subscribe(
       (res: any) => {
         console.log('Update Status:', res);
         this.updata = res;
-  
+
         // ✅ Show success message from backend if available
         if (res.message) {
           this.toast.success(res.message, 'Success');
         } else {
           this.toast.success('Parcel status updated successfully', 'Success');
         }
-  
+
         // ✅ Redirect after short delayad
         setTimeout(() => {
           this.router
@@ -70,7 +77,7 @@ export class SearchGrnNumberComponent {
       },
       (error) => {
         console.error('Error updating status:', error);
-  
+
         // ✅ Show error message from backend if available
         if (error.error && error.error.message) {
           this.toast.error(error.error.message, 'Error');
@@ -114,7 +121,7 @@ export class SearchGrnNumberComponent {
       this.api.GetSearch(searchPayload).subscribe((res: any) => {
         this.data2 = res;
         console.log('searchdataobject:', this.data2);
-        
+
       });
     }
   }

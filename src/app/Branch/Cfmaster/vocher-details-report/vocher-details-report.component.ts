@@ -1,7 +1,13 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
 import { Component } from '@angular/core';
 import { BranchService } from 'src/app/service/branch.service';
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-vocher-details-report',
   templateUrl: './vocher-details-report.component.html',
   styleUrls: ['./vocher-details-report.component.scss']
@@ -20,7 +26,7 @@ export class VocherDetailsReportComponent {
       console.log('Loaded voucher data:', parsedData);
       this.vocherReport=parsedData
       console.log("vocherReport:",this.vocherReport)
-      
+
 
     } else {
       console.warn('No voucher data found in localStorage');
@@ -28,7 +34,7 @@ export class VocherDetailsReportComponent {
     this.getProfileData();
 
   }
-  
+
 getProfileData() {
   this.api.GetProfileData().subscribe((res: any) => {
     this.pfdata = res;

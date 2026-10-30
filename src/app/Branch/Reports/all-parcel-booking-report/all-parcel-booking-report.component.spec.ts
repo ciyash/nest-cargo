@@ -8,7 +8,7 @@ describe('AllParcelBookingReportComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [AllParcelBookingReportComponent]
+      imports: [AllParcelBookingReportComponent]
     });
     fixture = TestBed.createComponent(AllParcelBookingReportComponent);
     component = fixture.componentInstance;

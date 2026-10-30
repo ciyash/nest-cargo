@@ -1,3 +1,8 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
+import { ToastModule } from 'primeng/toast';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -7,6 +12,8 @@ import { AuthService } from 'src/app/service/auth.service';
 import { BranchService } from 'src/app/service/branch.service';
 import { ToastrService } from 'ngx-toastr';
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent, ToastModule],
   selector: 'app-create-admin',
   templateUrl: './create-admin.component.html',
   styleUrls: ['./create-admin.component.scss']
@@ -39,7 +46,7 @@ export class CreateAdminComponent {
             role: ['admin', Validators.required],
             // companyName:['', Validators.required],
               });
-  
+
               this.form1 = this.fb.group({
                 name: ['', Validators.required],
                 username: ['', Validators.required],
@@ -51,7 +58,7 @@ export class CreateAdminComponent {
                 documents: ['', Validators.required],
                 role: ['', Validators.required],
                 // companyName:[''],
-  
+
                   });
       }
       ngOnInit(){
@@ -59,8 +66,8 @@ export class CreateAdminComponent {
         this.api.GetEmployeesData().subscribe((res: any) => {
           console.log('empdata', res);
           this.edata = res.map((employee: any) => {
-           
-            employee.showPassword = false; // Initialize show/hide 
+
+            employee.showPassword = false; // Initialize show/hide
             return employee;
           });
           this.loading = false;
@@ -69,7 +76,7 @@ export class CreateAdminComponent {
       togglePassword(index: number) {
         this.edata[index].showPassword = !this.edata[index].showPassword;
       }
-    
+
       // branchData() {
       //   this.bapi.getData('branch').subscribe({
       //     next: (response: any) => {
@@ -92,10 +99,10 @@ export class CreateAdminComponent {
           }
         });
       }
-      
-    
+
+
       Add() {
-      
+
         const payload = {
           name: this.form.value.name,
           username: this.form.value.username,
@@ -113,7 +120,7 @@ export class CreateAdminComponent {
           next: (response: any) => {
             console.log('Parcel loaded successfully:', response);
             this.toastr.success('Parcel loaded successfully', 'Success');
-  
+
             // this.messageService.add({ severity: 'success', summary: 'success', detail: 'Create Employee successfully' });
             setTimeout(() => {
              this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
@@ -127,9 +134,9 @@ export class CreateAdminComponent {
           },
         });
       }
-  
+
       // edit(id:any) {
-  
+
       //   const payload = {
       //     name: this.form.value.name,
       //     username: this.form.value.username,
@@ -142,14 +149,14 @@ export class CreateAdminComponent {
       //     role: this.form.value.role,
       //     companyName:this.form1.value.companyName
       //   };
-      
+
       //   console.log('Final Payload:', payload);
-        
+
       //   this.api.UpdateEmployee(id,payload).subscribe({
       //     next: (response: any) => {
       //       console.log('Parcel loaded successfully:', response);
       //       this.toastr.success('Parcel loaded successfully', 'Success');
-  
+
       //       // this.messageService.add({ severity: 'success', summary: 'success', detail: 'Create Employee successfully' });
       //       setTimeout(() => {
       //        this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
@@ -163,6 +170,5 @@ export class CreateAdminComponent {
       //     },
       //   });
       // }
-  
+
   }
-  

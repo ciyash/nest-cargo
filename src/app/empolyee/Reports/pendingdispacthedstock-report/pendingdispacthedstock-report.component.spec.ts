@@ -8,7 +8,7 @@ describe('PendingdispacthedstockReportComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [PendingdispacthedstockReportComponent]
+      imports: [PendingdispacthedstockReportComponent]
     });
     fixture = TestBed.createComponent(PendingdispacthedstockReportComponent);
     component = fixture.componentInstance;

@@ -1,3 +1,7 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../USER/header/header.component';
 
 import { Component, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { BranchService } from 'src/app/service/branch.service';
@@ -5,9 +9,11 @@ import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 declare var $: any;
-import * as XLSX from 'xlsx';
+import type * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-dispatched-report',
   templateUrl: './dispatched-report.component.html',
   styleUrls: ['./dispatched-report.component.scss']
@@ -24,7 +30,7 @@ export class DispatchedReportComponent {
   branchdata: any;
   allgetvechicle: any;
   pfdata: any;
-  today = new Date(); 
+  today = new Date();
   payload: any;
   tbcdata: any;
   onDropBranchSelect: any;
@@ -32,7 +38,7 @@ export class DispatchedReportComponent {
   pdata: any;
 
   constructor(
-    private api: BranchService, 
+    private api: BranchService,
     private fb: FormBuilder,
     private router: Router,
     private toast: ToastrService
@@ -144,7 +150,7 @@ export class DispatchedReportComponent {
 
 
 
-  
+
 
   getProfileData() {
     this.api.GetProfileData().subscribe((res: any) => {
@@ -195,7 +201,7 @@ DispatchReport() {
   this.api.DispatchedReport(this.payload).subscribe({
     next: (res: any) => {
       console.log("res:",res);
-      
+
       if (res.message) {
         this.toast.success(res.message); // ✅ show success toast
       } else {
@@ -231,7 +237,8 @@ goToPage(page: number) {
 
 
 
-exportToExcel(): void {
+async exportToExcel(): Promise<void> {
+    const XLSX = await import('xlsx');
   if (!this.reportData || this.reportData.length === 0) return;
 
   // Header Info
@@ -283,6 +290,6 @@ formatTime(date: string | Date): string {
 
 
 
-  
-  
+
+
 }

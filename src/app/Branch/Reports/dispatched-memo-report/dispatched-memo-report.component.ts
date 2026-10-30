@@ -1,12 +1,18 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
 import { Component, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { BranchService } from 'src/app/service/branch.service';
 declare var $: any;
-import * as XLSX from 'xlsx';
+import type * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-dispatched-memo-report',
   templateUrl: './dispatched-memo-report.component.html',
   styleUrls: ['./dispatched-memo-report.component.scss']
@@ -86,7 +92,7 @@ today = new Date();
     const day = ('0' + today.getDate()).slice(-2);
     return `${year}-${month}-${day}`; // ✅ returns 'yyyy-MM-dd' format
   }
-  
+
 
 
   ngAfterViewInit(): void {
@@ -99,7 +105,7 @@ today = new Date();
         this.form.patchValue({ fromCity: selectedCity });
         this.onFromcitySelect({ target: { value: selectedCity } });
       });
-  
+
       // Pickup Branch
       $(this.pickupbranch.nativeElement).select2();
       $(this.pickupbranch.nativeElement).val('all').trigger('change'); // ✅
@@ -108,7 +114,7 @@ today = new Date();
         this.form.patchValue({ pickUpBranch: selectedBranch });
         this.onPickupBranchSelect({ target: { value: selectedBranch } });
       });
-  
+
       // To City
       $(this.selectElem2.nativeElement).select2();
       $(this.selectElem2.nativeElement).val('all').trigger('change'); // ✅
@@ -117,7 +123,7 @@ today = new Date();
         this.form.patchValue({ toCity: selectedToCity });
         this.onTocitySelect({ target: { value: selectedToCity } });
       });
-  
+
       // Drop Branch
       $(this.droupbranch.nativeElement).select2();
       $(this.droupbranch.nativeElement).val('all').trigger('change'); // ✅
@@ -133,7 +139,7 @@ today = new Date();
         const selectedVehicle = event.params.data.id;
         this.form.patchValue({ vehicalNumber: selectedVehicle });
       });
-  
+
     }, 0);
   }
 
@@ -206,7 +212,7 @@ today = new Date();
           ...response,
           cityWiseDetails: response.cityWiseDetails || [],
         };
-        
+
         console.log('report:', this.DispatchedData);
 
         // Reset totals
@@ -265,40 +271,40 @@ today = new Date();
                 font-family: Arial, sans-serif;
                 margin: 20px;
               }
-  
+
               table {
                 width: 100%;
                 border-collapse: collapse;
                 font-size: 12px;
               }
-  
+
               th, td {
                 border: 1px solid #000;
                 padding: 4px;
                 text-align: center;
               }
-  
+
               h4, h6, p {
                 margin: 4px 0;
               }
-  
+
               .text-center {
                 text-align: center;
               }
-  
+
               .fw-bold {
                 font-weight: bold;
               }
-  
+
               .text-decoration-underline {
                 text-decoration: underline;
               }
-  
+
               .d-flex {
                 display: flex;
                 justify-content: space-between;
               }
-  
+
               @media print {
                 .no-print {
                   display: none;
@@ -314,16 +320,17 @@ today = new Date();
       popupWin!.document.close();
     }
   }
-  
+
 
   // Import these
 
 
-  
-  
-  downloadExcel(): void {
+
+
+  async downloadExcel(): Promise<void> {
+    const XLSX = await import('xlsx');
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
-  
+
     const addSheet = (data: any[], sheetName: string) => {
       if (!data?.length) return;
       const sheetData = data.map((item: any, i: number) => ({
@@ -346,12 +353,12 @@ today = new Date();
       const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(sheetData);
       XLSX.utils.book_append_sheet(wb, ws, sheetName);
     };
-  
+
     // Add each data sheet
     addSheet(this.DispatchedData?.data?.paid, 'Paid');
     addSheet(this.DispatchedData?.data?.credit, 'Credit');
     addSheet(this.DispatchedData?.data?.toPay, 'ToPay');
-  
+
     // City-wise Summary Sheet
     if (this.DispatchedData?.cityWiseDetails?.length) {
       const cityData = this.DispatchedData.cityWiseDetails.map((item: any, i: number) => ({
@@ -367,12 +374,12 @@ today = new Date();
       const citySheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(cityData);
       XLSX.utils.book_append_sheet(wb, citySheet, 'CityWise');
     }
-  
+
     // Generate Excel file
     const excelBuffer: any = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
     const blob: Blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
     FileSaver.saveAs(blob, `Dispatched_Report_${new Date().toISOString().slice(0, 10)}.xlsx`);
   }
-  
+
 
 }

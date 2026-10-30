@@ -1,10 +1,16 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
 import { Component, OnInit } from '@angular/core';
 import { BranchService } from 'src/app/service/branch.service';
-import * as XLSX from 'xlsx';
+import type * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-parcel-cancel',
   templateUrl: './parcel-cancel.component.html',
   styleUrls: ['./parcel-cancel.component.scss']
@@ -32,9 +38,9 @@ export class ParcelCancelComponent implements OnInit {
         const stateData = JSON.parse(dataString);
         this.data4 = stateData.data || stateData;
         this.datedata = stateData;
-  
+
         console.log('Loaded from localStorage:', stateData);
-  
+
         this.toast.success(stateData.message || 'Cancel report data loaded successfully!');
       } catch (e) {
         console.error('Failed to parse localStorage data', e);
@@ -45,9 +51,9 @@ export class ParcelCancelComponent implements OnInit {
       this.toast.warning('No cancel report data found.');
     }
   }
-  
-  
-  
+
+
+
   getProfileData(): void {
     this.api.GetProfileData().subscribe((res: any) => {
       this.pfdata = res;
@@ -72,40 +78,40 @@ export class ParcelCancelComponent implements OnInit {
                 font-family: Arial, sans-serif;
                 margin: 20px;
               }
-  
+
               table {
                 width: 100%;
                 border-collapse: collapse;
                 font-size: 12px;
               }
-  
+
               th, td {
                 border: 1px solid #000;
                 padding: 4px;
                 text-align: center;
               }
-  
+
               h4, h6, p {
                 margin: 4px 0;
               }
-  
+
               .text-center {
                 text-align: center;
               }
-  
+
               .fw-bold {
                 font-weight: bold;
               }
-  
+
               .text-decoration-underline {
                 text-decoration: underline;
               }
-  
+
               .d-flex {
                 display: flex;
                 justify-content: space-between;
               }
-  
+
               @media print {
                 .no-print {
                   display: none;
@@ -122,7 +128,8 @@ export class ParcelCancelComponent implements OnInit {
     }
   }
 
-  exportToExcel(): void {
+  async exportToExcel(): Promise<void> {
+    const XLSX = await import('xlsx');
     const excelData: any[] = [];
 
     // Header
@@ -198,6 +205,3 @@ export class ParcelCancelComponent implements OnInit {
     return `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
   }
 }
-
-  
-  

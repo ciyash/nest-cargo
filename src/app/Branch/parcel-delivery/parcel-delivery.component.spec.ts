@@ -8,7 +8,7 @@ describe('ParcelDeliveryComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [ParcelDeliveryComponent]
+      imports: [ParcelDeliveryComponent]
     });
     fixture = TestBed.createComponent(ParcelDeliveryComponent);
     component = fixture.componentInstance;

@@ -1,3 +1,7 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../../USER/header/header.component';
 import {
   Component,
   ElementRef,
@@ -12,6 +16,8 @@ import { BranchService } from 'src/app/service/branch.service';
 declare var $: any;
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeaderComponent],
   selector: 'app-report-status-date',
   templateUrl: './report-status-date.component.html',
   styleUrls: ['./report-status-date.component.scss']
@@ -19,7 +25,7 @@ declare var $: any;
 export class ReportStatusDateComponent {
     @ViewChild('selectElem') selectElem!: ElementRef;
     @ViewChild('selectElem2') selectElem2!: ElementRef;
-  
+
     form: FormGroup;
     citydata: any;
     branchdata: any;
@@ -28,7 +34,7 @@ export class ReportStatusDateComponent {
   ffdata: any;
   pfdata: any;
   profileData: any;
-  
+
     constructor(
       private fb: FormBuilder,
       private api: BranchService,
@@ -45,23 +51,23 @@ export class ReportStatusDateComponent {
         bookingStatus: ['', Validators.required],
       });
     }
-  
+
     ngOnInit() {
       this.getProfileData();
       this.api.GetCities().subscribe((res: any) => {
         this.citydata = res;
         console.log('citydata:', this.citydata);
       });
-  
+
       this.api.GetBranch().subscribe((res: any) => {
         this.branchdata = res;
         console.log('branchdata:', this.branchdata);
       });
     }
-  
+
     ngAfterViewInit(): void {
       setTimeout(() => {
-  
+
         $(this.selectElem2.nativeElement).select2();
         $(this.selectElem2.nativeElement).on('select2:select', (event: any) => {
           const selectedToCity = event.params.data.id;
@@ -69,7 +75,7 @@ export class ReportStatusDateComponent {
         });
       }, 0);
     }
-  
+
     getTodayDateString(): string {
       const today = new Date();
       const day = ('0' + today.getDate()).slice(-2);
@@ -77,19 +83,19 @@ export class ReportStatusDateComponent {
       const year = today.getFullYear();
       return `${year}-${month}-${day}`; // ✔ HTML date input format
     }
-    
-  
+
+
     // StatusDate() {
     //   const payload = this.form.value;
     //   console.log('payload:', payload);
-    
+
     //   this.api.ParcelStatusdateReport(payload).subscribe({
     //     next: (res: any) => {
     //       console.log('data:', res);
     //       // Show success message from backend, fallback to generic if not found
     //       const successMessage = res?.message || 'Report fetched successfully';
     //       this.toast.success(successMessage);
-    
+
     //       this.gstdata = res;
     //       const finalData = {
     //         ...this.gstdata,
@@ -100,7 +106,7 @@ export class ReportStatusDateComponent {
     //     },
     //     error: (err: any) => {
     //       console.error('Error fetching report:', err);
-    
+
     //       // Show error message from backend, fallback to generic if not found
     //       const errorMessage = err?.error?.message || 'Failed to fetch report';
     //       this.toast.error(errorMessage);
@@ -110,25 +116,25 @@ export class ReportStatusDateComponent {
     StatusDate() {
       const payload = this.form.value;
       console.log('payload:', payload);
-    
+
       this.api.ParcelStatusdateReport(payload).subscribe({
         next: (res: any) => {
           console.log('data:', res);
-    
+
           const successMessage = res?.message || 'Report fetched successfully';
           this.toast.success(successMessage);
-    
+
           this.gstdata = res;
-    
+
           const finalData = {
             ...this.gstdata,
             fromDate: payload.startDate,
             toDate: payload.endDate
           };
-    
+
           // Store data in localStorage or sessionStorage
           localStorage.setItem('dateReportData', JSON.stringify(finalData));
-    
+
           // Open new tab to the target route
           window.open('/datereport', '_blank');
         },
@@ -139,8 +145,8 @@ export class ReportStatusDateComponent {
         }
       });
     }
-    
-    
+
+
     getProfileData() {
       this.api.GetProfileData().subscribe((res: any) => {
         console.log('profile', res);
@@ -148,7 +154,7 @@ export class ReportStatusDateComponent {
         this.pfdata = res.branchId.city;
         this.profileData = res;
         console.log("profileData:", this.profileData);
-    
+
         // Update form controls with profile data
         this.form.patchValue({
           fromCity: this.pfdata || '', // Set fromCity to the city from branchId
@@ -156,7 +162,6 @@ export class ReportStatusDateComponent {
         });
           });
     }
-  
-    
-  }  
-  
+
+
+  }

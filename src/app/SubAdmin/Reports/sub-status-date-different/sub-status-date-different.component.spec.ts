@@ -8,7 +8,7 @@ describe('SubStatusDateDifferentComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [SubStatusDateDifferentComponent]
+      imports: [SubStatusDateDifferentComponent]
     });
     fixture = TestBed.createComponent(SubStatusDateDifferentComponent);
     component = fixture.componentInstance;

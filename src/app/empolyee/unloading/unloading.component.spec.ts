@@ -8,7 +8,7 @@ describe('UnloadingComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [UnloadingComponent]
+      imports: [UnloadingComponent]
     });
     fixture = TestBed.createComponent(UnloadingComponent);
     component = fixture.componentInstance;
